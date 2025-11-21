@@ -71,8 +71,29 @@ namespace DS {
             this->destory();
         }
 
+        void reserve(u64 count) {
+            const byte_t total_allocation_size = sizeof(T) * this->m_capacity;
+
+            const byte_t old_allocation_size = sizeof(T) * this->m_count;
+            const byte_t new_allocation_size = sizeof(T) * count;
+
+            if (new_allocation_size > total_allocation_size) {
+                this->m_data = Memory::realloc(this->m_data, old_allocation_size, new_allocation_size);
+                this->m_capacity = count;
+            }
+        }
+
         void resize(u64 count) {
-            RUNTIME_ASSERT_MSG(false, "resize not implemented!\n");
+            const byte_t total_allocation_size = sizeof(T) * this->m_capacity;
+
+            const byte_t old_allocation_size = sizeof(T) * this->m_count;
+            const byte_t new_allocation_size = sizeof(T) * count;
+            if (new_allocation_size > total_allocation_size) {
+                this->m_data = Memory::realloc(this->m_data, old_allocation_size, new_allocation_size);
+            }
+
+            this->m_count = count;
+            this->m_capacity = count;
         }
 
         void push(T value) {

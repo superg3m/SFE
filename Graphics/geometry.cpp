@@ -200,8 +200,8 @@ namespace Graphics {
 
                 sphere_vertices.push(Vertex{
                     Math::Vector3(x, y, z),
-                    Math::Vector3(x, y, z),                      // Normal (unit direction)
-                    Math::Vector2(u, v)                          // UV
+                    Math::Vector3(x, y, z), // Normal (unit direction)
+                    Math::Vector2(u, v)     // UV
                 });
             }
         }
@@ -283,15 +283,16 @@ namespace Graphics {
         this->setup(flags, vertices, indices);
     }
 
+    // This has to be different...
     /*
-    MeshEntry Mesh::processMesh(aiMesh* ai_mesh, const aiScene* scene, GM_Matrix4 parent_transform) {
-        MeshEntry entry;
-        entry.base_vertex = (unsigned int)this->vertices.size();
-        entry.base_index = (unsigned int)this->indices.size();
-        entry.material_index = ai_mesh->mMaterialIndex;
-        entry.index_count = ai_mesh->mNumFaces * 3;
-        entry.vertex_count = ai_mesh->mNumVertices;
-        this->meshes.push_back(entry);
+    Geometry* Geometry::processAssimpMesh(aiMesh* ai_mesh, const aiScene* scene,Math::Matrix4 parent_transform) {
+        Geometry* geo = (Geometry*)Memory::alloc(sizeof(Geometry));
+        geo->base_vertex = (unsigned int)this->vertices.count();
+        geo->base_index = (unsigned int)this->indices.count();
+        geo->material = material_cache[ai_mesh->mMaterialIndex];
+        geo->index_count = ai_mesh->mNumFaces * 3;
+        geo->vertex_count = ai_mesh->mNumVertices;
+        this->next = geo;
         
         { // Geometry Start
             const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
@@ -299,12 +300,12 @@ namespace Graphics {
             for (unsigned int j = 0; j < ai_mesh->mNumVertices; j++) {
                 const aiVector3D& ai_position = ai_mesh->mVertices[j];
 
-                GM_Vec4 transformed_position = parent_transform * GM_Vec4(ai_position.x, ai_position.y, ai_position.z, 1.0f);
+                Math::Vector4 transformed_position = parent_transform * Math::Vector4(ai_position.x, ai_position.y, ai_position.z, 1.0f);
                 v.aPosition = Math::Vector3(transformed_position.x, transformed_position.y, transformed_position.z);
 
                 if (ai_mesh->mNormals) {
                     const aiVector3D& pNormal = ai_mesh->mNormals[j];
-                    GM_Vec4 transformed_normal = parent_transform * GM_Vec4(pNormal.x, pNormal.y, pNormal.z, 0.0f); // W component is 0 for vectors
+                    Math::Vector4 transformed_normal = parent_transform * Math::Vector4(pNormal.x, pNormal.y, pNormal.z, 0.0f); // W component is 0 for vectors
                     v.aNormal = Math::Vector3(transformed_normal.x, transformed_normal.y, transformed_normal.z).normalize(); // Normalize after transform
                 } else {
                     aiVector3D Normal(0.0f, 1.0f, 0.0f);
@@ -312,24 +313,24 @@ namespace Graphics {
                 }
 
                 const aiVector3D& uv = ai_mesh->HasTextureCoords(0) ? ai_mesh->mTextureCoords[0][j] : Zero3D;
-                v.aTexCoord = GM_Vec2(uv.x, uv.y);
+                v.aTexCoord = Math::Vector2(uv.x, uv.y);
 
-                this->vertices.push_back(v);
+                this->vertices.push(v);
             }
 
             for (unsigned int j = 0; j < ai_mesh->mNumFaces; j++) {
                 const aiFace& Face = ai_mesh->mFaces[j];
                 if (Face.mNumIndices == 3) {
-                    this->indices.push_back(Face.mIndices[0]);
-                    this->indices.push_back(Face.mIndices[1]);
-                    this->indices.push_back(Face.mIndices[2]);
+                    this->indices.push(Face.mIndices[0]);
+                    this->indices.push(Face.mIndices[1]);
+                    this->indices.push(Face.mIndices[2]);
                 } else {
-                    CKG_LOG_ERROR("Mesh '%s' has non-triangular face with %d indices. Skipping.\n", ai_mesh->mName.C_Str(), Face.mNumIndices);
+                    LOG_ERROR("Mesh '%s' has non-triangular face with %d indices. Skipping.\n", ai_mesh->mName.C_Str(), Face.mNumIndices);
                 }
             }
         } // Geometry End
 
-        return entry;
+        return geo;
     }
 
     GM_Matrix4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
@@ -370,6 +371,8 @@ namespace Graphics {
             this->vertices.reserve(total_vertex_count);
             this->indices.reserve(total_index_count);
         } // Precompute Memory
+
+        DS::Vector<Material> material_cache[]
 
         { // materials start
             std::string directory = path.substr(0, path.find_last_of('/'));

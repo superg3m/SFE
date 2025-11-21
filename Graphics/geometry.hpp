@@ -18,9 +18,9 @@ namespace Graphics {
 
 		u32 base_vertex  = 0; // offset to next vertex in the vertex buffer
 		u32 base_index   = 0; // offset to next index in the index buffer
+
 		Material material;
 		Math::AABB aabb;
-
 		Geometry* next;
 
 		Geometry();
@@ -35,9 +35,14 @@ namespace Graphics {
 		void setup(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indicies);
 
 		private:
-			// void loadMeshFromScene(const std::string &path, const aiScene* scene);
+			DS::Vector<Material> material_cache;
+			DS::Vector<Vertex> vertices;
+			DS::Vector<GLuint> indices;
+
 			// void loadMeshFromData(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices, VertexAttributeFlag flags);
-			// MeshEntry processMesh(aiMesh *mesh, const aiScene *scene, GM_Matrix4 absolute_transform);
-			// void processNode(aiNode* node, const aiScene* scene, GM_Matrix4 parent_transform);
+
+			void loadMeshFromScene(const std::string &path, const aiScene* scene);
+			Geometry* processAssimpMesh(aiMesh* ai_mesh,  const aiScene* scene, Math::Matrix4 parent_transform);
+			void processNode(aiNode* node, const aiScene* scene, Math::Matrix4 parent_transform);
 	};
 }
