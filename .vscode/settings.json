@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.mysql": "sql",
+        "*.h": "c",
+        "array": "cpp",
+        "limits": "cpp",
+        "__split_buffer": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "iosfwd": "cpp"
+    }
+}
