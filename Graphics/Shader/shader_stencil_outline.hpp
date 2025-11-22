@@ -1,10 +1,10 @@
 #pragma once
 
-#include <ShaderBase.hpp>
+#include <Shader/shader_base.hpp>
 
 struct ShaderStencilOutline : public ShaderBase {
     ShaderStencilOutline() = default;
-    ShaderStencilOutline(std::vector<const char*> shader_paths);
+    ShaderStencilOutline(DS::Vector<const char*> shader_paths);
     void compile() override;
     
     void setOutlineScale(float s) const;

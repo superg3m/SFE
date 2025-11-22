@@ -2,7 +2,7 @@
 
 #include <Shader/shader_model.hpp>
 
-ShaderModel::ShaderModel(std::vector<const char*> shader_paths) {
+ShaderModel::ShaderModel(DS::Vector<const char*> shader_paths) {
     this->shader_paths = shader_paths;
     this->compile();
 }
@@ -10,21 +10,21 @@ ShaderModel::ShaderModel(std::vector<const char*> shader_paths) {
 void ShaderModel::compile() {
     this->program_id = this->createShaderProgram(this->shader_paths);
 
-    this->uSpotLight_Location.position = this->getUniformLocation("uSpotLight.position");
-    this->uSpotLight_Location.direction = this->getUniformLocation("uSpotLight.direction");
-    this->uSpotLight_Location.cutOff = this->getUniformLocation("uSpotLight.cutOff");
-    this->uSpotLight_Location.outerCutOff = this->getUniformLocation("uSpotLight.outerCutOff");
-    this->uSpotLight_Location.constant = this->getUniformLocation("uSpotLight.constant");
-    this->uSpotLight_Location.linear = this->getUniformLocation("uSpotLight.linear");
-    this->uSpotLight_Location.diffuse = this->getUniformLocation("uSpotLight.quadratic");
-    this->uSpotLight_Location.ambient = this->getUniformLocation("uSpotLight.ambient");
-    this->uSpotLight_Location.diffuse = this->getUniformLocation("uSpotLight.diffuse");
-    this->uSpotLight_Location.specular = this->getUniformLocation("uSpotLight.specular");
+    this->uSpotLight_Location.position = this->getUniformLocation("uSpotLight.position", GL_FLOAT_VEC3);
+    this->uSpotLight_Location.direction = this->getUniformLocation("uSpotLight.direction", GL_FLOAT_VEC3);
+    this->uSpotLight_Location.cutOff = this->getUniformLocation("uSpotLight.cutOff", GL_FLOAT);
+    this->uSpotLight_Location.outerCutOff = this->getUniformLocation("uSpotLight.outerCutOff", GL_FLOAT);
+    this->uSpotLight_Location.constant = this->getUniformLocation("uSpotLight.constant", GL_FLOAT);
+    this->uSpotLight_Location.linear = this->getUniformLocation("uSpotLight.linear", GL_FLOAT);
+    this->uSpotLight_Location.diffuse = this->getUniformLocation("uSpotLight.quadratic", GL_FLOAT);
+    this->uSpotLight_Location.ambient = this->getUniformLocation("uSpotLight.ambient", GL_FLOAT_VEC3);
+    this->uSpotLight_Location.diffuse = this->getUniformLocation("uSpotLight.diffuse", GL_FLOAT_VEC3);
+    this->uSpotLight_Location.specular = this->getUniformLocation("uSpotLight.specular", GL_FLOAT_VEC3);
 
-    this->uDirectionalLight_Location.direction = this->getUniformLocation("uDirLight.direction");
-    this->uDirectionalLight_Location.ambient = this->getUniformLocation("uDirLight.ambient");
-    this->uDirectionalLight_Location.diffuse = this->getUniformLocation("uDirLight.diffuse");
-    this->uDirectionalLight_Location.specular = this->getUniformLocation("uDirLight.specular");
+    this->uDirectionalLight_Location.direction = this->getUniformLocation("uDirLight.direction", GL_FLOAT_VEC3);
+    this->uDirectionalLight_Location.ambient = this->getUniformLocation("uDirLight.ambient", GL_FLOAT_VEC3);
+    this->uDirectionalLight_Location.diffuse = this->getUniformLocation("uDirLight.diffuse", GL_FLOAT_VEC3);
+    this->uDirectionalLight_Location.specular = this->getUniformLocation("uDirLight.specular", GL_FLOAT_VEC3);
 
     for (int i = 0; i < LIGHT_COUNT; i++) {
         char* position = String::sprintf(nullptr ,"uPointLights[%d].position", i);
@@ -35,13 +35,13 @@ void ShaderModel::compile() {
         char* diffuse = String::sprintf(nullptr ,"uPointLights[%d].diffuse", i);
         char* specular = String::sprintf(nullptr ,"uPointLights[%d].specular", i);
 
-        this->uPointLight_Locations[i].position = this->getUniformLocation(position);
-        this->uPointLight_Locations[i].constant = this->getUniformLocation(constant);
-        this->uPointLight_Locations[i].linear = this->getUniformLocation(linear);
-        this->uPointLight_Locations[i].quadratic = this->getUniformLocation(quadratic);
-        this->uPointLight_Locations[i].ambient = this->getUniformLocation(ambient);
-        this->uPointLight_Locations[i].diffuse = this->getUniformLocation(diffuse);
-        this->uPointLight_Locations[i].specular = this->getUniformLocation(specular);
+        this->uPointLight_Locations[i].position = this->getUniformLocation(position, GL_FLOAT_VEC3);
+        this->uPointLight_Locations[i].constant = this->getUniformLocation(constant, GL_FLOAT);
+        this->uPointLight_Locations[i].linear = this->getUniformLocation(linear, GL_FLOAT);
+        this->uPointLight_Locations[i].quadratic = this->getUniformLocation(quadratic, GL_FLOAT);
+        this->uPointLight_Locations[i].ambient = this->getUniformLocation(ambient, GL_FLOAT_VEC3);
+        this->uPointLight_Locations[i].diffuse = this->getUniformLocation(diffuse, GL_FLOAT_VEC3);
+        this->uPointLight_Locations[i].specular = this->getUniformLocation(specular, GL_FLOAT_VEC3);
 
         Memory::free(position);
         Memory::free(constant);
@@ -52,15 +52,21 @@ void ShaderModel::compile() {
         Memory::free(specular);
     }
 
-    this->uViewPosition_Location = this->getUniformLocation("uViewPosition");
-    this->uUseFlashlight_Location = this->getUniformLocation("uUseFlashlight");
+    this->uViewPosition_Location = this->getUniformLocation("uViewPosition", GL_FLOAT_VEC3);
+    this->uUseFlashlight_Location = this->getUniformLocation("uUseFlashlight", GL_BOOL);
+
+    this->uMaterial_Location.color_map = this->getUniformLocation("uMaterial.color_map", GL_SAMPLER_2D);
+    this->uMaterial_Location.specular_map = this->getUniformLocation("uMaterial.specular_map", GL_SAMPLER_2D);
+    this->uMaterial_Location.shininess = this->getUniformLocation("uMaterial.shininess", GL_FLOAT);
+    this->uMaterial_Location.opacity = this->getUniformLocation("uMaterial.opacity", GL_FLOAT);
+    this->uMaterial_Location.color = this->getUniformLocation("uMaterial.color", GL_FLOAT_VEC3);
 }
 
 void ShaderModel::setSpotLight(SpotLight &spot_light) const {
     this->use();
 
-    glUniform3fv(this->uSpotLight_Location.position, 1, &spot_light.position.x);
-    glUniform3fv(this->uSpotLight_Location.direction, 1, &spot_light.direction.x);
+    this->setVec3(this->uSpotLight_Location.position, spot_light.position);
+    this->setVec3(this->uSpotLight_Location.direction, spot_light.direction);
     glUniform1f(this->uSpotLight_Location.cutOff, spot_light.cutOff);
     glUniform1f(this->uSpotLight_Location.outerCutOff, spot_light.outerCutOff);
 
@@ -68,43 +74,59 @@ void ShaderModel::setSpotLight(SpotLight &spot_light) const {
     glUniform1f(this->uSpotLight_Location.linear, spot_light.linear);
     glUniform1f(this->uSpotLight_Location.quadratic, spot_light.quadratic);
 
-    glUniform3fv(this->uSpotLight_Location.ambient, 1, &spot_light.ambient.x);
-    glUniform3fv(this->uSpotLight_Location.diffuse, 1, &spot_light.diffuse.x);
-    glUniform3fv(this->uSpotLight_Location.specular, 1, &spot_light.specular.x);
+    this->setVec3(this->uSpotLight_Location.ambient, spot_light.ambient);
+    this->setVec3(this->uSpotLight_Location.diffuse, spot_light.diffuse);
+    this->setVec3(this->uSpotLight_Location.specular, spot_light.specular);
 }
 
 void ShaderModel::setDirectionalLight(DirectionalLight &directional_light) const {
     this->use();
 
-    glUniform3fv(this->uDirectionalLight_Location.direction, 1, &directional_light.direction.x);
+    this->setVec3(this->uDirectionalLight_Location.direction, directional_light.direction);
 
-    glUniform3fv(this->uDirectionalLight_Location.ambient, 1, &directional_light.ambient.x);
-    glUniform3fv(this->uDirectionalLight_Location.diffuse, 1, &directional_light.diffuse.x);
-    glUniform3fv(this->uDirectionalLight_Location.specular, 1, &directional_light.specular.x);
+    this->setVec3(this->uDirectionalLight_Location.ambient, directional_light.ambient);
+    this->setVec3(this->uDirectionalLight_Location.diffuse, directional_light.diffuse);
+    this->setVec3(this->uDirectionalLight_Location.specular, directional_light.specular);
 }
 
 void ShaderModel::setPointLight(PointLight &point_light, int index) const {
     this->use();
 
-    glUniform3fv(this->uPointLight_Locations[index].position, 1, &point_light.position.x);
+    this->setVec3(this->uPointLight_Locations[index].position, point_light.position);
 
-    glUniform1f(this->uPointLight_Locations[index].constant, point_light.constant);
-    glUniform1f(this->uPointLight_Locations[index].linear, point_light.linear);
-    glUniform1f(this->uPointLight_Locations[index].quadratic, point_light.quadratic);
+    this->setFloat(this->uPointLight_Locations[index].constant, point_light.constant);
+    this->setFloat(this->uPointLight_Locations[index].linear, point_light.linear);
+    this->setFloat(this->uPointLight_Locations[index].quadratic, point_light.quadratic);
 
-    glUniform3fv(this->uPointLight_Locations[index].ambient, 1, &point_light.ambient.x);
-    glUniform3fv(this->uPointLight_Locations[index].diffuse, 1, &point_light.diffuse.x);
-    glUniform3fv(this->uPointLight_Locations[index].specular, 1, &point_light.specular.x);
+    this->setVec3(this->uPointLight_Locations[index].ambient, point_light.ambient);
+    this->setVec3(this->uPointLight_Locations[index].diffuse, point_light.diffuse);
+    this->setVec3(this->uPointLight_Locations[index].specular, point_light.specular);
 }
 
 void ShaderModel::setViewPosition(Math::Vector3 &view_position) const {
     this->use();
 
-    glUniform3fv(this->uViewPosition_Location, 1, &view_position.x);
+    this->setVec3(this->uViewPosition_Location, 1, &view_position.x);
 }
 
 void ShaderModel::setUseFlashlight(bool useFlashlight) const {
     this->use();
 
     glUniform1i(this->uUseFlashlight_Location, (int)useFlashlight);
+}
+
+void ShaderModel::setMaterial(Material &material) const {
+    this->use();
+
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, material.color_map.id);
+    this->setInt(uMaterial_Location.color_map, 0);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, material.specular_map.id);
+    this->setInt(uMaterial_Location.specular_map, 1);
+
+    this->setFloat(uMaterial_Location.shininess, material.shininess);
+    this->setFloat(uMaterial_Location.opacity, material.opacity);
+    this->setVec3(uMaterial_Location.color, material.color);
 }

@@ -1,12 +1,16 @@
 #pragma once
 
 #include <vector>
-#include <ShaderBase.hpp>
+
+#include <Shader/shader_base.hpp>
 
 struct ShaderSkybox : public ShaderBase {
     ShaderSkybox() = default;
-    ShaderSkybox(std::vector<const char*> shader_paths);
+    ShaderSkybox(DS::Vector<const char*> shader_paths);
     void compile() override;
     
     void setSkyboxTexture(GLTextureID texture) const;
+
+private:
+    unsigned int uSkyboxTexture_Location;
 };

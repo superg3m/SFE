@@ -5,6 +5,7 @@
 
 #include <glad/glad.h>
 
+#include <DataStructure/ds.hpp>
 #include <Geometry/material.hpp>
 #include <Math/matrix.hpp>
 
@@ -19,14 +20,35 @@ struct ShaderBase {
     void setView(Math::Matrix4 &view) const;
     void setProjection(Math::Matrix4 &projection) const;
 
-    // Fragment Uniforms
-    void setMaterial(Material &material) const;
+    void setBool(char* name, bool value) const;
+    void setInt(char* name, int value) const;
+    void setFloat(char* name, float value) const;
+    void setVec2(char* name, const Math::Vector2& value) const;
+    void setVec2(char* name, float x, float y) const;
+    void setVec3(char* name, const Math::Vector3& value) const;
+    void setVec3(char* name, float x, float y, float z) const;
+    void setVec4(char* name, const Math::Vector4& value) const;
+    void setVec4(char* name, float x, float y, float z, float w) const;
+    void setMat4(char* name, const Math::Matrix4& mat) const;
 protected:
-    std::vector<const char*> shader_paths;
+    DS::Vector<const char*> shader_paths;
+    DS::Hashmap<char*, GLenum> uniforms;
+
     ShaderBase() = default;
     GLenum typeFromPath(const char* path);
     void checkCompileError(unsigned int source_id, const char* path);
     unsigned int shaderSourceCompile(const char* path);
-    unsigned int getUniformLocation(const char* name, bool log_error = true) const;
-    unsigned int createShaderProgram(std::vector<const char*> shader_paths);
+    unsigned int getUniformLocation(char* name, GLenum type, bool log_error = true) const;
+    unsigned int createShaderProgram(DS::Vector<const char*> shader_paths);
+
+    void setBool(unsigned int location, bool value) const;
+    void setInt(unsigned int location, int value) const;
+    void setFloat(unsigned int location, float value) const;
+    void setVec2(unsigned int location, const Math::Vector2& value) const;
+    void setVec2(unsigned int location, float x, float y) const;
+    void setVec3(unsigned int location, const Math::Vector3& value) const;
+    void setVec3(unsigned int location, float x, float y, float z) const;
+    void setVec4(unsigned int location, const Math::Vector4& value) const;
+    void setVec4(unsigned int location, float x, float y, float z, float w) const;
+    void setMat4(unsigned int location, const Math::Matrix4& mat) const;
 };

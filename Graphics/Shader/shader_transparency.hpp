@@ -1,11 +1,12 @@
 #pragma once
 
 #include <vector>
-#include <ShaderBase.hpp>
+
+#include <Shader/shader_base.hpp>
 
 struct ShaderTransparency : public ShaderBase {
     ShaderTransparency() = default;
-    ShaderTransparency(std::vector<const char*> shader_paths);
+    ShaderTransparency(DS::Vector<const char*> shader_paths);
     void compile() override;
     
     void setTexture(GLTextureID texture) const;

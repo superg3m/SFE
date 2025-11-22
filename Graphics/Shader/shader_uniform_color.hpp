@@ -1,10 +1,10 @@
 #pragma once
 
-#include <ShaderBase.hpp>
+#include <Shader/shader_base.hpp>
 
 struct ShaderUniformColor : public ShaderBase {
     ShaderUniformColor() = default;
-    ShaderUniformColor(std::vector<const char*> shader_paths);
+    ShaderUniformColor(DS::Vector<const char*> shader_paths);
     void compile() override;
     void setColor(Math::Vector3 color);
 private:

@@ -490,7 +490,7 @@ namespace Graphics {
         this->indices.shrink_to_fit();
     }
 
-    void Mesh::loadMeshFromData(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices, VertexAttributeFlag flags) {
+    void Mesh::loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags) {
         this->materials.resize(1);
         this->meshes.resize(1);
         this->meshes[0].vertex_count = (unsigned int)vertices.size();

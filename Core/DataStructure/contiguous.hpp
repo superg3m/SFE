@@ -105,7 +105,7 @@ namespace DS {
             this->m_count += 1;
         }
 
-        void unstable_swapback_remove(int i) {
+        void unstableSwapbackRemove(int i) {
             RUNTIME_ASSERT_MSG(this->m_count > 0, "You may not remove if the vector is empty!\n");
             RUNTIME_ASSERT_MSG((i >= 0) && (this->m_count - 1 >= i), "index is outside of bounds!\n");
 

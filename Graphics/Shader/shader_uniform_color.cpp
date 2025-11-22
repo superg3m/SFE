@@ -1,6 +1,6 @@
-#include <ShaderUniformColor.hpp>
+#include <Shader/shader_uniform_color.hpp>
 
-ShaderUniformColor::ShaderUniformColor(std::vector<const char*> shader_paths) {
+ShaderUniformColor::ShaderUniformColor(DS::Vector<const char*> shader_paths) {
     this->shader_paths = shader_paths;
     this->compile();
 }
@@ -13,5 +13,5 @@ void ShaderUniformColor::compile() {
 void ShaderUniformColor::setColor(Math::Vector3 color) {
     this->use();
 
-    glUniform3fv(this->uColor_Location, 1, &color.r);
+    this->setVec3(this->uColor_Location, 1, &color.r);
 }

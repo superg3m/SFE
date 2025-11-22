@@ -5,7 +5,7 @@
 
 struct ShaderModel : public ShaderBase {
     ShaderModel() = default;
-    ShaderModel(std::vector<const char*> shader_paths);
+    ShaderModel(DS::Vector<const char*> shader_paths);
     void compile() override;
     
     // Fragment Uniforms
@@ -14,6 +14,7 @@ struct ShaderModel : public ShaderBase {
     void setPointLight(PointLight &point_light, int index) const;
     void setViewPosition(Math::Vector3 &view_position) const;
     void setUseFlashlight(bool useFlashlight) const;
+    void setMaterial(Material &material) const;
 private:
     // Fragment Uniforms
     SpotLightLocation uSpotLight_Location;
@@ -21,4 +22,6 @@ private:
     PointLightLocation uPointLight_Locations[LIGHT_COUNT];
     unsigned int uViewPosition_Location;
     unsigned int uUseFlashlight_Location;
+
+    MaterialLocation uMaterial_Location;
 };

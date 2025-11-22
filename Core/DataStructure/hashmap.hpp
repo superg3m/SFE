@@ -181,6 +181,20 @@ namespace DS {
         u64 count() {
             return this->m_count;
         }
+
+        HashmapEntry* begin() { 
+            return m_entries; 
+        }
+        HashmapEntry* end() { 
+            return m_entries + m_capacity; 
+        }
+        const HashmapEntry* begin() const { 
+            return m_entries; 
+        }
+        const HashmapEntry* end() const { 
+            return m_entries + m_capacity; 
+        }
+
     private:
         u64 m_count = 0;
         u64 m_capacity = 0;

@@ -34,7 +34,19 @@ struct Material {
     Texture normal_map;
     Texture height_map;
 
-    Math::Vector3 color = Math::Vector3(1);
     float shininess = 32.0f;
     float opacity = 1.0f;
+
+    Math::Vector3 color = Math::Vector3(1);
+};
+
+struct MaterialLocation {
+    unsigned int color_map;
+    unsigned int specular_map;
+    unsigned int normal_map;
+    unsigned int height_map;
+
+    unsigned int color;
+    unsigned int shininess;
+    unsigned int opacity;
 };

@@ -1,6 +1,6 @@
-#include <ShaderTransparency.hpp>
+#include <Shader/shader_transparency.hpp>
 
-ShaderTransparency::ShaderTransparency(std::vector<const char*> shader_paths) {
+ShaderTransparency::ShaderTransparency(DS::Vector<const char*> shader_paths) {
     this->shader_paths = shader_paths;
     this->compile();
 }
