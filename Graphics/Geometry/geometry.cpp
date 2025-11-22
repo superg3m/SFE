@@ -232,13 +232,10 @@ namespace Graphics {
         return ret;
     }
 
-    void Geometry::draw(ShaderBase* shader) {
+    void Geometry::draw() {
         glBindVertexArray(this->VAO);
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
-            shader->use();
-            shader->setMaterial(this->material); // this is kind of odd
-
             if (geo->index_count > 0) {
                 glDrawElementsBaseVertex(
                     draw_type, geo->index_count, 

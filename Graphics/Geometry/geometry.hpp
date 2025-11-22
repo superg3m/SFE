@@ -31,7 +31,7 @@ namespace Graphics {
 		static Geometry Sphere(int segments);
 		static Geometry Model(const char* path);
 
-		void draw(ShaderBase* shader);
+		void draw();
 
 		private:
 			DS::Vector<Vertex> vertices;
