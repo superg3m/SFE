@@ -67,12 +67,12 @@ void ShaderModel::setSpotLight(SpotLight &spot_light) const {
 
     this->setVec3(this->uSpotLight_Location.position, spot_light.position);
     this->setVec3(this->uSpotLight_Location.direction, spot_light.direction);
-    glUniform1f(this->uSpotLight_Location.cutOff, spot_light.cutOff);
-    glUniform1f(this->uSpotLight_Location.outerCutOff, spot_light.outerCutOff);
+    this->setFloat(this->uSpotLight_Location.cutOff, spot_light.cutOff);
+    this->setFloat(this->uSpotLight_Location.outerCutOff, spot_light.outerCutOff);
 
-    glUniform1f(this->uSpotLight_Location.constant, spot_light.constant);
-    glUniform1f(this->uSpotLight_Location.linear, spot_light.linear);
-    glUniform1f(this->uSpotLight_Location.quadratic, spot_light.quadratic);
+    this->setFloat(this->uSpotLight_Location.constant, spot_light.constant);
+    this->setFloat(this->uSpotLight_Location.linear, spot_light.linear);
+    this->setFloat(this->uSpotLight_Location.quadratic, spot_light.quadratic);
 
     this->setVec3(this->uSpotLight_Location.ambient, spot_light.ambient);
     this->setVec3(this->uSpotLight_Location.diffuse, spot_light.diffuse);
@@ -105,14 +105,12 @@ void ShaderModel::setPointLight(PointLight &point_light, int index) const {
 
 void ShaderModel::setViewPosition(Math::Vector3 &view_position) const {
     this->use();
-
-    this->setVec3(this->uViewPosition_Location, 1, &view_position.x);
+    this->setVec3(this->uViewPosition_Location, view_position);
 }
 
 void ShaderModel::setUseFlashlight(bool useFlashlight) const {
     this->use();
-
-    glUniform1i(this->uUseFlashlight_Location, (int)useFlashlight);
+    this->setBool(this->uUseFlashlight_Location, useFlashlight);
 }
 
 void ShaderModel::setMaterial(Material &material) const {

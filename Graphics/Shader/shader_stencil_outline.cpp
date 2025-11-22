@@ -8,11 +8,11 @@ ShaderStencilOutline::ShaderStencilOutline(DS::Vector<const char*> shader_paths)
 void ShaderStencilOutline::compile() {
     this->program_id = this->createShaderProgram(this->shader_paths);
 
-    this->uOutlineScale_Location = this->getUniformLocation("uOutlineScale");
+    this->uOutlineScale_Location = this->getUniformLocation("uOutlineScale", GL_FLOAT);
 }
 
 void ShaderStencilOutline::setOutlineScale(float s) const {
     this->use();
 
-    glUniform1f(this->uOutlineScale_Location, s); 
+    this->setFloat(this->uOutlineScale_Location, s); 
 }

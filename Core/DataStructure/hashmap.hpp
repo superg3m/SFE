@@ -131,7 +131,7 @@ namespace DS {
             entry->filled = true;
         }
 
-        bool has(K key) {
+        bool has(K key) const {
             u64 hash = this->safeHash(key);
             s64 index = this->resolveCollision(key, hash % this->m_capacity);
             if (index == -1) {
@@ -143,7 +143,7 @@ namespace DS {
             return entry->filled && !entry->dead;
         }
 
-        V get(K key) {
+        V get(K key) const {
             RUNTIME_ASSERT_MSG(this->has(key), "Key doesn't exist\n");
 
             u64 hash = this->safeHash(key);

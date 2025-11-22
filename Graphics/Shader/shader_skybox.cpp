@@ -8,7 +8,7 @@ ShaderSkybox::ShaderSkybox(DS::Vector<const char*> shader_paths) {
 void ShaderSkybox::compile() {
     this->program_id = this->createShaderProgram(this->shader_paths);
 
-    this->uSkyboxTexture_Location = this->getUniformLocation("uSkyboxTexture");
+    this->uSkyboxTexture_Location = this->getUniformLocation("uSkyboxTexture", GL_SAMPLER_2D);
 }
 
 void ShaderSkybox::setSkyboxTexture(GLTextureID texture) const {
@@ -16,5 +16,5 @@ void ShaderSkybox::setSkyboxTexture(GLTextureID texture) const {
 
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
-    glUniform1i(this->uSkyboxTexture_Location, 0); 
+    this->setInt(this->uSkyboxTexture_Location, 0); 
 }

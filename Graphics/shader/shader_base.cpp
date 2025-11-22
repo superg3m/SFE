@@ -50,13 +50,21 @@ unsigned int ShaderBase::shaderSourceCompile(const char* path) {
     return source_id;
 }
 
-unsigned int ShaderBase::getUniformLocation(char* name, GLenum type, bool log_error) const {
-    if (this->uniforms.has(name)) {
-        
+unsigned int ShaderBase::getUniformLocation(char* name, GLenum type) const {
+    if (!this->uniforms.has(name)) {
+        LOG_ERROR("Shader {%s} Uniform: '%s' does not exists\n", this->shader_paths[0], name);
+        return -1;
+    }
+    
+    GLenum expected = this->uniforms.get(name);
+    if (expected != type) {
+        LOG_ERROR("Shader {%s} Uniform: '%s' type missmatch\n", this->shader_paths[0], name);
+        LOG_ERROR("Expected: %s | Got: %s\n", glEnumToString(expected), glEnumToString(type));
+        return -1;
     }
 
     GLint location = glGetUniformLocation(this->program_id, name);
-    if (location == -1 && log_error) {
+    if (location == -1) {
         LOG_ERROR("Shader {%s} Uniform: '%s' does not exists\n", this->shader_paths[0], name);
     }
 

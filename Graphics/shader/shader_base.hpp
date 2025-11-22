@@ -9,6 +9,22 @@
 #include <Geometry/material.hpp>
 #include <Math/matrix.hpp>
 
+static const char* glEnumToString(GLenum type) {
+    switch (type) {
+        case GL_BOOL:          return "bool";
+        case GL_INT:           return "int";
+        case GL_FLOAT:         return "float";
+        case GL_FLOAT_VEC2:    return "vec2";
+        case GL_FLOAT_VEC3:    return "vec3";
+        case GL_FLOAT_VEC4:    return "vec4";
+        case GL_FLOAT_MAT4:    return "mat4";
+        case GL_SAMPLER_2D:    return "sampler2D";
+        case GL_SAMPLER_CUBE:  return "samplerCube";
+        
+        default:               return "unknown";
+    }
+}
+
 struct ShaderBase {
     unsigned int program_id = 0;
     virtual void compile() = 0;
@@ -38,7 +54,7 @@ protected:
     GLenum typeFromPath(const char* path);
     void checkCompileError(unsigned int source_id, const char* path);
     unsigned int shaderSourceCompile(const char* path);
-    unsigned int getUniformLocation(char* name, GLenum type, bool log_error = true) const;
+    unsigned int getUniformLocation(char* name, GLenum type) const;
     unsigned int createShaderProgram(DS::Vector<const char*> shader_paths);
 
     void setBool(unsigned int location, bool value) const;
