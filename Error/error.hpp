@@ -15,4 +15,4 @@ enum Error {
  * @param error_code 
  * @return const char*
  */
-const char* error_str(Error error_code);
+const char* getErrorString(Error error_code);

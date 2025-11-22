@@ -89,7 +89,7 @@ namespace Hashing {
         return ret;
     }
 
-    u64 cstring_hash(const void* str, u64 str_length) {
+    u64 cstringHash(const void* str, u64 str_length) {
         (void)str_length;
 
         u64 hash = 5381;
@@ -103,7 +103,7 @@ namespace Hashing {
         return hash;
     }
 
-    bool cstring_equality(const void* c1, byte_t c1_size, const void* c2, byte_t c2_size) {
+    bool cstringEquality(const void* c1, byte_t c1_size, const void* c2, byte_t c2_size) {
         (void)c1_size;
         (void)c2_size;
 
@@ -113,7 +113,7 @@ namespace Hashing {
         return String::equal((const char*)c1, c1_length, (const char*)c2, c2_length);
     }
 
-    u64 string_view_hash(const void* view, u64 str_length) {
+    u64 stringViewHash(const void* view, u64 str_length) {
         (void)str_length;
         DS::View<char>* str_view = (DS::View<char>*)view;
         u64 hash = 5381;
@@ -127,7 +127,7 @@ namespace Hashing {
         return hash;
     }
 
-    bool string_view_equality(const void* c1, byte_t c1_size, const void* c2, byte_t c2_size) {
+    bool stringViewEquality(const void* c1, byte_t c1_size, const void* c2, byte_t c2_size) {
         (void)c1_size;
         (void)c2_size;
 

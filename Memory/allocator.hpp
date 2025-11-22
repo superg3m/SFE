@@ -66,6 +66,6 @@ namespace Memory {
         u8* base_address = nullptr;
         DS::Stack<byte_t>* size_stack = nullptr;
 
-        bool data_is_poppable(void* data);
+        bool isDataPoppable(void* data);
     };
 }

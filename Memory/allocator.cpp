@@ -7,7 +7,7 @@
 namespace Memory {
     static BaseAllocator* g_allocator = nullptr;
 
-    void bind_allocator(BaseAllocator* allocator) {
+    void bindAllocator(BaseAllocator* allocator) {
         RUNTIME_ASSERT(allocator);
         RUNTIME_ASSERT(allocator->is_valid());
 
@@ -128,7 +128,7 @@ namespace Memory {
         RUNTIME_ASSERT(data);
         RUNTIME_ASSERT_MSG(this->valid, "Allocator is invalid!\n");
 
-        if (this->data_is_poppable(data)) {
+        if (this->isDataPoppable(data)) {
             this->used -= this->size_stack->pop();
         }
     }
@@ -143,7 +143,7 @@ namespace Memory {
         RUNTIME_ASSERT(old_allocation_size != 0);
         RUNTIME_ASSERT(new_allocation_size != 0);
 
-        if (this->data_is_poppable(data)) {
+        if (this->isDataPoppable(data)) {
             this->free(data);
             return this->malloc(new_allocation_size);
         }
@@ -155,7 +155,7 @@ namespace Memory {
         return ret;
     }
 
-    bool ArenaAllocator::data_is_poppable(void* data) {
+    bool ArenaAllocator::isDataPoppable(void* data) {
         byte_t bytes_to_pop = this->size_stack->peek();
         return this->base_address + (this->used - bytes_to_pop) == data;
     }

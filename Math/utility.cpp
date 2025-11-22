@@ -6,7 +6,7 @@ namespace Math {
         return a + ((b - a) * t);
     }
 
-    float inverse_lerp(float a, float b, float value) {
+    float inverseLerp(float a, float b, float value) {
         if (NEAR_ZERO(a - b)) {
             return 0.0f; // Avoid division by zero
         }
@@ -21,7 +21,7 @@ namespace Math {
         return e_min + (s_ratio * (e_max - e_min));
     }
 
-    float move_toward(float current, float target, float delta) {
+    float moveToward(float current, float target, float delta) {
         float diff = target - current;
 
         if (fabsf(diff) <= delta) {

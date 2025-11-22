@@ -9,7 +9,7 @@ namespace String {
         return ret;
     }
 
-    char* sprintf( u64* out_buffer_length, const char* fmt ...) {
+    char* sprintf(u64* out_buffer_length, const char* fmt ...) {
         va_list args, copy_args;
         va_start(args, fmt);
             va_copy(copy_args, args);
@@ -66,7 +66,7 @@ namespace String {
         return Memory::equal(s1.data, s1.length, s2.data, s2.length);
     }
 
-    s64 index_of(const char* str, u64 str_length, const char* substring, u64 substring_length) {
+    s64 indexOf(const char* str, u64 str_length, const char* substring, u64 substring_length) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(substring);
 
@@ -106,10 +106,10 @@ namespace String {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(contains);
 
-        return String::index_of(str, str_length, contains, contains_length) != -1;  
+        return String::indexOf(str, str_length, contains, contains_length) != -1;  
     }
 
-    s64 last_index_of(const char* str, u64 str_length, const char* substring, u64 substring_length) {
+    s64 lastIndexOf(const char* str, u64 str_length, const char* substring, u64 substring_length) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(substring);
 

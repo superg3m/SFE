@@ -34,7 +34,7 @@ namespace Math {
         static Matrix4 Transform(Vector3 s, float theta, Vector3 axis, Vector3 t);
         static Matrix4 InverseTransform(Vector3 s, float theta, Vector3 axis, Vector3 t);
         static void Decompose(Matrix4 mat, Vector3* out_position, Quaternion* out_orientation, Vector3* out_scale);
-
+        
         static Matrix4 Perspective(float fov_degrees, float aspect, float near_plane, float far_plane);
         static Matrix4 Orthographic(float left, float right, float bottom, float top, float near_plane, float far_plane);
         static Matrix4 Lookat(Vector3 position, Vector3 target, Vector3 world_up);

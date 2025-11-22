@@ -167,7 +167,7 @@ namespace Math {
         return Quaternion::FromRotationMatrix(&mat.v[0].x);
     }
 
-    Matrix4 Quaternion::to_matrix4() {
+    Matrix4 Quaternion::getMatrix4() {
         Matrix4 result = Matrix4::Identity();
 
         float x2 = this->v.x * this->v.x;
@@ -204,7 +204,7 @@ namespace Math {
         return result;
     }
 
-    void Quaternion::to_angle_axis(float &theta, Vector3 &vec) {
+    void Quaternion::getAngleAxis(float &theta, Vector3 &vec) {
         Quaternion quat = this->normalize();
         float sinf_half_theta = quat.v.magnitude();
 

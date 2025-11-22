@@ -17,10 +17,10 @@ namespace String {
     bool equal(DS::View<char> s1, DS::View<char> s2);
     bool contains(const char* s1, u64 s1_length, const char* contains, u64 contains_length);
 
-    s64 index_of(const char* str, u64 str_length, const char* substring, u64 substring_length);
-    s64 last_index_of(const char* str, u64 str_length, const char* substring, u64 substring_length);
-    bool starts_with(const char* str, u64 str_length, const char* starts_with, u64 starts_with_length);
-    bool ends_with(const char* str, u64 str_length, const char* ends_with, u64 ends_with_length);
+    s64 indexOf(const char* str, u64 str_length, const char* substring, u64 substring_length);
+    s64 lastIndexOf(const char* str, u64 str_length, const char* substring, u64 substring_length);
+    bool startsWith(const char* str, u64 str_length, const char* starts_with, u64 starts_with_length);
+    bool endsWith(const char* str, u64 str_length, const char* ends_with, u64 ends_with_length);
 
     void copy(char* s1, byte_t s1_capacity, const char* s2, u64 s2_length);
     void append(char* str, u64 str_length, byte_t str_capacity, const char* to_append, u64 to_append_length);

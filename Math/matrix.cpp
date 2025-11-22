@@ -127,7 +127,7 @@ namespace Math {
     Matrix4 Matrix4::Rotate(Matrix4 mat, Quaternion quat) {
         float theta;
         Vector3 axis;
-        quat.to_angle_axis(theta, axis);
+        quat.getAngleAxis(theta, axis);
         return Matrix4::Rotate(mat, theta, axis);
     }
 

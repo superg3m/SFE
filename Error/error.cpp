@@ -10,7 +10,7 @@ static const char* ERROR_STRINGS[ERROR_COUNT] = {
     stringify(ERROR_INVALID_PARAMETER),
 };
 
-const char* error_str(Error error_code) {
+const char* getErrorString(Error error_code) {
     RUNTIME_ASSERT((error_code >= 0) && (error_code < ERROR_COUNT));
 
     return ERROR_STRINGS[error_code];

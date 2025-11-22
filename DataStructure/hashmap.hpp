@@ -8,7 +8,7 @@
 #include <String/string.hpp>
 #include <Hashing/hashing.hpp>
 
-#define HASHMAP_DEFAULT_LOAD_FACTOR 0.7f
+#define HASHMAP_DEFAULT_getLoadFactor 0.7f
 
 namespace DS {
     typedef u64(HashFunction)(const void*, byte_t);
@@ -44,11 +44,11 @@ namespace DS {
                 this->m_hash_func = Hashing::siphash24;
                 this->m_equal_func = Memory::equal;
             } else if constexpr (key_is_cstring) {
-                this->m_hash_func = Hashing::cstring_hash;
-                this->m_equal_func = Hashing::cstring_equality;
+                this->m_hash_func = Hashing::cstringHash;
+                this->m_equal_func = Hashing::cstringEquality;
             } else if constexpr (key_is_string_view) {
-                this->m_hash_func = Hashing::string_view_hash;
-                this->m_equal_func = Hashing::string_view_equality;
+                this->m_hash_func = Hashing::stringViewHash;
+                this->m_equal_func = Hashing::stringViewEquality;
             }
         }
 
@@ -68,11 +68,11 @@ namespace DS {
                 this->m_hash_func = Hashing::siphash24;
                 this->m_equal_func = Memory::equal;
             } else if constexpr (key_is_cstring) {
-                this->m_hash_func = Hashing::cstring_hash;
-                this->m_equal_func = Hashing::cstring_equality;
+                this->m_hash_func = Hashing::cstringHash;
+                this->m_equal_func = Hashing::cstringEquality;
             } else if constexpr (key_is_string_view) {
-                this->m_hash_func = Hashing::string_view_hash;
-                this->m_equal_func = Hashing::string_view_equality;
+                this->m_hash_func = Hashing::stringViewHash;
+                this->m_equal_func = Hashing::stringViewEquality;
             }
 
             for (InitPair pair : list) {
@@ -113,12 +113,12 @@ namespace DS {
         }
 
         void put(K key, V value) {
-            if (this->load_factor() >= HASHMAP_DEFAULT_LOAD_FACTOR) {
-                this->grow_and_rehash();
+            if (this->getLoadFactor() >= HASHMAP_DEFAULT_getLoadFactor) {
+                this->growRehash();
             }
 
-            u64 hash = this->safe_hash(key);
-            s64 index = this->resolve_collision(key, hash % this->m_capacity);
+            u64 hash = this->safeHash(key);
+            s64 index = this->resolveCollision(key, hash % this->m_capacity);
             RUNTIME_ASSERT(index != -1);
 
             HashmapEntry* entry = &this->m_entries[index];
@@ -132,8 +132,8 @@ namespace DS {
         }
 
         bool has(K key) {
-            u64 hash = this->safe_hash(key);
-            s64 index = this->resolve_collision(key, hash % this->m_capacity);
+            u64 hash = this->safeHash(key);
+            s64 index = this->resolveCollision(key, hash % this->m_capacity);
             if (index == -1) {
                 return false;
             }
@@ -146,8 +146,8 @@ namespace DS {
         V get(K key) {
             RUNTIME_ASSERT_MSG(this->has(key), "Key doesn't exist\n");
 
-            u64 hash = this->safe_hash(key);
-            s64 index = this->resolve_collision(key, hash % this->m_capacity);
+            u64 hash = this->safeHash(key);
+            s64 index = this->resolveCollision(key, hash % this->m_capacity);
             RUNTIME_ASSERT(index != -1);
             
             HashmapEntry* entry = &this->m_entries[index];
@@ -159,8 +159,8 @@ namespace DS {
         V remove(K key) {
             RUNTIME_ASSERT_MSG(this->has(key), "Key doesn't exist\n");
 
-            u64 hash = this->safe_hash(key);
-            s64 index = this->resolve_collision(key, hash % this->m_capacity);
+            u64 hash = this->safeHash(key);
+            s64 index = this->resolveCollision(key, hash % this->m_capacity);
             RUNTIME_ASSERT(index != -1);
             
             HashmapEntry* entry = &this->m_entries[index];
@@ -189,7 +189,7 @@ namespace DS {
         HashFunction* m_hash_func = nullptr;
         EqualFunction* m_equal_func = nullptr;
 
-        void grow_and_rehash() {
+        void growRehash() {
             u64 old_capacity = this->m_capacity;
             HashmapEntry* old_entries = this->m_entries;
 
@@ -205,8 +205,8 @@ namespace DS {
                     continue;
                 }
 
-                u64 hash = this->safe_hash(old_entry.key);
-                s64 index = this->resolve_collision(old_entry.key, hash % this->m_capacity);
+                u64 hash = this->safeHash(old_entry.key);
+                s64 index = this->resolveCollision(old_entry.key, hash % this->m_capacity);
                 RUNTIME_ASSERT(index != -1);
 
                 this->m_entries[index] = old_entry;
@@ -215,7 +215,7 @@ namespace DS {
             Memory::free(old_entries);
         }
 
-        s64 resolve_collision(K key, u64 inital_hash_index) {
+        s64 resolveCollision(K key, u64 inital_hash_index) {
             s64 cannonical_hash_index = inital_hash_index;
 
             u64 visited_count = 0;
@@ -225,7 +225,7 @@ namespace DS {
                     break;
                 }
 
-                bool equality_match = this->safe_equality(key, entry->key);
+                bool equality_match = this->safeEquality(key, entry->key);
                 if (equality_match) {
                     break;
                 }
@@ -242,13 +242,13 @@ namespace DS {
             return cannonical_hash_index;
         }
 
-        float load_factor() {
+        float getLoadFactor() {
             return (float)(this->m_dead_count + this->m_count) / (float)this->m_capacity;
         }
         
         #define NOT_USED 0
 
-        u64 safe_hash(K key) {
+        u64 safeHash(K key) {
             constexpr bool key_is_trivial = std::is_trivially_copyable_v<K>;
             constexpr bool key_is_pointer = std::is_pointer_v<K>;
             constexpr bool key_is_cstring = std::is_same_v<K, char*> || std::is_same_v<K, const char*>;
@@ -265,7 +265,7 @@ namespace DS {
             }
         }
 
-        bool safe_equality(K k1, K k2) {
+        bool safeEquality(K k1, K k2) {
             constexpr bool key_is_trivial = std::is_trivially_copyable_v<K>;
             constexpr bool key_is_pointer = std::is_pointer_v<K>;
             constexpr bool key_is_cstring = std::is_same_v<K, char*> || std::is_same_v<K, const char*>;

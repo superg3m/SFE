@@ -12,9 +12,9 @@
     namespace Platform {
         bool initialize() { return true; }
         void shutdown() {}
-        double get_seconds_elapsed() { return 0.0; }
+        double getSecondsElapsed() { return 0.0; }
 
-        bool file_path_exists(const char* path) {
+        bool filePathExists(const char* path) {
             FILE *fptr = fopen(path, "r");
 
             if (fptr == nullptr) {
@@ -26,7 +26,7 @@
             return true;
         }
 
-        int copy_file(const char* source_path, const char* dest_path, int block_until_success) {
+        int copyFile(const char* source_path, const char* dest_path, int block_until_success) {
             const byte_t BUFFER_SIZE = 4096;
 
             for (;;) {
@@ -69,17 +69,17 @@
             usleep(ms * 1000);
         }
 
-        u8* read_entire_file( const char* file_name, byte_t& out_file_size, Error& error) {
+        u8* readEntireFile( const char* file_name, byte_t& out_file_size, Error& error) {
             FILE* file_handle = fopen(file_name, "r");
             if (file_handle == nullptr) {
-                LOG_ERROR("Invalid file_handle, the file_name/path is likely wrong: read_entire_file(%s)\n", file_name);
+                LOG_ERROR("Invalid file_handle, the file_name/path is likely wrong: readEntireFile(%s)\n", file_name);
                 error = ERROR_RESOURCE_NOT_FOUND;
 
                 return nullptr;
             }
 
             if (fseek(file_handle, 0L, SEEK_END) != 0) {
-                LOG_ERROR("fseek failed: read_entire_file(%s)\n", file_name);
+                LOG_ERROR("fseek failed: readEntireFile(%s)\n", file_name);
                 error = ERROR_RESOURCE_NOT_FOUND;
                 fclose(file_handle);
                 return nullptr;
@@ -87,7 +87,7 @@
 
             out_file_size = ftell(file_handle);
             if (out_file_size == -1L) {
-                LOG_ERROR("ftell failed: read_entire_file(%s)\n", file_name);
+                LOG_ERROR("ftell failed: readEntireFile(%s)\n", file_name);
                 error = ERROR_RESOURCE_NOT_FOUND;
                 fclose(file_handle);
                 return nullptr;
@@ -95,7 +95,7 @@
 
             rewind(file_handle);
             if (ferror(file_handle)) {
-                LOG_ERROR("rewind() failed: read_entire_file(%s)\n", file_name);
+                LOG_ERROR("rewind() failed: readEntireFile(%s)\n", file_name);
                 error = ERROR_RESOURCE_NOT_FOUND;
                 fclose(file_handle);
                 
@@ -104,7 +104,7 @@
 
             u8* file_data = (u8*)Memory::alloc((byte_t)out_file_size + 1); // +1 for null terminator
             if (fread(file_data, out_file_size, 1, file_handle) != 1) {
-                LOG_ERROR("fread() failed: read_entire_file(%s)\n", file_name);
+                LOG_ERROR("fread() failed: readEntireFile(%s)\n", file_name);
                 error = ERROR_RESOURCE_NOT_FOUND;
                 Memory::free(file_data);
                 fclose(file_handle);
@@ -119,10 +119,10 @@
             return file_data;
         }
 
-        DLL load_dll(const char* dll_path, Error& error)  {
+        DLL loadDLL(const char* dll_path, Error& error)  {
             DLL library = dlopen(dll_path, RTLD_LAZY);
             if (!library) {
-                LOG_ERROR("dlopen() failed: load_dll(%s)\n", dll_path);
+                LOG_ERROR("dlopen() failed: loadDLL(%s)\n", dll_path);
                 error = ERROR_RESOURCE_NOT_FOUND;
 
                 return nullptr;
@@ -131,19 +131,19 @@
             return library;
         }
 
-        DLL free_dll(DLL dll, Error& error)  {
+        DLL freeDLL(DLL dll, Error& error)  {
             RUNTIME_ASSERT(dll);
             dlclose(dll);
 
             return nullptr;
         }
 
-        void* get_proc_address(DLL dll, const char* proc_name, Error& error) {
+        void* getProcAddress(DLL dll, const char* proc_name, Error& error) {
             RUNTIME_ASSERT(dll);
 
             void* proc = dlsym(dll, proc_name);
             if (!proc) {
-                LOG_ERROR("dlsym() failed: ckg_os_get_proc_address(%s)\n", proc_name);
+                LOG_ERROR("dlsym() failed: ckg_os_getProcAddress(%s)\n", proc_name);
                 error = ERROR_RESOURCE_NOT_FOUND;
 
                 return nullptr;

@@ -13,8 +13,8 @@ namespace Math {
         Quaternion inverse();
         Quaternion normalize();
         Quaternion scale(float scale);
-        Matrix4 to_matrix4();
-        void to_angle_axis(float &theta, Vector3 &vec);
+        Matrix4 getMatrix4();
+        void getAngleAxis(float &theta, Vector3 &vec);
 
         static Quaternion Identity();
         static Quaternion Literal(float w, Vector3 axis);

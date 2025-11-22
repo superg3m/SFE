@@ -33,7 +33,7 @@ void ShaderBase::checkCompileError(unsigned int source_id, const char* path) {
 
 unsigned int ShaderBase::shaderSourceCompile(const char* path) {
     size_t file_size = 0;
-    const GLchar* shader_source = (const GLchar*)ckg_io_read_entire_file(path, &file_size, NULLPTR);
+    const GLchar* shader_source = (const GLchar*)ckg_io_readEntireFile(path, &file_size, NULLPTR);
     GLenum type = this->typeFromPath(path);
     unsigned int source_id = glCreateShader(type);
     glShaderSource(source_id, 1, &shader_source, NULL);
