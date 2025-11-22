@@ -1,20 +1,23 @@
 #include <Core/core.hpp>
 #include <Graphics/graphics.hpp>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 static ShaderModel model_shader;
 static Graphics::Geometry pole;
 static Graphics::Geometry hexplane;
-static Graphics::Geometry* animals[4];
-
+static Graphics::Geometry animals[4];
 Math::Matrix4 translate_mats[4];
 Math::Matrix4 animals_rot[4];
 
 float saved_rot = 0.0f;
 float saved_translation = 0.0f;
-
 static int is_rotating = 1;
 static int is_translating = 1;
+
+Camera camera;
+float WIDTH = 800;
+float HEIGHT = 600;
 
 // NOTE(Jovanni):
 // This handles like -1 mod 5 = 4
@@ -45,8 +48,15 @@ void display() {
     Math::Matrix4 rot_mat = Math::Matrix4::Identity(); 
     Math::Matrix4::Rotate(rot_mat, saved_rot, 0, 1, 0);
 
+    float fov = camera.zoom;
+    float aspect = WIDTH / HEIGHT;
+    float near_plane = 0.1f;
+    float far_plane = 1000.0f;
+    Math::Matrix4 perspective = Math::Matrix4::Perspective(fov, aspect, near_plane, far_plane);
+    Math::Matrix4 view = camera.getViewMatrix();
+
     model_shader.use();
-    model_shader.setProjection(persepctive);
+    model_shader.setProjection(perspective);
     model_shader.setView(view);
     for (int i = 0; i < 4; i++) {
         Math::Matrix4 model = rot_mat * translate_mats[i];
@@ -63,33 +73,29 @@ void display() {
 
         model = rot_mat * translate_mat * animals_rot[i];
         model_shader.setModel(model);
-        if (animals[i] != NULL) {
-            animals[i]->draw();
+        if (i != 3) {
+            animals[i].draw();
         }
     }
+ 
+    Math::Matrix4 model = Math::Matrix4::Identity();
+    model = Math::Matrix4::Scale(model, 2);
+    model = rot_mat * model;
+    model = Math::Matrix4::Translate(model, 0, 2.5f, 0);
+    model_shader.setModel(model);
+    hexplane.draw();
 
-    float modelview[16];
-    float scale_mat[16];
-    mat4f_scale_new(scale_mat, 2, 2, 2);
-
-    float translate_mat_top[16];
-    mat4f_translate_new(translate_mat_top, 0, 2.5f, 0);
-
-    float translate_mat_bot[16];
-    mat4f_translate_new(translate_mat_bot, 0, -2.5f, 0);
-
-    mat4f_mult_mat4f_many(modelview, viewMat, translate_mat_top, rot_mat, scale_mat, NULL);
-    glUniformMatrix4fv(kuhl_get_uniform("ModelView"), 1, 0, modelview);
-    kuhl_geometry_draw(&hexplane);
-
-    mat4f_mult_mat4f_many(modelview, viewMat, translate_mat_bot, rot_mat, scale_mat, NULL);
-    glUniformMatrix4fv(kuhl_get_uniform("ModelView"), 1, 0, modelview);
-    kuhl_geometry_draw(&hexplane);
-    kuhl_errorcheck();
+    model = Math::Matrix4::Identity();
+    model = Math::Matrix4::Scale(model, 2);
+    model = rot_mat * model;
+    model = Math::Matrix4::Translate(model, 0, -2.5f, 0);
+    model_shader.setModel(model);
+    hexplane.draw();
     
     glUseProgram(0);
 }
 
+/*
 void init_pole_geometry(kuhl_geometry *geo, GLuint program){
     #define SG_VERTS_COUNT 6
     #define SG_POS_COUNT 3
@@ -219,46 +225,66 @@ void init_hexplane_geometry(kuhl_geometry *geo, GLuint program){
     #undef SG_POS_COUNT
     #undef SG_NORM_COUNT
 }
+*/
 
 int main(int argc, char** argv) {
-	kuhl_ogl_init(&argc, argv, -1, -1, 32, 4);
-	glfwSetKeyCallback(kuhl_get_window(), keyboard);
-	// glfwSetFramebufferSizeCallback(window, reshape);
+	glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
-	program = kuhl_create_program("triangle-shade.vert", "triangle-shade.frag");
-	glUseProgram(program);
-	kuhl_errorcheck();
-    glUseProgram(0);
+    #ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
 
-	init_pole_geometry(&pole, program);
-    init_hexplane_geometry(&hexplane, program);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
+    if (window == nullptr) {
+        LOG_ERROR("Failed to create GLFW window\n");
+        glfwTerminate();
+        return -1;
+    }
 
-    animals[0] = kuhl_load_model("./models/merry/cow.ply", NULL, program, NULL);
-    mat4f_rotateAxis_new(animals_rot[0], 270, 0.0f, 1.0f, 0.0f);
-    mat4f_translate_new(translate_mats[0], -2, 0, 0);
+    glfwMakeContextCurrent(window);
+    // glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    // glfwSetScrollCallback(window, scroll_callback);
+	glfwSetKeyCallback(window, keyboard);
 
-    animals[1] = kuhl_load_model("./models/merry/hippo.ply", NULL, program, NULL);
-    mat4f_translate_new(translate_mats[1], 2, 0, 0);
-    mat4f_rotateAxis_new(animals_rot[1], 90, 0.0f, 1.0f, 0.0f);
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        LOG_ERROR("Failed to initialize GLAD\n");
+        glfwTerminate();
+        return -1;
+    }
 
-    animals[2] = kuhl_load_model("./models/merry/lion.ply", NULL, program, NULL);
-    mat4f_translate_new(translate_mats[2], 0, 0, 2);
-    mat4f_rotateAxis_new(animals_rot[2], 0, 0.0f, 1.0f, 0.0f);  
+    glfwSwapInterval(1);
 
-    animals[3] = NULL;
-    mat4f_translate_new(translate_mats[3], 0, 0, -2);
-    
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-	float initCamPos[3]  = {0,0,10}; // location of camera
-	float initCamLook[3] = {0,0,0}; // a point the camera is facing at
-	float initCamUp[3]   = {0,1,0}; // a vector indicating which direction is up
-	viewmat_init(initCamPos, initCamLook, initCamUp);
-	
-	while(!glfwWindowShouldClose(kuhl_get_window())) {
+    model_shader = ShaderModel({""});
+
+	// init_pole_geometry(&pole, program);
+    // init_hexplane_geometry(&hexplane, program);
+
+    animals[0] = Graphics::Geometry::Model("./models/merry/cow.ply");
+    animals_rot[0] = Math::Matrix4::Rotate(animals_rot[0], 270, 0, 1, 0);
+    translate_mats[0] = Math::Matrix4::Translate(translate_mats[0], -2, 0, 0);
+
+    animals[1] = Graphics::Geometry::Model("./models/merry/hippo.ply");
+    animals_rot[1] = Math::Matrix4::Rotate(animals_rot[1], 90, 0, 1, 0);
+    translate_mats[1] = Math::Matrix4::Translate(translate_mats[1], 2, 0, 0);
+
+    animals[2] = Graphics::Geometry::Model("./models/merry/lion.ply");
+    animals_rot[2] = Math::Matrix4::Rotate(animals_rot[2], 0, 0, 1, 0);
+    translate_mats[2] = Math::Matrix4::Translate(translate_mats[2], 0, 0, 2);
+    translate_mats[3] = Math::Matrix4::Translate(translate_mats[3], 0, 0, -2);
+
+    camera = Camera(0, 0, 10);
+	while(!glfwWindowShouldClose(window)) {
 		display();
-		kuhl_errorcheck();
-
-		/* process events (keyboard, mouse, etc) */
 		glfwPollEvents();
 	}
 
