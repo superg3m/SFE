@@ -1,5 +1,5 @@
-#include "../Math/math.hpp"
-#include "glad/glad.h"
+#include <Math/math.hpp>
+#include <glad/glad.h>
 
 struct Vertex {
     Math::Vector3 aPosition;    // location 0
@@ -11,7 +11,7 @@ struct Vertex {
     Math::Vector4 aBoneIDs;     // location 6 (use GM_IVec4 if you have it for integer IDs)
     Math::Vector4 aBoneWeights; // location 7 (using vec4 for weights for simplicity)
 
-    // Default constructor to initialize, or use default member initializers if C++11+
+    // Default constructor to initialize, or use default member initializers if C++11
     Vertex() {
         this->aPosition    = Math::Vector3(0, 0, 0);
         this->aNormal      = Math::Vector3(0, 1, 0);

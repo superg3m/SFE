@@ -3,8 +3,8 @@
 #include <Common/common.hpp>
 #include <DataStructure/ds.hpp>
 #include <Math/math.hpp>
-#include <Graphics/material.hpp>
-#include <Graphics/vertex.hpp>
+#include <Geometry/material.hpp>
+#include <Geometry/vertex.hpp>
 
 namespace Graphics {
 	struct Geometry {

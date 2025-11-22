@@ -1,3 +1,5 @@
+#pragma once
+
 namespace Math {
     typedef struct Vector3 Vector3;
 

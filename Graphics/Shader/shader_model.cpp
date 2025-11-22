@@ -1,4 +1,6 @@
-#include <ShaderModel.hpp>
+#include <String/string.hpp>
+
+#include <Shader/shader_model.hpp>
 
 ShaderModel::ShaderModel(std::vector<const char*> shader_paths) {
     this->shader_paths = shader_paths;
@@ -25,15 +27,29 @@ void ShaderModel::compile() {
     this->uDirectionalLight_Location.specular = this->getUniformLocation("uDirLight.specular");
 
     for (int i = 0; i < LIGHT_COUNT; i++) {
-        this->uPointLight_Locations[i].position = this->getUniformLocation("uPointLights["+ std::to_string(i) + "].position");
+        char* position = String::sprintf(nullptr ,"uPointLights[%d].position", i);
+        char* constant = String::sprintf(nullptr ,"uPointLights[%d].constant", i);
+        char* linear = String::sprintf(nullptr ,"uPointLights[%d].linear", i);
+        char* quadratic = String::sprintf(nullptr ,"uPointLights[%d].quadratic", i);
+        char* ambient = String::sprintf(nullptr ,"uPointLights[%d].ambient", i);
+        char* diffuse = String::sprintf(nullptr ,"uPointLights[%d].diffuse", i);
+        char* specular = String::sprintf(nullptr ,"uPointLights[%d].specular", i);
 
-        this->uPointLight_Locations[i].constant = this->getUniformLocation("uPointLights["+ std::to_string(i) + "].constant");
-        this->uPointLight_Locations[i].linear = this->getUniformLocation("uPointLights["+ std::to_string(i) + "].linear");
-        this->uPointLight_Locations[i].quadratic = this->getUniformLocation("uPointLights["+ std::to_string(i) + "].quadratic");
+        this->uPointLight_Locations[i].position = this->getUniformLocation(position);
+        this->uPointLight_Locations[i].constant = this->getUniformLocation(constant);
+        this->uPointLight_Locations[i].linear = this->getUniformLocation(linear);
+        this->uPointLight_Locations[i].quadratic = this->getUniformLocation(quadratic);
+        this->uPointLight_Locations[i].ambient = this->getUniformLocation(ambient);
+        this->uPointLight_Locations[i].diffuse = this->getUniformLocation(diffuse);
+        this->uPointLight_Locations[i].specular = this->getUniformLocation(specular);
 
-        this->uPointLight_Locations[i].ambient = this->getUniformLocation("uPointLights["+ std::to_string(i) + "].ambient");
-        this->uPointLight_Locations[i].diffuse = this->getUniformLocation("uPointLights["+ std::to_string(i) + "].diffuse");
-        this->uPointLight_Locations[i].specular = this->getUniformLocation("uPointLights["+ std::to_string(i) + "].specular");
+        Memory::free(position);
+        Memory::free(constant);
+        Memory::free(linear);
+        Memory::free(quadratic);
+        Memory::free(ambient);
+        Memory::free(diffuse);
+        Memory::free(specular);
     }
 
     this->uViewPosition_Location = this->getUniformLocation("uViewPosition");
@@ -81,7 +97,7 @@ void ShaderModel::setPointLight(PointLight &point_light, int index) const {
     glUniform3fv(this->uPointLight_Locations[index].specular, 1, &point_light.specular.x);
 }
 
-void ShaderModel::setViewPosition(GM_Vec3 &view_position) const {
+void ShaderModel::setViewPosition(Math::Vector3 &view_position) const {
     this->use();
 
     glUniform3fv(this->uViewPosition_Location, 1, &view_position.x);

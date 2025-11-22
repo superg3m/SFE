@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Math/vector.hpp>
 #include <Math/matrix.hpp>
 

@@ -6,7 +6,7 @@ struct ShaderUniformColor : public ShaderBase {
     ShaderUniformColor() = default;
     ShaderUniformColor(std::vector<const char*> shader_paths);
     void compile() override;
-    void setColor(GM_Vec3 color);
+    void setColor(Math::Vector3 color);
 private:
     unsigned int uColor_Location = 0;
 };

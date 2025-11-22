@@ -2,10 +2,11 @@
 
 #include <vector>
 #include <string>
-#include "material.hpp"
-#include "../Math/matrix.hpp"
 
 #include <glad/glad.h>
+
+#include <Geometry/material.hpp>
+#include <Math/matrix.hpp>
 
 struct ShaderBase {
     unsigned int program_id = 0;

@@ -1,12 +1,12 @@
-#include "geometry.hpp"
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
+#include <Geometry/geometry.hpp>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include <float.h>
 
-#include "../Math/aabb.hpp"
-#include "../DataStructure/contiguous.hpp"
+#include <Math/aabb.hpp>
+#include <DataStructure/contiguous.hpp>
 
 static Math::AABB CalculateAABB(const DS::Vector<Vertex>& vertices) {
     float x_min = FLT_MAX;

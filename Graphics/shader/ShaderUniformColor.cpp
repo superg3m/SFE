@@ -10,7 +10,7 @@ void ShaderUniformColor::compile() {
     this->uColor_Location = getUniformLocation("uColor");
 }
 
-void ShaderUniformColor::setColor(GM_Vec3 color) {
+void ShaderUniformColor::setColor(Math::Vector3 color) {
     this->use();
 
     glUniform3fv(this->uColor_Location, 1, &color.r);

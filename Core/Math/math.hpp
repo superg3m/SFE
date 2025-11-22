@@ -1,4 +1,4 @@
-// change this to <aabb.h>
+#pragma once
 
 #include <Math/aabb.hpp>
 #include <Math/easing.hpp>

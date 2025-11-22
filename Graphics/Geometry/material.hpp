@@ -1,6 +1,8 @@
-#include "../Math/math.hpp"
-#include "../Common/common.hpp"
-#include "shader_base.hpp"
+#include <Common/common.hpp>
+
+#include <Math/math.hpp>
+
+#include <Shader/shader_base.hpp>
 
 using GLTextureID = int;
 enum TextureType {

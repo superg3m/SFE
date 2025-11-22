@@ -29,6 +29,7 @@ constexpr float EPSILON = 0.0001f;
 #define RAD_TO_DEGREES(rad) ((rad)*(180/PI))
 
 #define ArrayCount(array) (sizeof(array) / sizeof(array[0]))
+#define STRING_LIT_ARG(literal) literal, sizeof(literal) - 1
 
 #if defined(_WIN32)
     #define PLATFORM_WINDOWS

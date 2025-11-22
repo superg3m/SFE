@@ -1,22 +1,24 @@
 #include "shader_base.hpp"
 
-#include ""
+#include <DataStructure/ds.hpp>
+#include <String/string.hpp>
+#include <Platform/platform.hpp>
 
 GLenum ShaderBase::typeFromPath(const char* shader_source_path) {
-    u64 shader_path_length = ckg_cstr_length(shader_source_path);
-    s64 extension_index = ckg_str_last_index_of(shader_source_path, shader_path_length, CKG_LIT_ARG("."));
-    ckg_assert_msg(extension_index != -1, "Missing extension (.vert, .frag)\n");
-    CKG_StringView extension = ckg_sv_create(shader_source_path + extension_index, shader_path_length - (u64)extension_index);
+    u64 shader_path_length = String::length(shader_source_path);
+    s64 extension_index = String::lastIndexOf(shader_source_path, shader_path_length, STRING_LIT_ARG("."));
+    RUNTIME_ASSERT_MSG(extension_index != -1, "Missing extension (.vert, .frag)\n");
+    DS::View<char> extension = DS::View<char>(shader_source_path + extension_index, shader_path_length - (u64)extension_index);
 
-    if (ckg_str_contains(extension.data, extension.length, CKG_LIT_ARG(".vert"))) {
+    if (String::contains(extension.data, extension.length, STRING_LIT_ARG(".vert"))) {
         return GL_VERTEX_SHADER;
-    } else if (ckg_str_contains(extension.data, extension.length, CKG_LIT_ARG(".frag"))) {
+    } else if (String::contains(extension.data, extension.length, STRING_LIT_ARG(".frag"))) {
         return GL_FRAGMENT_SHADER;
-    } else if (ckg_str_contains(extension.data, extension.length, CKG_LIT_ARG(".gs"))) {
+    } else if (String::contains(extension.data, extension.length, STRING_LIT_ARG(".gs"))) {
         return GL_GEOMETRY_SHADER;
     }
 
-    ckg_assert_msg(false, "Unsupported extension: %.*s | Expected: (.vert, .frag, .gs)\n", extension.length, extension.data);
+    RUNTIME_ASSERT_MSG(false, "Unsupported extension: %.*s | Expected: (.vert, .frag, .gs)\n", extension.length, extension.data);
     return GL_INVALID_ENUM;
 }
 
@@ -32,8 +34,11 @@ void ShaderBase::checkCompileError(unsigned int source_id, const char* path) {
 }
 
 unsigned int ShaderBase::shaderSourceCompile(const char* path) {
-    size_t file_size = 0;
-    const GLchar* shader_source = (const GLchar*)ckg_io_readEntireFile(path, &file_size, NULLPTR);
+    byte_t file_size = 0;
+    Error error = ERROR_SUCCESS;
+    GLchar* shader_source = (GLchar*)Platform::readEntireFile(path, file_size, error);
+    RUNTIME_ASSERT_MSG(error == ERROR_SUCCESS, "Shader Error: %s\n", path, getErrorString(error));
+
     GLenum type = this->typeFromPath(path);
     unsigned int source_id = glCreateShader(type);
     glShaderSource(source_id, 1, &shader_source, NULL);
@@ -47,7 +52,7 @@ unsigned int ShaderBase::shaderSourceCompile(const char* path) {
 
 unsigned int ShaderBase::getUniformLocation(const char* name, bool log_error) const {
     GLint location = glGetUniformLocation(this->program_id, name);
-    if (location == -1) {
+    if (location == -1 && log_error) {
         LOG_ERROR("Shader {%s} Uniform: '%s' does not exists\n", this->shader_paths[0], name);
     }
 

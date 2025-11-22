@@ -1,3 +1,4 @@
+#pragma once
 
 namespace Math {
     // Date: May 18, 2025
