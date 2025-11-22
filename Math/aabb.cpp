@@ -1,5 +1,6 @@
-#include "aabb.hpp"
-#include "../Common/common.hpp"
+#include <Common/common.hpp>
+#include <Math/aabb.hpp>
+
 
 namespace Math {
     AABB AABB::FromCenterExtents(Vector3 center, Vector3 extents) {

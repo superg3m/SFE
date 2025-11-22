@@ -15,8 +15,8 @@ struct Entity {
     void setScale(GM_Vec3 s);
     void setScale(float scale_x, float scale_y, float scale_z);
 
-    GM_Matrix4 getTransform();
-    GM_Matrix4 getAABBTransform();
+    Math::Matrix4 getTransform();
+    Math::Matrix4 getAABBTransform();
     GM_AABB getAABB();
 
     // addComponent(ComponentBase)

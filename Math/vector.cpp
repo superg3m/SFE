@@ -1,6 +1,5 @@
-#include "../Common/common.hpp"
-#include "vector.hpp"
-#include <math.h>
+#include <Common/common.hpp>
+#include <Math/vector.hpp>
 
 namespace Math {
     Vector2::Vector2() {

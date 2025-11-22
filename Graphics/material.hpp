@@ -1,5 +1,6 @@
 #include "../Math/math.hpp"
 #include "../Common/common.hpp"
+#include "shader_base.hpp"
 
 using GLTextureID = int;
 enum TextureType {
@@ -20,13 +21,16 @@ static const char* texture_to_string[TEXTURE_COUNT] = {
 
 STATIC_ASSERT(ArrayCount(texture_to_string) == (TEXTURE_COUNT));
 
-struct Material {
-    char* name;
+struct Texture {
+    char* name = nullptr;
+    GLTextureID id = -1;
+};
 
-    GLTextureID color_map    = -1;
-    GLTextureID specular_map = -1;
-    GLTextureID normal_map   = -1;
-    GLTextureID height_map   = -1;
+struct Material {
+    Texture color_map;
+    Texture specular_map;
+    Texture normal_map;
+    Texture height_map;
 
     Math::Vector3 color = Math::Vector3(1);
     float shininess = 32.0f;

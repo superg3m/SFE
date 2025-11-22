@@ -1,4 +1,4 @@
-#include "platform.hpp"
+#include <Platform/platform.hpp>
 
 #if defined(PLATFORM_WINDOWS)
     #define NOMINMAX
@@ -7,9 +7,9 @@
     #include <windowsx.h>
     #include <timeapi.h>
 
-    #include "../Common/logger.hpp"
-    #include "../Common/assert.hpp"
-    #include "../Common/error.hpp"
+    #include <Common/logger.hpp>
+    #include <Common/assert.hpp>
+    #include <Common/error.hpp>
 
     namespace Platform {
         global double g_frequency = {0};

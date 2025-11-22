@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Common/common.hpp"
-#include "allocator.hpp"
+#include <Common/common.hpp>
+#include <Memory/allocator.hpp>
 
 namespace Memory {
     void zero(void* data, byte_t data_size_in_bytes);

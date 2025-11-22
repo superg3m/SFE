@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "types.hpp"
-#include "assert.hpp"
-#include "logger.hpp"
+#include <Common/types.hpp>
+#include <Common/assert.hpp>
+#include <Common/logger.hpp>
 
 void MACRO_RUNTIME_ASSERT(bool expression, const char* function, const char* file, int line) {
     if (!expression) {                             

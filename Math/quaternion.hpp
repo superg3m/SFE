@@ -1,5 +1,5 @@
-#include "vector.hpp"
-#include "matrix.hpp"
+#include <Math/vector.hpp>
+#include <Math/matrix.hpp>
 
 namespace Math {
     struct Quaternion {

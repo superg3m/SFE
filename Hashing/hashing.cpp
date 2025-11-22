@@ -1,6 +1,6 @@
-#include "hashing.hpp"
-#include "../String/string.hpp"
-#include "../DataStructure/ds.hpp"
+#include <Hashing/hashing.hpp>
+#include <String/string.hpp>
+#include <DataStructure/ds.hpp>
 
 // Original location:
 // https://github.com/majek/csiphash/1

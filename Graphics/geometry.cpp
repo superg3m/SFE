@@ -232,6 +232,32 @@ namespace Graphics {
         return ret;
     }
 
+    void Geometry::draw(ShaderBase* shader) {
+        glBindVertexArray(this->VAO);
+
+        for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
+            shader->use();
+            shader->setMaterial(this->material); // this is kind of odd
+
+            if (geo->index_count > 0) {
+                glDrawElementsBaseVertex(
+                    draw_type, geo->index_count, 
+                    GL_UNSIGNED_INT, 
+                    (void*)(sizeof(unsigned int) * geo->base_index), 
+                    geo->base_vertex
+                );
+            } else {
+                glDrawArrays(
+                    draw_type,
+                    geo->base_vertex,
+                    geo->vertex_count
+                );
+            }
+        }
+
+        glBindVertexArray(0);
+    }
+
     void Geometry::setup(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices) {
         this->aabb = CalculateAABB(vertices);
 
@@ -333,8 +359,8 @@ namespace Graphics {
         return geo;
     }
 
-    GM_Matrix4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
-        GM_Matrix4 ret;
+    Math::Matrix4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
+        Math::Matrix4 ret;
 
         ret.v[0].x = ai_matrix.a1; ret.v[1].x = ai_matrix.b1; ret.v[2].x = ai_matrix.c1; ret.v[3].x = ai_matrix.d1; 
         ret.v[0].y = ai_matrix.a2; ret.v[1].y = ai_matrix.b2; ret.v[2].y = ai_matrix.c2; ret.v[3].y = ai_matrix.d2;
@@ -344,13 +370,13 @@ namespace Graphics {
         return ret;
     }
 
-    void Mesh::processNode(aiNode* node, const aiScene* scene, GM_Matrix4 parent_transform) {
+    void Mesh::processNode(aiNode* node, const aiScene* scene, Math::Matrix4 parent_transform) {
         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             this->meshes.push_back(processMesh(mesh, scene, parent_transform));
         }
 
-        GM_Matrix4 new_parent_transform = parent_transform * convertAssimpMatrixToGM(node->mTransformation);
+        Math::Matrix4 new_parent_transform = parent_transform * convertAssimpMatrixToGM(node->mTransformation);
         for (unsigned int i = 0; i < node->mNumChildren; i++) {
             processNode(node->mChildren[i], scene, new_parent_transform);
         }
@@ -410,7 +436,7 @@ namespace Graphics {
                 if (ai_material->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS) {
                     this->materials[i].opacity = opacity;
                 } else {
-                    CKG_LOG_WARN("Mesh Failed opacity matkey?\n");
+                    LOG_WARN("Mesh Failed opacity matkey?\n");
                 }
 
                 for (int type_int = 0; type_int < TEXTURE_COUNT; type_int++) {
@@ -438,17 +464,17 @@ namespace Graphics {
                                 TextureLoader::registerTexture(filename, id);
                             }
 
-                            CKG_LOG_DEBUG("Material: %d | has embedded Texture of type: %s\n", i, texture_to_string[type]);
+                            LOG_DEBUG("Material: %d | has embedded Texture of type: %s\n", i, texture_to_string[type]);
                             this->materials[i].textures[type] = TextureLoader::textures.at(filename);
                         } else {
-                            CKG_LOG_DEBUG("Material: %d | has external texture of type: %s\n", i, texture_to_string[type]);
+                            LOG_DEBUG("Material: %d | has external texture of type: %s\n", i, texture_to_string[type]);
                             if (TextureLoader::textures.count(filename) == 0) {
                                 TextureLoader::registerTexture(filename, filename.c_str(), this->texture_flags);
                             }
                             this->materials[i].textures[type] = TextureLoader::textures.at(filename);
                         }
                     } else {
-                        CKG_LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
+                        LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
                     }
                 }
             }

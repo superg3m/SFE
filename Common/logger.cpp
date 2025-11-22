@@ -2,9 +2,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "common.hpp"
-#include "types.hpp"
-#include "assert.hpp"
+#include <Common/common.hpp>
+#include <Common/types.hpp>
+#include <Common/assert.hpp>
 
 //Regular text
 #define COLOR_RED "\033[0;31m"

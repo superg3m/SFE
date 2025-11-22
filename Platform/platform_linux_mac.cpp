@@ -1,9 +1,9 @@
-#include "platform.hpp"
+#include <Platform/platform.hpp>
 
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_APPLE)
-    #include "../Common/logger.hpp"
-    #include "../Common/assert.hpp"
-    #include "../Error/error.hpp"
+    #include <Common/logger.hpp>
+    #include <Common/assert.hpp>
+    #include <Error/error.hpp>
 
     #include <unistd.h>
     #include <dlfcn.h>

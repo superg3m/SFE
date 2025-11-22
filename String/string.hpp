@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../Common/common.hpp"
-#include "../Memory/memory.hpp"
-#include "../DataStructure/ds.hpp"
-
 #include <cstdarg>
 #include <cstdio>
+
+#include <Common/common.hpp>
+#include <DataStructure/ds.hpp>
+#include <Memory/memory.hpp>
 
 namespace String {
     char* allocate( const char* s1, u64 length);

@@ -1,7 +1,8 @@
-#include "allocator.hpp"
-#include "../DataStructure/ds.hpp"
 #include <cstdlib>
 #include <new>
+
+#include <DataStructure/ds.hpp>
+#include <Memory/allocator.hpp>
 
 namespace Memory {
     static BaseAllocator* g_allocator = nullptr;

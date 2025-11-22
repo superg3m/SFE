@@ -1,11 +1,10 @@
-#include "glad/glad.h"
-#include "vertex.hpp"
+#include <glad/glad.h>
 
-#include "../Common/common.hpp"
-#include "../Math/math.hpp"
-
-#include "material.hpp"
-#include "../DataStructure/ds.hpp"
+#include <Common/common.hpp>
+#include <DataStructure/ds.hpp>
+#include <Math/math.hpp>
+#include <Graphics/material.hpp>
+#include <Graphics/vertex.hpp>
 
 namespace Graphics {
 	struct Geometry {
@@ -32,17 +31,18 @@ namespace Graphics {
 		static Geometry Sphere(int segments);
 		static Geometry Model(const char* path);
 
-		void setup(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indicies);
+		void draw(ShaderBase* shader);
 
 		private:
-			DS::Vector<Material> material_cache;
 			DS::Vector<Vertex> vertices;
 			DS::Vector<GLuint> indices;
 
+			void setup(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indicies);
+
 			// void loadMeshFromData(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices, VertexAttributeFlag flags);
 
-			void loadMeshFromScene(const std::string &path, const aiScene* scene);
-			Geometry* processAssimpMesh(aiMesh* ai_mesh,  const aiScene* scene, Math::Matrix4 parent_transform);
-			void processNode(aiNode* node, const aiScene* scene, Math::Matrix4 parent_transform);
+			// void loadMeshFromScene(const std::string &path, const aiScene* scene);
+			// Geometry* processAssimpMesh(aiMesh* ai_mesh,  const aiScene* scene, Math::Matrix4 parent_transform);
+			// void processNode(aiNode* node, const aiScene* scene, Math::Matrix4 parent_transform);
 	};
 }

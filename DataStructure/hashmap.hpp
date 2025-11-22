@@ -1,11 +1,12 @@
 #include <initializer_list>
 #include <type_traits>
 
-#include "../Memory/memory.hpp"
-#include "../Common/common.hpp"
-#include "../DataStructure/view.hpp"
-#include "../String/string.hpp"
-#include "../Hashing/hashing.hpp"
+#include <Common/common.hpp>
+
+#include <Memory/memory.hpp>
+#include <DataStructure/view.hpp>
+#include <String/string.hpp>
+#include <Hashing/hashing.hpp>
 
 #define HASHMAP_DEFAULT_LOAD_FACTOR 0.7f
 

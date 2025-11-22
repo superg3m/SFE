@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Common/common.hpp"
+#include <Common/common.hpp>
 
 namespace DS {
     template<typename T>

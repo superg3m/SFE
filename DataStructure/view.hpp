@@ -3,8 +3,8 @@
 #include <initializer_list>
 #include <type_traits>
 
-#include "../Memory/memory.hpp"
-#include "../Common/common.hpp"
+#include <Memory/memory.hpp>
+#include <Common/common.hpp>
 
 namespace DS {
     template <typename T>

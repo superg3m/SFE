@@ -1,4 +1,4 @@
-#include "../Common/common.hpp"
+#include <Common/common.hpp>
 
 namespace Hashing {
     u64 siphash24(const void* source, u64 source_size);

@@ -1,5 +1,6 @@
-#include "error.hpp"
-#include "../Common/common.hpp"
+#include <Common/common.hpp>
+
+#include <Error/error.hpp>
 
 static const char* ERROR_STRINGS[ERROR_COUNT] = {
     stringify(ERROR_SUCCESS),

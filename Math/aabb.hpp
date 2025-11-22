@@ -1,4 +1,4 @@
-#include "vector.hpp"
+#include <Math/vector.hpp>
 
 namespace Math {
     struct AABB {

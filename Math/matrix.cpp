@@ -1,6 +1,8 @@
-#include "matrix.hpp"
-#include "../Common/common.hpp"
-#include "quaternion.hpp"
+
+#include <Common/common.hpp>
+
+#include <Math/matrix.hpp>
+#include <Math/quaternion.hpp>
 
 namespace Math {
     Matrix4::Matrix4() {
@@ -14,10 +16,12 @@ namespace Math {
         this->v = {r0, r1, r2, r3};
     }
 
-    Matrix4::Matrix4(float m00, float m01, float m02, float m03,
-            float m10, float m11, float m12, float m13,
-            float m20, float m21, float m22, float m23,
-            float m30, float m31, float m32, float m33) {
+    Matrix4::Matrix4(
+        float m00, float m01, float m02, float m03,
+        float m10, float m11, float m12, float m13,
+        float m20, float m21, float m22, float m23,
+        float m30, float m31, float m32, float m33
+    ) {
         v[0] = Vector4(m00, m01, m02, m03);
         v[1] = Vector4(m10, m11, m12, m13);
         v[2] = Vector4(m20, m21, m22, m23);

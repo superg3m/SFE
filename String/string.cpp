@@ -1,5 +1,5 @@
-#include "string.hpp"
-#include "../DataStructure/view.hpp"
+#include <DataStructure/view.hpp>
+#include <String/string.hpp>
 
 namespace String {
     char* allocate(const char* s1, u64 length) {

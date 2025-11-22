@@ -1,5 +1,5 @@
 #pragma once
 
-#include "contiguous.hpp"
-#include "hashmap.hpp"
-#include "view.hpp"
+#include <DataStructure/contiguous.hpp>
+#include <DataStructure/hashmap.hpp>
+#include <DataStructure/view.hpp>

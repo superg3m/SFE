@@ -1,6 +1,5 @@
-#include "utility.hpp"
-#include "../Common/common.hpp"
-#include <math.h>
+#include <Common/common.hpp>
+#include <Math/utility.hpp>
 
 namespace Math {
     float lerp(float a, float b, float t) {

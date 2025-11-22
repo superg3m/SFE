@@ -1,6 +1,8 @@
-#include "aabb.h"
-#include "easing.hpp"
-#include "matrix.hpp"
-#include "vector.hpp"
-#include "utility.hpp"
-#include "quaternion.h"
+// change this to <aabb.h>
+
+#include <Math/aabb.hpp>
+#include <Math/easing.hpp>
+#include <Math/matrix.hpp>
+#include <Math/vector.hpp>
+#include <Math/utility.hpp>
+#include <Math/quaternion.hpp>

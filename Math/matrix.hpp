@@ -1,5 +1,6 @@
-#include "vector.hpp"
 #include <array>
+
+#include <Math/vector.hpp>
 
 namespace Math {
     typedef struct Quaternion Quaternion;

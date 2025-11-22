@@ -1,5 +1,5 @@
-#include "quaternion.hpp"
-#include "../Common/common.hpp"
+#include <Common/common.hpp>
+#include <Math/quaternion.hpp>
 
 namespace Math {
     Quaternion::Quaternion() {
