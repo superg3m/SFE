@@ -7,8 +7,8 @@ ShaderSkybox::ShaderSkybox(DS::Vector<const char*> shader_paths) {
 
 void ShaderSkybox::compile() {
     this->program_id = this->createShaderProgram(this->shader_paths);
-
-    this->uSkyboxTexture_Location = this->getUniformLocation("uSkyboxTexture", GL_SAMPLER_2D);
+    
+    this->uSkyboxTexture_Location = this->getUniformLocation("uSkyboxTexture", GL_SAMPLER_CUBE);
 }
 
 void ShaderSkybox::setSkyboxTexture(GLTextureID texture) const {
