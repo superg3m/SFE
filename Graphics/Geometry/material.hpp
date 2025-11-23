@@ -1,7 +1,7 @@
+#pragma once
+
 #include <Common/common.hpp>
-
 #include <Math/math.hpp>
-
 #include <Shader/shader_base.hpp>
 
 using GLTextureID = int;

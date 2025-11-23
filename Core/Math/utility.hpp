@@ -10,4 +10,5 @@ namespace Math {
     float moveoward(float current, float target, float delta);
     float smoothstep(float edge0, float edge1, float x);
     float smootherstep(float edge0, float edge1, float x);
+    int mod(int a, int b);
 } 

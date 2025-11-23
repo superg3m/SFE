@@ -1,4 +1,4 @@
-#include <shader_stencil_outline.hpp>
+#include <Shader/shader_stencil_outline.hpp>
 
 ShaderStencilOutline::ShaderStencilOutline(DS::Vector<const char*> shader_paths) {
     this->shader_paths = shader_paths;

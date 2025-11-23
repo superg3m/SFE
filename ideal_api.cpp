@@ -1,5 +1,5 @@
-#include <Core/core.hpp>
-#include <Graphics/graphics.hpp>
+#include <core.hpp>
+#include <graphics.hpp>
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
@@ -18,13 +18,6 @@ static int is_translating = 1;
 Camera camera;
 float WIDTH = 800;
 float HEIGHT = 600;
-
-// NOTE(Jovanni):
-// This handles like -1 mod 5 = 4
-uint32_t math_mod(int a, int b) {
-    int rem = a % b;
-    return (rem < 0) ? (rem + b) : rem;
-}
 
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if(action == GLFW_PRESS) {

@@ -50,7 +50,7 @@ unsigned int ShaderBase::shaderSourceCompile(const char* path) {
     return source_id;
 }
 
-unsigned int ShaderBase::getUniformLocation(char* name, GLenum type) const {
+unsigned int ShaderBase::getUniformLocation(const char* name, GLenum type) const {
     if (!this->uniforms.has(name)) {
         LOG_ERROR("Shader {%s} Uniform: '%s' does not exists\n", this->shader_paths[0], name);
         return -1;
@@ -99,7 +99,7 @@ unsigned int ShaderBase::createShaderProgram(DS::Vector<const char*> shader_path
     for (auto entries : this->uniforms) {
         if (!entries.filled || entries.dead) continue;
 
-        Memory::free(entries.key);
+        Memory::free((char*)entries.key);
     }
 
     GLint uniform_count = 0;
@@ -137,34 +137,34 @@ void ShaderBase::setProjection(Math::Matrix4 &projection) const {
     this->setMat4("uProjection", projection);
 }
 
-void ShaderBase::setBool(char* name, bool value) const {
+void ShaderBase::setBool(const char* name, bool value) const {
     glUniform1i(this->getUniformLocation(name, GL_BOOL), (int)value);
 }
-void ShaderBase::setInt(char* name, int value) const {
+void ShaderBase::setInt(const char* name, int value) const {
     glUniform1i(this->getUniformLocation(name, GL_INT), value);
 }
-void ShaderBase::setFloat(char* name, float value) const {
+void ShaderBase::setFloat(const char* name, float value) const {
     glUniform1f(this->getUniformLocation(name, GL_FLOAT), value);
 }
-void ShaderBase::setVec2(char* name, const Math::Vector2& value) const {
+void ShaderBase::setVec2(const char* name, const Math::Vector2& value) const {
     glUniform2fv(this->getUniformLocation(name, GL_FLOAT_VEC2), 1, &value.x);
 }
-void ShaderBase::setVec2(char* name, float x, float y) const {
+void ShaderBase::setVec2(const char* name, float x, float y) const {
     glUniform2f(this->getUniformLocation(name, GL_FLOAT_VEC2), x, y);
 }
-void ShaderBase::setVec3(char* name, const Math::Vector3& value) const {
+void ShaderBase::setVec3(const char* name, const Math::Vector3& value) const {
     glUniform3fv(this->getUniformLocation(name, GL_FLOAT_VEC3), 1, &value.x);
 }
-void ShaderBase::setVec3(char* name, float x, float y, float z) const {
+void ShaderBase::setVec3(const char* name, float x, float y, float z) const {
     glUniform3f(this->getUniformLocation(name, GL_FLOAT_VEC3), x, y, z);
 }
-void ShaderBase::setVec4(char* name, const Math::Vector4& value) const {
+void ShaderBase::setVec4(const char* name, const Math::Vector4& value) const {
     glUniform4fv(this->getUniformLocation(name, GL_FLOAT_VEC4), 1, &value.x);
 }
-void ShaderBase::setVec4(char* name, float x, float y, float z, float w) const {
+void ShaderBase::setVec4(const char* name, float x, float y, float z, float w) const {
     glUniform4f(this->getUniformLocation(name, GL_FLOAT_VEC4), x, y, z, w);
 }
-void ShaderBase::setMat4(char* name, const Math::Matrix4& mat) const {
+void ShaderBase::setMat4(const char* name, const Math::Matrix4& mat) const {
     glUniformMatrix4fv(this->getUniformLocation(name, GL_FLOAT_MAT4), 1, GL_TRUE, &mat.v[0].x);
 }
 

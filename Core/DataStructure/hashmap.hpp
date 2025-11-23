@@ -229,7 +229,7 @@ namespace DS {
             Memory::free(old_entries);
         }
 
-        s64 resolveCollision(K key, u64 inital_hash_index) {
+        s64 resolveCollision(K key, u64 inital_hash_index) const {
             s64 cannonical_hash_index = inital_hash_index;
 
             u64 visited_count = 0;
@@ -262,7 +262,7 @@ namespace DS {
         
         #define NOT_USED 0
 
-        u64 safeHash(K key) {
+        u64 safeHash(K key) const {
             constexpr bool key_is_trivial = std::is_trivially_copyable_v<K>;
             constexpr bool key_is_pointer = std::is_pointer_v<K>;
             constexpr bool key_is_cstring = std::is_same_v<K, char*> || std::is_same_v<K, const char*>;
@@ -279,7 +279,7 @@ namespace DS {
             }
         }
 
-        bool safeEquality(K k1, K k2) {
+        bool safeEquality(K k1, K k2) const {
             constexpr bool key_is_trivial = std::is_trivially_copyable_v<K>;
             constexpr bool key_is_pointer = std::is_pointer_v<K>;
             constexpr bool key_is_cstring = std::is_same_v<K, char*> || std::is_same_v<K, const char*>;

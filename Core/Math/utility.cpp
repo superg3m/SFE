@@ -30,5 +30,10 @@ namespace Math {
 
         return current + (diff > 0 ? delta : -delta);
     }
+
+    int mod(int a, int b) {
+        int rem = a % b;
+        return (rem < 0) ? (rem + b) : rem;
+    }
 }
 

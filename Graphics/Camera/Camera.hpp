@@ -33,7 +33,8 @@ struct Camera {
     float movement_speed;
     float zoom;
 
-    // maybe consider adding like lookat
+    // maybe consider adding like lookat'
+    Camera() = default;
     Camera(Math::Vector3 position);
     Camera(float x, float y, float z);
     Math::Matrix4 getViewMatrix();
