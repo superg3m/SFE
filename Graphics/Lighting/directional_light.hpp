@@ -3,11 +3,11 @@
 #include <Math/math.hpp>
 
 struct DirectionalLight {
-    Math::Vector3 direction;
+    Math::Vec3 direction;
 
-    Math::Vector3 ambient;
-    Math::Vector3 diffuse;
-    Math::Vector3 specular;
+    Math::Vec3 ambient;
+    Math::Vec3 diffuse;
+    Math::Vec3 specular;
 };
 
 struct DirectionalLightLocation {

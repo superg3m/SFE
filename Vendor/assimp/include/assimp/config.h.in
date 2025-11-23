@@ -220,7 +220,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  a users defined matrix as the scene root node transformation before
  *  transforming vertices. This property correspond to the 'a1' component
  *  of the transformation matrix.
- *  Property type: aiMatrix4x4.
+ *  Property type: aiMat4x4.
  */
 #define AI_CONFIG_PP_PTV_ROOT_TRANSFORMATION    \
     "PP_PTV_ROOT_TRANSFORMATION"
@@ -228,7 +228,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ---------------------------------------------------------------------------
 /** @brief Set epsilon to check the identity of the matrix 4x4.
  *
- * This is used by aiMatrix4x4t<TReal>::IsIdentity(const TReal epsilon).
+ * This is used by aiMat4x4t<TReal>::IsIdentity(const TReal epsilon).
  * @note The default value is 10e-3f for backward compatibility of legacy code.
  * Property type: Float.
  */

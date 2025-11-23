@@ -3,8 +3,8 @@
 #include <Math/math.hpp>
 
 struct SpotLight {
-    Math::Vector3 position;
-    Math::Vector3 direction;
+    Math::Vec3 position;
+    Math::Vec3 direction;
     float cutOff;
     float outerCutOff;
 
@@ -12,9 +12,9 @@ struct SpotLight {
     float linear;
     float quadratic;
  
-    Math::Vector3 ambient;
-    Math::Vector3 diffuse;
-    Math::Vector3 specular;        
+    Math::Vec3 ambient;
+    Math::Vec3 diffuse;
+    Math::Vec3 specular;        
 };
 
 struct SpotLightLocation {

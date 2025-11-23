@@ -54,7 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef __cplusplus
 
-template <typename T> class aiMatrix4x4t;
+template <typename T> class aiMat4x4t;
 template <typename T> class aiVector2t;
 template <typename T> class aiVector3t;
 
@@ -104,7 +104,7 @@ public:
     /** @brief Construction from a 4x4 matrix. The remaining parts
      *  of the matrix are ignored.
      */
-    explicit aiMatrix3x3t( const aiMatrix4x4t<TReal>& pMatrix);
+    explicit aiMatrix3x3t( const aiMat4x4t<TReal>& pMatrix);
 
     // -------------------------------------------------------------------
     /** @brief Transpose the matrix

@@ -13,6 +13,5 @@ void ShaderStencilOutline::compile() {
 
 void ShaderStencilOutline::setOutlineScale(float s) const {
     this->use();
-
     this->setFloat(this->uOutlineScale_Location, s); 
 }

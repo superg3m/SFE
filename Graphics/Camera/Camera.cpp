@@ -1,17 +1,17 @@
 #include <Camera/Camera.hpp>
 
 void Camera::updateCamera() {
-    Math::Vector3 new_front = Math::Vector3::euler(this->yaw, this->pitch);
+    Math::Vec3 new_front = Math::Vec3::Euler(this->yaw, this->pitch);
     this->front = new_front.normalize();
-    this->right = Math::Vector3::cross(this->front, this->world_up).normalize();
-    this->up    = Math::Vector3::cross(this->right, this->front).normalize();
+    this->right = Math::Vec3::Cross(this->front, this->world_up).normalize();
+    this->up    = Math::Vec3::Cross(this->right, this->front).normalize();
 }
 
-Camera::Camera(Math::Vector3 position) {
+Camera::Camera(Math::Vec3 position) {
     this->position = position;
 
-    this->world_up = Math::Vector3(0, 1, 0);
-    this->up = Math::Vector3(0, 1, 0);
+    this->world_up = Math::Vec3(0, 1, 0);
+    this->up = Math::Vec3(0, 1, 0);
 
     this->mouse_sensitivity = DEFAULTED_SENSITIVITY;
     this->movement_speed = DEFAULTED_SPEED;
@@ -23,10 +23,10 @@ Camera::Camera(Math::Vector3 position) {
 }
 
 Camera::Camera(float x, float y, float z) {
-    this->position = Math::Vector3(x, y, z);
+    this->position = Math::Vec3(x, y, z);
 
-    this->world_up = Math::Vector3(0, 1, 0);
-    this->up = Math::Vector3(0, 1, 0);
+    this->world_up = Math::Vec3(0, 1, 0);
+    this->up = Math::Vec3(0, 1, 0);
 
     this->mouse_sensitivity = DEFAULTED_SENSITIVITY;
     this->movement_speed = DEFAULTED_SPEED;
@@ -38,16 +38,16 @@ Camera::Camera(float x, float y, float z) {
 }
 
 
-Math::Matrix4 Camera::lookat(Math::Vector3 target_position) {
-    return Math::Matrix4::Lookat(this->position, target_position, this->up);
+Math::Mat4 Camera::lookat(Math::Vec3 target_position) {
+    return Math::Mat4::Lookat(this->position, target_position, this->up);
 }
 
-Math::Matrix4 Camera::lookat(float x, float y, float z) {
-    return Math::Matrix4::Lookat(this->position, Math::Vector3(x, y, z), this->up);
+Math::Mat4 Camera::lookat(float x, float y, float z) {
+    return Math::Mat4::Lookat(this->position, Math::Vec3(x, y, z), this->up);
 }
 
-Math::Matrix4 Camera::getViewMatrix() {
-    return Math::Matrix4::Lookat(this->position, this->position + this->front, this->up);
+Math::Mat4 Camera::getViewMatrix() {
+    return Math::Mat4::Lookat(this->position, this->position + this->front, this->up);
 }
 
 void Camera::processKeyboard(CameraDirection direction, float deltaTime) {

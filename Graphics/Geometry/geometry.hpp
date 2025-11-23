@@ -42,7 +42,7 @@ namespace Graphics {
 			// void loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags);
 
 			// void loadMeshFromScene(const std::string &path, const aiScene* scene);
-			// Geometry* processAssimpMesh(aiMesh* ai_mesh,  const aiScene* scene, Math::Matrix4 parent_transform);
-			// void processNode(aiNode* node, const aiScene* scene, Math::Matrix4 parent_transform);
+			// Geometry* processAssimpMesh(aiMesh* ai_mesh,  const aiScene* scene, Math::Mat4 parent_transform);
+			// void processNode(aiNode* node, const aiScene* scene, Math::Mat4 parent_transform);
 	};
 }

@@ -103,7 +103,7 @@ void ShaderModel::setPointLight(PointLight &point_light, int index) const {
     this->setVec3(this->uPointLight_Locations[index].specular, point_light.specular);
 }
 
-void ShaderModel::setViewPosition(Math::Vector3 &view_position) const {
+void ShaderModel::setViewPosition(Math::Vec3 &view_position) const {
     this->use();
     this->setVec3(this->uViewPosition_Location, view_position);
 }

@@ -5,10 +5,13 @@
 // the goal would be to render 3d stuff then render a small 2d square
 
 struct Renderer {
-    unsigned int VAO;
-
     void bindVAO();
 
     void toggleWireFrame(bool toggle);
-    void toggleWireFrame();
+
+private:
+    unsigned int VAO;
 };
+
+// drawSquare(x, y, width, height, color);
+// drawCircle(center, radius, color);

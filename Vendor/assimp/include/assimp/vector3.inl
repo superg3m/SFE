@@ -65,7 +65,7 @@ AI_FORCE_INLINE aiVector3t<TReal> operator * (const aiMatrix3x3t<TReal>& pMatrix
 // ------------------------------------------------------------------------------------------------
 /** Transformation of a vector by a 4x4 matrix */
 template <typename TReal>
-AI_FORCE_INLINE aiVector3t<TReal> operator * (const aiMatrix4x4t<TReal>& pMatrix, const aiVector3t<TReal>& pVector) {
+AI_FORCE_INLINE aiVector3t<TReal> operator * (const aiMat4x4t<TReal>& pMatrix, const aiVector3t<TReal>& pVector) {
     aiVector3t<TReal> res;
     res.x = pMatrix.a1 * pVector.x + pMatrix.a2 * pVector.y + pMatrix.a3 * pVector.z + pMatrix.a4;
     res.y = pMatrix.b1 * pVector.x + pMatrix.b2 * pVector.y + pMatrix.b3 * pVector.z + pMatrix.b4;
@@ -162,7 +162,7 @@ AI_FORCE_INLINE aiVector3t<TReal>& aiVector3t<TReal>::operator *= (const aiMatri
 }
 // ------------------------------------------------------------------------------------------------
 template <typename TReal>
-AI_FORCE_INLINE aiVector3t<TReal>& aiVector3t<TReal>::operator *= (const aiMatrix4x4t<TReal>& mat){
+AI_FORCE_INLINE aiVector3t<TReal>& aiVector3t<TReal>::operator *= (const aiMat4x4t<TReal>& mat){
     return (*this = mat * (*this));
 }
 // ------------------------------------------------------------------------------------------------

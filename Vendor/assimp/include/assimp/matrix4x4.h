@@ -40,12 +40,12 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
-/** @file matrix4x4.h
+/** @file Mat4x4.h
  *  @brief 4x4 matrix structure, including operators when compiling in C++
  */
 #pragma once
-#ifndef AI_MATRIX4X4_H_INC
-#define AI_MATRIX4X4_H_INC
+#ifndef AI_Mat4X4_H_INC
+#define AI_Mat4X4_H_INC
 
 #ifdef __GNUC__
 #   pragma GCC system_header
@@ -71,31 +71,31 @@ template<typename TReal> class aiQuaterniont;
  *  defined thereby.
  */
 template<typename TReal>
-class aiMatrix4x4t {
+class aiMat4x4t {
 public:
     /**
      * @brief Set to identity
      * */
-    aiMatrix4x4t() AI_NO_EXCEPT;
+    aiMat4x4t() AI_NO_EXCEPT;
 
     /**
      * @brief Construction from single values
      * */
-    aiMatrix4x4t (  TReal _a1, TReal _a2, TReal _a3, TReal _a4,
+    aiMat4x4t (  TReal _a1, TReal _a2, TReal _a3, TReal _a4,
                     TReal _b1, TReal _b2, TReal _b3, TReal _b4,
                     TReal _c1, TReal _c2, TReal _c3, TReal _c4,
                     TReal _d1, TReal _d2, TReal _d3, TReal _d4);
 
 
     /** construction from 3x3 matrix, remaining elements are set to identity */
-    explicit aiMatrix4x4t( const aiMatrix3x3t<TReal>& m);
+    explicit aiMat4x4t( const aiMatrix3x3t<TReal>& m);
 
     /** construction from position, rotation and scaling components
      * @param scaling The scaling for the x,y,z axes
      * @param rotation The rotation as a hamilton quaternion
      * @param position The position for the x,y,z axes
      */
-    aiMatrix4x4t(const aiVector3t<TReal>& scaling, const aiQuaterniont<TReal>& rotation,
+    aiMat4x4t(const aiVector3t<TReal>& scaling, const aiQuaterniont<TReal>& rotation,
           const aiVector3t<TReal>& position);
 
     // array access operators
@@ -111,30 +111,30 @@ public:
     const TReal* operator[] (unsigned int p_iIndex) const;
 
     // comparison operators
-    bool operator== (const aiMatrix4x4t& m) const;
-    bool operator!= (const aiMatrix4x4t& m) const;
+    bool operator== (const aiMat4x4t& m) const;
+    bool operator!= (const aiMat4x4t& m) const;
 
-    bool Equal(const aiMatrix4x4t &m, TReal epsilon = ai_epsilon) const;
+    bool Equal(const aiMat4x4t &m, TReal epsilon = ai_epsilon) const;
 
     // matrix multiplication.
-    aiMatrix4x4t& operator *= (const aiMatrix4x4t& m);
-    aiMatrix4x4t  operator *  (const aiMatrix4x4t& m) const;
-    aiMatrix4x4t operator * (const TReal& aFloat) const;
-    aiMatrix4x4t operator + (const aiMatrix4x4t& aMatrix) const;
+    aiMat4x4t& operator *= (const aiMat4x4t& m);
+    aiMat4x4t  operator *  (const aiMat4x4t& m) const;
+    aiMat4x4t operator * (const TReal& aFloat) const;
+    aiMat4x4t operator + (const aiMat4x4t& aMatrix) const;
 
     template <typename TOther>
-    operator aiMatrix4x4t<TOther> () const;
+    operator aiMat4x4t<TOther> () const;
 
     // -------------------------------------------------------------------
     /** @brief Transpose the matrix */
-    aiMatrix4x4t& Transpose();
+    aiMat4x4t& Transpose();
 
     // -------------------------------------------------------------------
     /** @brief Invert the matrix.
      *  If the matrix is not invertible all elements are set to qnan.
      *  Beware, use (f != f) to check whether a TReal f is qnan.
      */
-    aiMatrix4x4t& Inverse();
+    aiMat4x4t& Inverse();
 
     // -------------------------------------------------------------------
     /**
@@ -197,8 +197,8 @@ public:
      *  @param y Rotation angle for the y-axis, in radians
      *  @param z Rotation angle for the z-axis, in radians
      */
-    aiMatrix4x4t& FromEulerAnglesXYZ(TReal x, TReal y, TReal z);
-    aiMatrix4x4t& FromEulerAnglesXYZ(const aiVector3t<TReal>& blubb);
+    aiMat4x4t& FromEulerAnglesXYZ(TReal x, TReal y, TReal z);
+    aiMat4x4t& FromEulerAnglesXYZ(const aiVector3t<TReal>& blubb);
 
     // -------------------------------------------------------------------
     /** @brief Returns a rotation matrix for a rotation around the x axis
@@ -206,7 +206,7 @@ public:
      *  @param out Receives the output matrix
      *  @return Reference to the output matrix
      */
-    static aiMatrix4x4t& RotationX(TReal a, aiMatrix4x4t& out);
+    static aiMat4x4t& RotationX(TReal a, aiMat4x4t& out);
 
     // -------------------------------------------------------------------
     /** @brief Returns a rotation matrix for a rotation around the y axis
@@ -214,7 +214,7 @@ public:
      *  @param out Receives the output matrix
      *  @return Reference to the output matrix
      */
-    static aiMatrix4x4t& RotationY(TReal a, aiMatrix4x4t& out);
+    static aiMat4x4t& RotationY(TReal a, aiMat4x4t& out);
 
     // -------------------------------------------------------------------
     /** @brief Returns a rotation matrix for a rotation around the z axis
@@ -222,7 +222,7 @@ public:
      *  @param out Receives the output matrix
      *  @return Reference to the output matrix
      */
-    static aiMatrix4x4t& RotationZ(TReal a, aiMatrix4x4t& out);
+    static aiMat4x4t& RotationZ(TReal a, aiMat4x4t& out);
 
     // -------------------------------------------------------------------
     /** Returns a rotation matrix for a rotation around an arbitrary axis.
@@ -231,8 +231,8 @@ public:
      *  @param out Receives the output matrix
      *  @return Reference to the output matrix
      */
-    static aiMatrix4x4t& Rotation(TReal a, const aiVector3t<TReal>& axis,
-            aiMatrix4x4t& out);
+    static aiMat4x4t& Rotation(TReal a, const aiVector3t<TReal>& axis,
+            aiMat4x4t& out);
 
     // -------------------------------------------------------------------
     /** @brief Returns a translation matrix
@@ -240,8 +240,8 @@ public:
      *  @param out Receives the output matrix
      *  @return Reference to the output matrix
      */
-    static aiMatrix4x4t& Translation( const aiVector3t<TReal>& v,
-            aiMatrix4x4t& out);
+    static aiMat4x4t& Translation( const aiVector3t<TReal>& v,
+            aiMat4x4t& out);
 
     // -------------------------------------------------------------------
     /** @brief Returns a scaling matrix
@@ -249,7 +249,7 @@ public:
      *  @param out Receives the output matrix
      *  @return Reference to the output matrix
      */
-    static aiMatrix4x4t& Scaling( const aiVector3t<TReal>& v, aiMatrix4x4t& out);
+    static aiMat4x4t& Scaling( const aiVector3t<TReal>& v, aiMat4x4t& out);
 
     // -------------------------------------------------------------------
     /** @brief A function for creating a rotation matrix that rotates a
@@ -260,8 +260,8 @@ public:
      *          "Efficiently Building a Matrix to Rotate One Vector to Another"
      *          Journal of Graphics Tools, 4(4):1-4, 1999
      */
-    static aiMatrix4x4t& FromToMatrix(const aiVector3t<TReal>& from,
-            const aiVector3t<TReal>& to, aiMatrix4x4t& out);
+    static aiMat4x4t& FromToMatrix(const aiVector3t<TReal>& from,
+            const aiVector3t<TReal>& to, aiMat4x4t& out);
 
     TReal a1, a2, a3, a4;
     TReal b1, b2, b3, b4;
@@ -269,11 +269,11 @@ public:
     TReal d1, d2, d3, d4;
 };
 
-typedef aiMatrix4x4t<ai_real> aiMatrix4x4;
+typedef aiMat4x4t<ai_real> aiMat4x4;
 
 #else
 
-struct aiMatrix4x4 {
+struct aiMat4x4 {
     ai_real a1, a2, a3, a4;
     ai_real b1, b2, b3, b4;
     ai_real c1, c2, c3, c4;
@@ -283,4 +283,4 @@ struct aiMatrix4x4 {
 
 #endif // __cplusplus
 
-#endif // AI_MATRIX4X4_H_INC
+#endif // AI_Mat4X4_H_INC

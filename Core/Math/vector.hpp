@@ -1,20 +1,20 @@
 #pragma once
 
 namespace Math {
-    struct Vector2 {
+    struct Vec2 {
         float x;
         float y;
 
-        Vector2();
-        explicit Vector2(float fill);
-        explicit Vector2(float x, float y);
+        Vec2();
+        explicit Vec2(float fill);
+        explicit Vec2(float x, float y);
 
         float magnitude();
         float magnitudeSquared();
-        Vector2 normalize();
-        Vector2 scale(float scale) const;
-        Vector2 scale(Vector2 s) const;
-        Vector2 scale(float scale_x, float scale_y) const;
+        Vec2 normalize();
+        Vec2 scale(float scale) const;
+        Vec2 scale(Vec2 s) const;
+        Vec2 scale(float scale_x, float scale_y) const;
 
         /**
          * @brief The return value tells you:
@@ -26,30 +26,31 @@ namespace Math {
          * @param b 
          * @return float 
          */
-        static float dot(Vector2 a, Vector2 b);
-        static float distance(Vector2 a, Vector2 b);
-        static float distanceSquared(Vector2 a, Vector2 b);
-        static Vector2 lerp(Vector2 a, Vector2 b, float t);
-        static Vector2 euler(float yaw, float pitch);
+        static float Dot(Vec2 a, Vec2 b);
+        static float Distance(Vec2 a, Vec2 b);
+        static float DistanceSquared(Vec2 a, Vec2 b);
+        static Vec2 Closest(Vec2 a, Vec2 b, Vec2 target = Vec2(0)); // normally the target is the origin
+        static Vec2 Lerp(Vec2 a, Vec2 b, float t);
+        static Vec2 Euler(float yaw, float pitch);
 
-        Vector2 operator+(const Vector2 &right);
-        Vector2& operator+=(const Vector2 &right);
+        Vec2 operator+(const Vec2 &right);
+        Vec2& operator+=(const Vec2 &right);
 
-        Vector2 operator-(const Vector2 &right);
-        Vector2& operator-=(const Vector2 &right);
+        Vec2 operator-(const Vec2 &right);
+        Vec2& operator-=(const Vec2 &right);
 
-        Vector2 operator*(const Vector2 &right);
-        Vector2& operator*=(const Vector2 &right);
+        Vec2 operator*(const Vec2 &right);
+        Vec2& operator*=(const Vec2 &right);
 
-        Vector2 operator/(const Vector2 &right);
-        Vector2& operator/=(const Vector2 &right);
+        Vec2 operator/(const Vec2 &right);
+        Vec2& operator/=(const Vec2 &right);
 
-        bool operator==(const Vector2 &right);
-        bool operator!=(const Vector2 &right);
+        bool operator==(const Vec2 &right);
+        bool operator!=(const Vec2 &right);
     };
 
-    typedef struct Vector4 Vector4;
-    struct Vector3 {
+    typedef struct Vec4 Vec4;
+    struct Vec3 {
         union {
             struct {
                 float x;
@@ -64,18 +65,18 @@ namespace Math {
             };
         };
 
-        Vector3();
-        explicit Vector3(float fill);
-        explicit Vector3(float x, float y, float z);
-        explicit Vector3(Vector2 v, float z);
-        explicit Vector3(Vector4 v);
+        Vec3();
+        explicit Vec3(float fill);
+        explicit Vec3(float x, float y, float z);
+        explicit Vec3(Vec2 v, float z);
+        explicit Vec3(Vec4 v);
 
         float magnitude();
         float magnitudeSquared();
-        Vector3 normalize();
-        Vector3 scale(float scale) const;
-        Vector3 scale(Vector3 s) const;
-        Vector3 scale(float scale_x, float scale_y, float scale_z) const;
+        Vec3 normalize();
+        Vec3 scale(float scale) const;
+        Vec3 scale(Vec3 s) const;
+        Vec3 scale(float scale_x, float scale_y, float scale_z) const;
 
         /**
          * @brief The return value tells you:
@@ -87,30 +88,31 @@ namespace Math {
          * @param b 
          * @return float 
          */
-        static float dot(Vector3 a, Vector3 b);
-        static float distance(Vector3 a, Vector3 b);
-        static float distanceSquared(Vector3 a, Vector3 b);
-        static Vector3 lerp(Vector3 a, Vector3 b, float t);
-        static Vector3 cross(Vector3 a, Vector3 b);
-        static Vector3 euler(float yaw, float pitch);
+        static float Dot(Vec3 a, Vec3 b);
+        static float Distance(Vec3 a, Vec3 b);
+        static float DistanceSquared(Vec3 a, Vec3 b);
+        static Vec3 Closest(Vec3 a, Vec3 b, Vec3 target = Vec3(0)); // normally the target is the origin
+        static Vec3 Lerp(Vec3 a, Vec3 b, float t);
+        static Vec3 Cross(Vec3 a, Vec3 b);
+        static Vec3 Euler(float yaw, float pitch);
 
-        Vector3 operator+(const Vector3 &right);
-        Vector3& operator+=(const Vector3 &right);
+        Vec3 operator+(const Vec3 &right);
+        Vec3& operator+=(const Vec3 &right);
 
-        Vector3 operator-(const Vector3 &right);
-        Vector3& operator-=(const Vector3 &right);
+        Vec3 operator-(const Vec3 &right);
+        Vec3& operator-=(const Vec3 &right);
 
-        Vector3 operator*(const Vector3 &right);
-        Vector3& operator*=(const Vector3 &right);
+        Vec3 operator*(const Vec3 &right);
+        Vec3& operator*=(const Vec3 &right);
 
-        Vector3 operator/(const Vector3 &right);
-        Vector3& operator/=(const Vector3 &right);
+        Vec3 operator/(const Vec3 &right);
+        Vec3& operator/=(const Vec3 &right);
 
-        bool operator==(const Vector3 &right);
-        bool operator!=(const Vector3 &right);
+        bool operator==(const Vec3 &right);
+        bool operator!=(const Vec3 &right);
     };
 
-    struct Vector4 {
+    struct Vec4 {
         union {
             struct {
                 float x;
@@ -127,17 +129,17 @@ namespace Math {
             };
         };
 
-        Vector4();
-        explicit Vector4(float fill);
-        explicit Vector4(float x, float y, float z, float w);
-        explicit Vector4(Vector3 v, float w);
+        Vec4();
+        explicit Vec4(float fill);
+        explicit Vec4(float x, float y, float z, float w);
+        explicit Vec4(Vec3 v, float w);
 
         float magnitude();
         float magnitudeSquared();
-        Vector4 normalize();
-        Vector4 scale(float scale) const;
-        Vector4 scale(Vector4 s) const;
-        Vector4 scale(float scale_x, float scale_y, float scale_z, float scale_w) const;
+        Vec4 normalize();
+        Vec4 scale(float scale) const;
+        Vec4 scale(Vec4 s) const;
+        Vec4 scale(float scale_x, float scale_y, float scale_z, float scale_w) const;
 
         /**
          * @brief The return value tells you:
@@ -149,24 +151,25 @@ namespace Math {
          * @param b 
          * @return float 
          */
-        static float dot(Vector4 a, Vector4 b);
-        static Vector4 lerp(Vector4 a, Vector4 b, float t);
-        static float distance(Vector4 a, Vector4 b);
-        static float distanceSquared(Vector4 a, Vector4 b);
+        static float Dot(Vec4 a, Vec4 b);
+        static Vec4 Lerp(Vec4 a, Vec4 b, float t);
+        static float Distance(Vec4 a, Vec4 b);
+        static float DistanceSquared(Vec4 a, Vec4 b);
+        static Vec4 Closest(Vec4 a, Vec4 b, Vec4 target = Vec4(0)); // normally the target is the origin
 
-        Vector4 operator+(const Vector4 &right);
-        Vector4& operator+=(const Vector4 &right);
+        Vec4 operator+(const Vec4 &right);
+        Vec4& operator+=(const Vec4 &right);
 
-        Vector4 operator-(const Vector4 &right);
-        Vector4& operator-=(const Vector4 &right);
+        Vec4 operator-(const Vec4 &right);
+        Vec4& operator-=(const Vec4 &right);
 
-        Vector4 operator*(const Vector4 &right);
-        Vector4& operator*=(const Vector4 &right);
+        Vec4 operator*(const Vec4 &right);
+        Vec4& operator*=(const Vec4 &right);
 
-        Vector4 operator/(const Vector4 &right);
-        Vector4& operator/=(const Vector4 &right);
+        Vec4 operator/(const Vec4 &right);
+        Vec4& operator/=(const Vec4 &right);
 
-        bool operator==(const Vector4 &right);
-        bool operator!=(const Vector4 &right);
+        bool operator==(const Vec4 &right);
+        bool operator!=(const Vec4 &right);
     };
 };

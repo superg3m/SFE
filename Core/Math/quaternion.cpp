@@ -25,7 +25,7 @@ namespace Math {
     Quaternion Quaternion::inverse() {
         Quaternion ret(1, 0, 0, 0);
 
-        float magnitude_squared = SQUARED(this->w) + Vector3::dot(this->v, this->v);
+        float magnitude_squared = SQUARED(this->w) + Vector3::Dot(this->v, this->v);
         if (magnitude_squared == 0.0f) { 
             return Quaternion::Identity();
         }
@@ -163,12 +163,12 @@ namespace Math {
         return q;
     }
 
-    Quaternion Quaternion::FromRotationMatrix(Matrix4 mat) {
+    Quaternion Quaternion::FromRotationMatrix(Mat4 mat) {
         return Quaternion::FromRotationMatrix(&mat.v[0].x);
     }
 
-    Matrix4 Quaternion::getMatrix4() {
-        Matrix4 result = Matrix4::Identity();
+    Mat4 Quaternion::getMat4() {
+        Mat4 result = Mat4::Identity();
 
         float x2 = this->v.x * this->v.x;
         float y2 = this->v.y * this->v.y;
@@ -220,7 +220,7 @@ namespace Math {
         theta = RAD_TO_DEGREES(theta);
     }
 
-    Quaternion Quaternion::Slerp(Quaternion q, Quaternion r, float t) {
+    Quaternion Quaternion::SLerp(Quaternion q, Quaternion r, float t) {
         q = q.normalize();
         r = r.normalize();
         float dot = Quaternion::Dot(q, r);
@@ -283,8 +283,8 @@ namespace Math {
 
     Quaternion Quaternion::operator*(const Quaternion &right) {
         Quaternion ret = Quaternion::Identity();
-        ret.w = (this->w * right.w) - Vector3::dot(this->v, right.v);
-        ret.v = (this->v.scale(right.w) + right.v.scale(this->w)) + Vector3::cross(this->v, right.v);
+        ret.w = (this->w * right.w) - Vector3::Dot(this->v, right.v);
+        ret.v = (this->v.scale(right.w) + right.v.scale(this->w)) + Vector3::Cross(this->v, right.v);
         
         return ret;
     }

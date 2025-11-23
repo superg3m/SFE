@@ -2,34 +2,34 @@
 #include <glad/glad.h>
 
 struct Vertex {
-    Math::Vector3 aPosition = Math::Vector3(0.0f);    // location 0
-    Math::Vector3 aNormal = Math::Vector3(0.0f);      // location 1
-    Math::Vector2 aTexCoord = Math::Vector2(0.0f);    // location 2
-    Math::Vector3 aTangent = Math::Vector3(0.0f);     // location 3
-    Math::Vector3 aBitangent = Math::Vector3(0.0f);   // location 4
-    Math::Vector3 aColor = Math::Vector3(1.0f);       // location 5
-    Math::Vector4 aBoneIDs = Math::Vector4(0.0f);     // location 6 (use GM_IVec4 if you have it for integer IDs)
-    Math::Vector4 aBoneWeights = Math::Vector4(0.0f); // location 7 (using vec4 for weights for simplicity)
+    Math::Vec3 aPosition = Math::Vec3(0.0f);    // location 0
+    Math::Vec3 aNormal = Math::Vec3(0.0f);      // location 1
+    Math::Vec2 aTexCoord = Math::Vec2(0.0f);    // location 2
+    Math::Vec3 aTangent = Math::Vec3(0.0f);     // location 3
+    Math::Vec3 aBitangent = Math::Vec3(0.0f);   // location 4
+    Math::Vec3 aColor = Math::Vec3(1.0f);       // location 5
+    Math::Vec4 aBoneIDs = Math::Vec4(0.0f);     // location 6 (use GM_IVec4 if you have it for integer IDs)
+    Math::Vec4 aBoneWeights = Math::Vec4(0.0f); // location 7 (using vec4 for weights for simplicity)
 
     // Default constructor to initialize, or use default member initializers if C++11
     Vertex() = default;
 
-    Vertex(Math::Vector3 pos) { 
+    Vertex(Math::Vec3 pos) { 
         this->aPosition = pos;
     }
 
-    Vertex(Math::Vector3 pos, Math::Vector3 norm) { 
+    Vertex(Math::Vec3 pos, Math::Vec3 norm) { 
         this->aPosition = pos;
         this->aNormal = norm;
     }
 
-    Vertex(Math::Vector3 pos, Math::Vector3 norm, Math::Vector2 uv) {
+    Vertex(Math::Vec3 pos, Math::Vec3 norm, Math::Vec2 uv) {
         this->aPosition = pos;
         this->aNormal = norm; 
         this->aTexCoord = uv;
     }
 
-    Vertex(Math::Vector3 pos, Math::Vector3 norm, Math::Vector2 uv, Math::Vector3 tangent, Math::Vector3 bitangent) {
+    Vertex(Math::Vec3 pos, Math::Vec3 norm, Math::Vec2 uv, Math::Vec3 tangent, Math::Vec3 bitangent) {
         this->aPosition = pos;
         this->aNormal = norm; 
         this->aTexCoord = uv;
@@ -37,7 +37,7 @@ struct Vertex {
         this->aBitangent = bitangent;
     }
 
-    Vertex(Math::Vector3 pos, Math::Vector3 norm, Math::Vector2 uv, Math::Vector3 tangent, Math::Vector3 bitangent, Math::Vector3 color) : Vertex(pos, norm, uv, tangent, bitangent) {
+    Vertex(Math::Vec3 pos, Math::Vec3 norm, Math::Vec2 uv, Math::Vec3 tangent, Math::Vec3 bitangent, Math::Vec3 color) : Vertex(pos, norm, uv, tangent, bitangent) {
         this->aPosition = pos;
         this->aNormal = norm; 
         this->aTexCoord = uv;
@@ -46,7 +46,7 @@ struct Vertex {
         this->aColor = color;
     }
 
-    Vertex(Math::Vector3 pos, Math::Vector3 norm, Math::Vector2 uv, Math::Vector3 tangent, Math::Vector3 bitangent, Math::Vector3 color, Math::Vector4 boneIDs, Math::Vector4 bone_weights) {
+    Vertex(Math::Vec3 pos, Math::Vec3 norm, Math::Vec2 uv, Math::Vec3 tangent, Math::Vec3 bitangent, Math::Vec3 color, Math::Vec4 boneIDs, Math::Vec4 bone_weights) {
         this->aPosition = pos;
         this->aNormal = norm; 
         this->aTexCoord = uv;

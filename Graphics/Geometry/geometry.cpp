@@ -40,13 +40,13 @@ static Math::AABB CalculateAABB(const DS::Vector<Vertex>& vertices) {
         }
     }
 
-    Math::Vector3 center  = Math::Vector3(
+    Math::Vec3 center  = Math::Vec3(
         (x_max + x_min) / 2.0f,
         (y_max + y_min) / 2.0f,
         (z_max + z_min) / 2.0f
     );
 
-    Math::Vector3 extents = Math::Vector3(
+    Math::Vec3 extents = Math::Vec3(
         (x_max - x_min) / 2.0f,
         (y_max - y_min) / 2.0f,
         (z_max - z_min) / 2.0f
@@ -80,10 +80,10 @@ namespace Graphics {
     Geometry Geometry::Quad() {
         DS::Vector<Vertex> quad_vertices = {
             //         Position                        Normal                    UV
-            Vertex{Math::Vector3( 1.0f,  1.0f, 0.0f),  Math::Vector3(1.0f, 0.0f, 0.0f),  Math::Vector2(1, 1)}, // top right
-            Vertex{Math::Vector3( 1.0f, -1.0f, 0.0f),  Math::Vector3(0.0f, 1.0f, 0.0f),  Math::Vector2(1, 0)}, // bottom right
-            Vertex{Math::Vector3(-1.0f, -1.0f, 0.0f),  Math::Vector3(0.0f, 0.0f, 1.0f),  Math::Vector2(0, 0)}, // bottom left
-            Vertex{Math::Vector3(-1.0f,  1.0f, 0.0f),  Math::Vector3(1.0f, 1.0f, 0.0f),  Math::Vector2(0, 1)}  // top left 
+            Vertex{Math::Vec3( 1.0f,  1.0f, 0.0f),  Math::Vec3(1.0f, 0.0f, 0.0f),  Math::Vec2(1, 1)}, // top right
+            Vertex{Math::Vec3( 1.0f, -1.0f, 0.0f),  Math::Vec3(0.0f, 1.0f, 0.0f),  Math::Vec2(1, 0)}, // bottom right
+            Vertex{Math::Vec3(-1.0f, -1.0f, 0.0f),  Math::Vec3(0.0f, 0.0f, 1.0f),  Math::Vec2(0, 0)}, // bottom left
+            Vertex{Math::Vec3(-1.0f,  1.0f, 0.0f),  Math::Vec3(1.0f, 1.0f, 0.0f),  Math::Vec2(0, 1)}  // top left 
         }; 
 
         DS::Vector<unsigned int> quad_indices = {
@@ -101,22 +101,22 @@ namespace Graphics {
     Geometry Geometry::AABB() {
         DS::Vector<Vertex> aabb_vertices = {
             // Bottom face
-            Vertex{Math::Vector3(-1.0f, -1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3( 1.0f, -1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3( 1.0f, -1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3( 1.0f, -1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3( 1.0f, -1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3(-1.0f, -1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3(-1.0f, -1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3(-1.0f, -1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
+            Vertex{Math::Vec3(-1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3( 1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3( 1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3(-1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
 
-            // Top Math::Vector3(face
-            Vertex{Math::Vector3(-1.0f, 1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3( 1.0f, 1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3( 1.0f, 1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3( 1.0f, 1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3( 1.0f, 1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3(-1.0f, 1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3(-1.0f, 1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3(-1.0f, 1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
+            // Top Math::Vec3(face
+            Vertex{Math::Vec3(-1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3( 1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3( 1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3(-1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
 
             // Vertical edges
-            Vertex{Math::Vector3(-1.0f, -1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3(-1.0f, 1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3( 1.0f, -1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3( 1.0f, 1.0f, -1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3( 1.0f, -1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3( 1.0f, 1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3(-1.0f, -1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)}, Vertex{Math::Vector3(-1.0f, 1.0f,  1.0f), Math::Vector3(0, 0, 0), Math::Vector2(0, 0)},
+            Vertex{Math::Vec3(-1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3( 1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3( 1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3(-1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
         };
 
         Geometry ret;
@@ -130,40 +130,40 @@ namespace Graphics {
     Geometry Geometry::Cube() {
         DS::Vector<Vertex> cube_vertices = {
             // Front face
-            Vertex{Math::Vector3(-1.0f, -1.0f, -1.0f), Math::Vector3(0, 0, -1), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3( 1.0f, -1.0f, -1.0f), Math::Vector3(0, 0, -1), Math::Vector2(1, 0)},
-            Vertex{Math::Vector3( 1.0f,  1.0f, -1.0f), Math::Vector3(0, 0, -1), Math::Vector2(1, 1)},
-            Vertex{Math::Vector3(-1.0f,  1.0f, -1.0f), Math::Vector3(0, 0, -1), Math::Vector2(0, 1)},
+            Vertex{Math::Vec3(-1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, -1), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3( 1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, -1), Math::Vec2(1, 0)},
+            Vertex{Math::Vec3( 1.0f,  1.0f, -1.0f), Math::Vec3(0, 0, -1), Math::Vec2(1, 1)},
+            Vertex{Math::Vec3(-1.0f,  1.0f, -1.0f), Math::Vec3(0, 0, -1), Math::Vec2(0, 1)},
 
             // Back face
-            Vertex{Math::Vector3(-1.0f, -1.0f, 1.0f), Math::Vector3(0, 0, 1), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3( 1.0f, -1.0f, 1.0f), Math::Vector3(0, 0, 1), Math::Vector2(1, 0)},
-            Vertex{Math::Vector3( 1.0f,  1.0f, 1.0f), Math::Vector3(0, 0, 1), Math::Vector2(1, 1)},
-            Vertex{Math::Vector3(-1.0f,  1.0f, 1.0f), Math::Vector3(0, 0, 1), Math::Vector2(0, 1)},
+            Vertex{Math::Vec3(-1.0f, -1.0f, 1.0f), Math::Vec3(0, 0, 1), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3( 1.0f, -1.0f, 1.0f), Math::Vec3(0, 0, 1), Math::Vec2(1, 0)},
+            Vertex{Math::Vec3( 1.0f,  1.0f, 1.0f), Math::Vec3(0, 0, 1), Math::Vec2(1, 1)},
+            Vertex{Math::Vec3(-1.0f,  1.0f, 1.0f), Math::Vec3(0, 0, 1), Math::Vec2(0, 1)},
 
             // Left face
-            Vertex{Math::Vector3(-1.0f, -1.0f,  1.0f), Math::Vector3(-1, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3(-1.0f, -1.0f, -1.0f), Math::Vector3(-1, 0, 0), Math::Vector2(1, 0)},
-            Vertex{Math::Vector3(-1.0f,  1.0f, -1.0f), Math::Vector3(-1, 0, 0), Math::Vector2(1, 1)},
-            Vertex{Math::Vector3(-1.0f,  1.0f,  1.0f), Math::Vector3(-1, 0, 0), Math::Vector2(0, 1)},
+            Vertex{Math::Vec3(-1.0f, -1.0f,  1.0f), Math::Vec3(-1, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3(-1.0f, -1.0f, -1.0f), Math::Vec3(-1, 0, 0), Math::Vec2(1, 0)},
+            Vertex{Math::Vec3(-1.0f,  1.0f, -1.0f), Math::Vec3(-1, 0, 0), Math::Vec2(1, 1)},
+            Vertex{Math::Vec3(-1.0f,  1.0f,  1.0f), Math::Vec3(-1, 0, 0), Math::Vec2(0, 1)},
 
             // Right face
-            Vertex{Math::Vector3( 1.0f, -1.0f, -1.0f), Math::Vector3(1, 0, 0), Math::Vector2(0, 0)},
-            Vertex{Math::Vector3( 1.0f, -1.0f,  1.0f), Math::Vector3(1, 0, 0), Math::Vector2(1, 0)},
-            Vertex{Math::Vector3( 1.0f,  1.0f,  1.0f), Math::Vector3(1, 0, 0), Math::Vector2(1, 1)},
-            Vertex{Math::Vector3( 1.0f,  1.0f, -1.0f), Math::Vector3(1, 0, 0), Math::Vector2(0, 1)},
+            Vertex{Math::Vec3( 1.0f, -1.0f, -1.0f), Math::Vec3(1, 0, 0), Math::Vec2(0, 0)},
+            Vertex{Math::Vec3( 1.0f, -1.0f,  1.0f), Math::Vec3(1, 0, 0), Math::Vec2(1, 0)},
+            Vertex{Math::Vec3( 1.0f,  1.0f,  1.0f), Math::Vec3(1, 0, 0), Math::Vec2(1, 1)},
+            Vertex{Math::Vec3( 1.0f,  1.0f, -1.0f), Math::Vec3(1, 0, 0), Math::Vec2(0, 1)},
 
             // Bottom face
-            Vertex{Math::Vector3(-1.0f, -1.0f, -1.0f), Math::Vector3(0, -1, 0), Math::Vector2(0, 1)},
-            Vertex{Math::Vector3( 1.0f, -1.0f, -1.0f), Math::Vector3(0, -1, 0), Math::Vector2(1, 1)},
-            Vertex{Math::Vector3( 1.0f, -1.0f,  1.0f), Math::Vector3(0, -1, 0), Math::Vector2(1, 0)},
-            Vertex{Math::Vector3(-1.0f, -1.0f,  1.0f), Math::Vector3(0, -1, 0), Math::Vector2(0, 0)},
+            Vertex{Math::Vec3(-1.0f, -1.0f, -1.0f), Math::Vec3(0, -1, 0), Math::Vec2(0, 1)},
+            Vertex{Math::Vec3( 1.0f, -1.0f, -1.0f), Math::Vec3(0, -1, 0), Math::Vec2(1, 1)},
+            Vertex{Math::Vec3( 1.0f, -1.0f,  1.0f), Math::Vec3(0, -1, 0), Math::Vec2(1, 0)},
+            Vertex{Math::Vec3(-1.0f, -1.0f,  1.0f), Math::Vec3(0, -1, 0), Math::Vec2(0, 0)},
 
             // Top face
-            Vertex{Math::Vector3(-1.0f,  1.0f, -1.0f), Math::Vector3(0, 1, 0), Math::Vector2(0, 1)},
-            Vertex{Math::Vector3( 1.0f,  1.0f, -1.0f), Math::Vector3(0, 1, 0), Math::Vector2(1, 1)},
-            Vertex{Math::Vector3( 1.0f,  1.0f,  1.0f), Math::Vector3(0, 1, 0), Math::Vector2(1, 0)},
-            Vertex{Math::Vector3(-1.0f,  1.0f,  1.0f), Math::Vector3(0, 1, 0), Math::Vector2(0, 0)},
+            Vertex{Math::Vec3(-1.0f,  1.0f, -1.0f), Math::Vec3(0, 1, 0), Math::Vec2(0, 1)},
+            Vertex{Math::Vec3( 1.0f,  1.0f, -1.0f), Math::Vec3(0, 1, 0), Math::Vec2(1, 1)},
+            Vertex{Math::Vec3( 1.0f,  1.0f,  1.0f), Math::Vec3(0, 1, 0), Math::Vec2(1, 0)},
+            Vertex{Math::Vec3(-1.0f,  1.0f,  1.0f), Math::Vec3(0, 1, 0), Math::Vec2(0, 0)},
         };
 
         DS::Vector<unsigned int> cube_indices = {
@@ -204,9 +204,9 @@ namespace Graphics {
                 float v = static_cast<float>(r) / rings;
 
                 sphere_vertices.push(Vertex{
-                    Math::Vector3(x, y, z),
-                    Math::Vector3(x, y, z), // Normal (unit direction)
-                    Math::Vector2(u, v)     // UV
+                    Math::Vec3(x, y, z),
+                    Math::Vec3(x, y, z), // Normal (unit direction)
+                    Math::Vec2(u, v)     // UV
                 });
             }
         }
@@ -308,7 +308,7 @@ namespace Graphics {
 
     // This has to be different...
     /*
-    Geometry* Geometry::processAssimpMesh(aiMesh* ai_mesh, const aiScene* scene,Math::Matrix4 parent_transform) {
+    Geometry* Geometry::processAssimpMesh(aiMesh* ai_mesh, const aiScene* scene,Math::Mat4 parent_transform) {
         Geometry* geo = (Geometry*)Memory::alloc(sizeof(Geometry));
         geo->base_vertex = (unsigned int)this->vertices.count();
         geo->base_index = (unsigned int)this->indices.count();
@@ -323,20 +323,20 @@ namespace Graphics {
             for (unsigned int j = 0; j < ai_mesh->mNumVertices; j++) {
                 const aiVector3D& ai_position = ai_mesh->mVertices[j];
 
-                Math::Vector4 transformed_position = parent_transform * Math::Vector4(ai_position.x, ai_position.y, ai_position.z, 1.0f);
-                v.aPosition = Math::Vector3(transformed_position.x, transformed_position.y, transformed_position.z);
+                Math::Vec4 transformed_position = parent_transform * Math::Vec4(ai_position.x, ai_position.y, ai_position.z, 1.0f);
+                v.aPosition = Math::Vec3(transformed_position.x, transformed_position.y, transformed_position.z);
 
                 if (ai_mesh->mNormals) {
                     const aiVector3D& pNormal = ai_mesh->mNormals[j];
-                    Math::Vector4 transformed_normal = parent_transform * Math::Vector4(pNormal.x, pNormal.y, pNormal.z, 0.0f); // W component is 0 for vectors
-                    v.aNormal = Math::Vector3(transformed_normal.x, transformed_normal.y, transformed_normal.z).normalize(); // Normalize after transform
+                    Math::Vec4 transformed_normal = parent_transform * Math::Vec4(pNormal.x, pNormal.y, pNormal.z, 0.0f); // W component is 0 for vectors
+                    v.aNormal = Math::Vec3(transformed_normal.x, transformed_normal.y, transformed_normal.z).normalize(); // Normalize after transform
                 } else {
                     aiVector3D Normal(0.0f, 1.0f, 0.0f);
-                    v.aNormal = Math::Vector3(Normal.x, Normal.y, Normal.z);
+                    v.aNormal = Math::Vec3(Normal.x, Normal.y, Normal.z);
                 }
 
                 const aiVector3D& uv = ai_mesh->HasTextureCoords(0) ? ai_mesh->mTextureCoords[0][j] : Zero3D;
-                v.aTexCoord = Math::Vector2(uv.x, uv.y);
+                v.aTexCoord = Math::Vec2(uv.x, uv.y);
 
                 this->vertices.push(v);
             }
@@ -356,8 +356,8 @@ namespace Graphics {
         return geo;
     }
 
-    Math::Matrix4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
-        Math::Matrix4 ret;
+    Math::Mat4 convertAssimpMatrixToGM(aiMat4x4 ai_matrix) {
+        Math::Mat4 ret;
 
         ret.v[0].x = ai_matrix.a1; ret.v[1].x = ai_matrix.b1; ret.v[2].x = ai_matrix.c1; ret.v[3].x = ai_matrix.d1; 
         ret.v[0].y = ai_matrix.a2; ret.v[1].y = ai_matrix.b2; ret.v[2].y = ai_matrix.c2; ret.v[3].y = ai_matrix.d2;
@@ -367,13 +367,13 @@ namespace Graphics {
         return ret;
     }
 
-    void Mesh::processNode(aiNode* node, const aiScene* scene, Math::Matrix4 parent_transform) {
+    void Mesh::processNode(aiNode* node, const aiScene* scene, Math::Mat4 parent_transform) {
         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             this->meshes.push_back(processMesh(mesh, scene, parent_transform));
         }
 
-        Math::Matrix4 new_parent_transform = parent_transform * convertAssimpMatrixToGM(node->mTransformation);
+        Math::Mat4 new_parent_transform = parent_transform * convertAssimpMatrixToGM(node->mTransformation);
         for (unsigned int i = 0; i < node->mNumChildren; i++) {
             processNode(node->mChildren[i], scene, new_parent_transform);
         }
@@ -403,7 +403,7 @@ namespace Graphics {
                 const aiMaterial* ai_material = scene->mMaterials[i];
 
                 aiColor4D ambient_color(0.0f, 0.0f, 0.0f, 0.0f);
-                Math::Vector3 white = Math::Vector3(1.0f);
+                Math::Vec3 white = Math::Vec3(1.0f);
 
                 if (ai_material->Get(AI_MATKEY_COLOR_AMBIENT, ambient_color) == AI_SUCCESS) {
                     this->materials[i].ambient_color.r = ambient_color.r;
@@ -535,7 +535,7 @@ namespace Graphics {
         
         /* Get this node's transform matrix and convert it into a plain array. */
         float thisTransform[16];
-        mat4f_from_aiMatrix4x4(thisTransform, nd->mTransformation);
+        mat4f_from_aiMat4x4(thisTransform, nd->mTransformation);
 
         /* Apply this node's transformation to our current transform. */
         mat4f_mult_mat4f_new(currentTransform, currentTransform, thisTransform);
@@ -980,7 +980,7 @@ namespace Graphics {
 
                 /* Also apply the bone offset */
                 float offset[16];
-                mat4f_from_aiMatrix4x4(offset, bone->mOffsetMatrix);
+                mat4f_from_aiMat4x4(offset, bone->mOffsetMatrix);
                 mat4f_mult_mat4f_new(g->bones->matrices[b], g->bones->matrices[b], offset);
 
                 // If a "fit" matrix was used to make the model fit in box

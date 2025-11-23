@@ -3,15 +3,15 @@
 #include <Math/math.hpp>
 
 struct PointLight {
-    Math::Vector3 position;
+    Math::Vec3 position;
 
     float constant;
     float linear;
     float quadratic;
 
-    Math::Vector3 ambient;
-    Math::Vector3 diffuse;
-    Math::Vector3 specular;
+    Math::Vec3 ambient;
+    Math::Vec3 diffuse;
+    Math::Vec3 specular;
 };
 
 struct PointLightLocation {

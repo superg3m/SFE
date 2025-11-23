@@ -65,7 +65,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/vector3.h>
 #include <assimp/color4.h>
 #include <assimp/matrix3x3.h>
-#include <assimp/matrix4x4.h>
+#include <assimp/Mat4x4.h>
 #include <assimp/quaternion.h>
 
 typedef int32_t ai_int32;
@@ -568,7 +568,7 @@ struct aiBuffer {
 #include "vector3.inl"
 #include "color4.inl"
 #include "matrix3x3.inl"
-#include "matrix4x4.inl"
+#include "Mat4x4.inl"
 #include "quaternion.inl"
 
 #endif // AI_TYPES_H_INC

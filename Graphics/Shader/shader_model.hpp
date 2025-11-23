@@ -12,7 +12,7 @@ struct ShaderModel : public ShaderBase {
     void setSpotLight(SpotLight &spot_light) const;
     void setDirectionalLight(DirectionalLight &directional_light) const;
     void setPointLight(PointLight &point_light, int index) const;
-    void setViewPosition(Math::Vector3 &view_position) const;
+    void setViewPosition(Math::Vec3 &view_position) const;
     void setUseFlashlight(bool useFlashlight) const;
     void setMaterial(Material &material) const;
 private:

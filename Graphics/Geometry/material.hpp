@@ -37,7 +37,7 @@ struct Material {
     float shininess = 32.0f;
     float opacity = 1.0f;
 
-    Math::Vector3 color = Math::Vector3(1);
+    Math::Vec3 color = Math::Vec3(1);
 };
 
 struct MaterialLocation {

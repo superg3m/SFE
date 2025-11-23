@@ -330,7 +330,7 @@ public:
     typedef std::map<KeyType, int> IntPropertyMap;
     typedef std::map<KeyType, ai_real> FloatPropertyMap;
     typedef std::map<KeyType, std::string> StringPropertyMap;
-    typedef std::map<KeyType, aiMatrix4x4> MatrixPropertyMap;
+    typedef std::map<KeyType, aiMat4x4> MatrixPropertyMap;
     typedef std::map<KeyType, std::function<void *(void *)>> CallbackPropertyMap;
 
 public:
@@ -389,7 +389,7 @@ public:
     /** Set a matrix configuration property.
      * @see SetPropertyInteger()
      */
-    bool SetPropertyMatrix(const char *szName, const aiMatrix4x4 &sValue);
+    bool SetPropertyMatrix(const char *szName, const aiMat4x4 &sValue);
 
     bool SetPropertyCallback(const char *szName, const std::function<void *(void *)> &f);
 
@@ -442,8 +442,8 @@ public:
      *  The return value remains valid until the property is modified.
      * @see GetPropertyInteger()
      */
-    const aiMatrix4x4 GetPropertyMatrix(const char *szName,
-            const aiMatrix4x4 &sErrorReturn = aiMatrix4x4()) const;
+    const aiMat4x4 GetPropertyMatrix(const char *szName,
+            const aiMat4x4 &sErrorReturn = aiMat4x4()) const;
 
     std::function<void *(void *)> GetPropertyCallback(const char* szName) const;
 

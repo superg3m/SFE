@@ -15,7 +15,7 @@ namespace Math {
         Quaternion inverse();
         Quaternion normalize();
         Quaternion scale(float scale);
-        Matrix4 getMatrix4();
+        Mat4 getMat4();
         void getAngleAxis(float &theta, Vector3 &vec);
 
         static Quaternion Identity();
@@ -24,8 +24,8 @@ namespace Math {
         static Quaternion FromEuler(Vector3 euler_angles_degrees);
         static Quaternion FromAngleAxis(float w, Vector3 axis);
         static Quaternion FromRotationMatrix(const float m[16]);
-        static Quaternion FromRotationMatrix(Matrix4 mat);
-        static Quaternion Slerp(Quaternion q, Quaternion r, float t);
+        static Quaternion FromRotationMatrix(Mat4 mat);
+        static Quaternion SLerp(Quaternion q, Quaternion r, float t);
         static float Dot(Quaternion a, Quaternion b);
 
         Quaternion operator+(const Quaternion &right);

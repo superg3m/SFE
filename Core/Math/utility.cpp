@@ -2,7 +2,7 @@
 #include <Math/utility.hpp>
 
 namespace Math {
-    float lerp(float a, float b, float t) {
+    float Lerp(float a, float b, float t) {
         return a + ((b - a) * t);
     }
 

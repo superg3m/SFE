@@ -245,7 +245,7 @@ public:
     /** Set a matrix configuration property.
      * @see SetPropertyInteger()
      */
-    bool SetPropertyMatrix(const char *szName, const aiMatrix4x4 &sValue);
+    bool SetPropertyMatrix(const char *szName, const aiMat4x4 &sValue);
 
     // -------------------------------------------------------------------
     /** Set a pointer configuration property.
@@ -302,8 +302,8 @@ public:
      *  The return value remains valid until the property is modified.
      * @see GetPropertyInteger()
      */
-    aiMatrix4x4 GetPropertyMatrix(const char *szName,
-            const aiMatrix4x4 &sErrorReturn = aiMatrix4x4()) const;
+    aiMat4x4 GetPropertyMatrix(const char *szName,
+            const aiMat4x4 &sErrorReturn = aiMat4x4()) const;
 
     // -------------------------------------------------------------------
     /** Get a pointer configuration property

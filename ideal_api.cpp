@@ -7,8 +7,8 @@ static ShaderModel model_shader;
 static Graphics::Geometry pole;
 static Graphics::Geometry hexplane;
 static Graphics::Geometry animals[4];
-Math::Matrix4 translate_mats[4];
-Math::Matrix4 animals_rot[4];
+Math::Mat4 translate_mats[4];
+Math::Mat4 animals_rot[4];
 
 float saved_rot = 0.0f;
 float saved_translation = 0.0f;
@@ -38,30 +38,30 @@ void display() {
         saved_rot = fmod(glfwGetTime() * 45.0f, 360);
     }
 
-    Math::Matrix4 rot_mat = Math::Matrix4::Identity(); 
-    Math::Matrix4::Rotate(rot_mat, saved_rot, 0, 1, 0);
+    Math::Mat4 rot_mat = Math::Mat4::Identity(); 
+    Math::Mat4::Rotate(rot_mat, saved_rot, 0, 1, 0);
 
     float fov = camera.zoom;
     float aspect = WIDTH / HEIGHT;
     float near_plane = 0.1f;
     float far_plane = 1000.0f;
-    Math::Matrix4 perspective = Math::Matrix4::Perspective(fov, aspect, near_plane, far_plane);
-    Math::Matrix4 view = camera.getViewMatrix();
+    Math::Mat4 perspective = Math::Mat4::Perspective(fov, aspect, near_plane, far_plane);
+    Math::Mat4 view = camera.getViewMatrix();
 
     model_shader.use();
     model_shader.setProjection(perspective);
     model_shader.setView(view);
     for (int i = 0; i < 4; i++) {
-        Math::Matrix4 model = rot_mat * translate_mats[i];
+        Math::Mat4 model = rot_mat * translate_mats[i];
         model_shader.setModel(model);
         pole.draw();
 
-        Math::Matrix4 translate_mat = translate_mats[i];
+        Math::Mat4 translate_mat = translate_mats[i];
         if (is_translating) {
             float x = translate_mat.v[0].w;
             float y = sin(glfwGetTime() * (1 + i)) - 0.5f;
             float z = translate_mat.v[2].w;
-            Math::Matrix4::Translate(translate_mat, x, y, z);
+            Math::Mat4::Translate(translate_mat, x, y, z);
         }
 
         model = rot_mat * translate_mat * animals_rot[i];
@@ -71,17 +71,17 @@ void display() {
         }
     }
  
-    Math::Matrix4 model = Math::Matrix4::Identity();
-    model = Math::Matrix4::Scale(model, 2);
+    Math::Mat4 model = Math::Mat4::Identity();
+    model = Math::Mat4::Scale(model, 2);
     model = rot_mat * model;
-    model = Math::Matrix4::Translate(model, 0, 2.5f, 0);
+    model = Math::Mat4::Translate(model, 0, 2.5f, 0);
     model_shader.setModel(model);
     hexplane.draw();
 
-    model = Math::Matrix4::Identity();
-    model = Math::Matrix4::Scale(model, 2);
+    model = Math::Mat4::Identity();
+    model = Math::Mat4::Scale(model, 2);
     model = rot_mat * model;
-    model = Math::Matrix4::Translate(model, 0, -2.5f, 0);
+    model = Math::Mat4::Translate(model, 0, -2.5f, 0);
     model_shader.setModel(model);
     hexplane.draw();
     
@@ -91,13 +91,13 @@ void display() {
 
 void init_pole_geometry() {
     DS::Vector<Vertex> vertices = {
-        Vertex(Math::Vector3{-0.05f, +2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{-0.05f, -2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{+0.05f, +2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vec3{-0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{-0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vector3{+0.05f, +2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{-0.05f, -2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{+0.05f, -2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{-0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
     };
     DS::Vector<unsigned int> indices = DS::Vector<unsigned int>();
 
@@ -107,29 +107,29 @@ void init_pole_geometry() {
 
 void init_hexplane_geometry() {
     DS::Vector<Vertex> vertices = {
-        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{-0.5f, +0.0f, +1.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{+0.5f, +0.0f, +1.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{-0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{+0.5f, +0.0f, +1.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{+1.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{+1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{+1.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{+0.5f, +0.0f, -1.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{+1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{+0.5f, +0.0f, -1.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{-0.5f, +0.0f, -1.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{-0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{-0.5f, +0.0f, -1.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{-1.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{-0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{-1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{-1.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
-        Vertex(Math::Vector3{-0.5f, +0.0f, +1.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{-1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Vertex(Math::Vec3{-0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
     };
     DS::Vector<unsigned int> indices = DS::Vector<unsigned int>();
 
@@ -180,17 +180,17 @@ int main(int argc, char** argv) {
     init_hexplane_geometry();
 
     animals[0] = Graphics::Geometry::Model("./models/merry/cow.ply");
-    animals_rot[0] = Math::Matrix4::Rotate(animals_rot[0], 270, 0, 1, 0);
-    translate_mats[0] = Math::Matrix4::Translate(translate_mats[0], -2, 0, 0);
+    animals_rot[0] = Math::Mat4::Rotate(animals_rot[0], 270, 0, 1, 0);
+    translate_mats[0] = Math::Mat4::Translate(translate_mats[0], -2, 0, 0);
 
     animals[1] = Graphics::Geometry::Model("./models/merry/hippo.ply");
-    animals_rot[1] = Math::Matrix4::Rotate(animals_rot[1], 90, 0, 1, 0);
-    translate_mats[1] = Math::Matrix4::Translate(translate_mats[1], 2, 0, 0);
+    animals_rot[1] = Math::Mat4::Rotate(animals_rot[1], 90, 0, 1, 0);
+    translate_mats[1] = Math::Mat4::Translate(translate_mats[1], 2, 0, 0);
 
     animals[2] = Graphics::Geometry::Model("./models/merry/lion.ply");
-    animals_rot[2] = Math::Matrix4::Rotate(animals_rot[2], 0, 0, 1, 0);
-    translate_mats[2] = Math::Matrix4::Translate(translate_mats[2], 0, 0, 2);
-    translate_mats[3] = Math::Matrix4::Translate(translate_mats[3], 0, 0, -2);
+    animals_rot[2] = Math::Mat4::Rotate(animals_rot[2], 0, 0, 1, 0);
+    translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
+    translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
     camera = Camera(0, 0, 10);
 	while(!glfwWindowShouldClose(window)) {
@@ -200,3 +200,36 @@ int main(int argc, char** argv) {
 
 	exit(EXIT_SUCCESS);
 }
+
+
+/*
+void draw_circle() {
+    Math::Vec3 CENTER = Math::Vec3(0);
+    const float RADIUS = 1.0f;
+    const int SEGMENT_COUNT = 360;
+    const float DELTA_THETA = 1 / SEGMENT_COUNT;
+
+    for (int i = 0; i < SEGMENT_COUNT; i++) { 
+        Math::Vec3 square_point = getSquarePoint(CENTER, DELTA_THETA * i, RADIUS);
+        Math::Vec3 circle_point = getCirclePoint(CENTER, DELTA_THETA * i, RADIUS);
+
+        // derive the quad segmenet from center
+        Math::Vec3 p0;
+        Math::Vec3 p1;
+        Math::Vec3 p2;
+        Math::Vec3 p3;
+
+
+
+        Math::Vec3 quad_normal = Math::Vec3::Cross(p1 - p0, p2 - p0);
+
+        // Math::Vec3 closest = Math::Vec3::Closest(square_point, circle_point);
+
+        Math::Vec2 normalized_camera_front = Math::Vec2(camera.front.x, camera.front.z).normalize();
+        Math::Vec2 normalized_segment_normal = Math::Vec2(normal.x, normal.z).normalize();
+        float camera_normal_dot = Math::Vec2::Dot(normalized_camera_front, normalized_segment_normal);
+        bool front_facing = (camera_normal_dot >= -1.0f) && (camera_normal_dot <= -0.8f);
+        // draw_slice(p0, )
+    }
+}
+*/

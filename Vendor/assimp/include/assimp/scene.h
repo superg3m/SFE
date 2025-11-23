@@ -105,7 +105,7 @@ struct ASSIMP_API aiNode {
     C_STRUCT aiString mName;
 
     /** The transformation relative to the node's parent. */
-    C_STRUCT aiMatrix4x4 mTransformation;
+    C_STRUCT aiMat4x4 mTransformation;
 
     /** Parent node. nullptr if this node is the root node. */
     C_STRUCT aiNode* mParent;

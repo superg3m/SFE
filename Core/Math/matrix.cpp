@@ -5,18 +5,18 @@
 #include <Math/quaternion.hpp>
 
 namespace Math {
-    Matrix4::Matrix4() {
+    Mat4::Mat4() {
         v[0] = Vector4(0, 0, 0, 0);
         v[1] = Vector4(0, 0, 0, 0);
         v[2] = Vector4(0, 0, 0, 0);
         v[3] = Vector4(0, 0, 0, 0);
     }
 
-    Matrix4::Matrix4(Vector4 r0, Vector4 r1, Vector4 r2, Vector4 r3) {
+    Mat4::Mat4(Vector4 r0, Vector4 r1, Vector4 r2, Vector4 r3) {
         this->v = {r0, r1, r2, r3};
     }
 
-    Matrix4::Matrix4(
+    Mat4::Mat4(
         float m00, float m01, float m02, float m03,
         float m10, float m11, float m12, float m13,
         float m20, float m21, float m22, float m23,
@@ -28,8 +28,8 @@ namespace Math {
         v[3] = Vector4(m30, m31, m32, m33);
     }
 
-    Matrix4 Matrix4::transpose() {
-        Matrix4 ret;
+    Mat4 Mat4::transpose() {
+        Mat4 ret;
 
         ret.v[0].x = this->v[0].x;
         ret.v[0].y = this->v[1].x;
@@ -54,8 +54,8 @@ namespace Math {
         return ret;
     }
 
-    Matrix4 Matrix4::Identity() {
-        Matrix4 ret;
+    Mat4 Mat4::Identity() {
+        Mat4 ret;
         ret.v = {
             Vector4(1, 0, 0, 0),
             Vector4(0, 1, 0, 0),
@@ -66,8 +66,8 @@ namespace Math {
         return ret;
     }
 
-    Matrix4 Matrix4::FromColumnMajor(const float mat[16]) {
-        Matrix4 ret = {
+    Mat4 Mat4::FromColumnMajor(const float mat[16]) {
+        Mat4 ret = {
             Vector4{mat[0], mat[4], mat[8], mat[12]},
             Vector4{mat[1], mat[5], mat[9], mat[13]},
             Vector4{mat[2], mat[6], mat[10], mat[14]},
@@ -77,12 +77,12 @@ namespace Math {
         return ret;
     }
 
-    Matrix4 Matrix4::Scale(Matrix4 mat, float scale) {
-        return Matrix4::Scale(mat, Vector3(scale, scale, scale));
+    Mat4 Mat4::Scale(Mat4 mat, float scale) {
+        return Mat4::Scale(mat, Vector3(scale, scale, scale));
     }
 
-    Matrix4 Matrix4::Scale(Matrix4 mat, Vector3 s) {
-        Matrix4 scale_matrix;
+    Mat4 Mat4::Scale(Mat4 mat, Vector3 s) {
+        Mat4 scale_matrix;
         scale_matrix.v = {
             Vector4(s.x,  0.0f, 0.0f, 0.0f),
             Vector4(0.0f, s.y,  0.0f, 0.0f),
@@ -93,12 +93,12 @@ namespace Math {
         return scale_matrix * mat;
     }
 
-    Matrix4 Matrix4::Scale(Matrix4 mat, float scale_x, float scale_y, float scale_z) {
-        return Matrix4::Scale(mat, Vector3(scale_x, scale_y, scale_z));
+    Mat4 Mat4::Scale(Mat4 mat, float scale_x, float scale_y, float scale_z) {
+        return Mat4::Scale(mat, Vector3(scale_x, scale_y, scale_z));
     }
 
 
-    Matrix4 Matrix4::Rotate(Matrix4 mat, float theta, Vector3 axis) {
+    Mat4 Mat4::Rotate(Mat4 mat, float theta, Vector3 axis) {
         float rad = DEGREES_TO_RAD(theta);
         float c = cosf(rad);
         float s = sinf(rad);
@@ -109,7 +109,7 @@ namespace Math {
         float y = axis.y;
         float z = axis.z;
 
-        Matrix4 rot;
+        Mat4 rot;
         rot.v = {
             Vector4(t * x * x + c,     t * x * y - z * s, t * x * z + y * s, 0.0f),
             Vector4(t * x * y + z * s, t * y * y + c,     t * y * z - x * s, 0.0f),
@@ -120,19 +120,19 @@ namespace Math {
         return rot * mat;
     }
 
-    Matrix4 Matrix4::Rotate(Matrix4 mat, float theta, float rot_x, float rot_y, float rot_z) {
-        return Matrix4::Rotate(mat, theta, Vector3(rot_x, rot_y, rot_z));
+    Mat4 Mat4::Rotate(Mat4 mat, float theta, float rot_x, float rot_y, float rot_z) {
+        return Mat4::Rotate(mat, theta, Vector3(rot_x, rot_y, rot_z));
     }
 
-    Matrix4 Matrix4::Rotate(Matrix4 mat, Quaternion quat) {
+    Mat4 Mat4::Rotate(Mat4 mat, Quaternion quat) {
         float theta;
         Vector3 axis;
         quat.getAngleAxis(theta, axis);
-        return Matrix4::Rotate(mat, theta, axis);
+        return Mat4::Rotate(mat, theta, axis);
     }
 
-    Matrix4 Matrix4::Translate(Matrix4 mat, Vector3 t) {
-        Matrix4 translate_matrix;
+    Mat4 Mat4::Translate(Mat4 mat, Vector3 t) {
+        Mat4 translate_matrix;
         translate_matrix.v = {
             Vector4(1.0f, 0.0f, 0.0f, t.x),
             Vector4(0.0f, 1.0f, 0.0f, t.y),
@@ -143,27 +143,27 @@ namespace Math {
         return translate_matrix * mat;
     }
 
-    Matrix4 Matrix4::Translate(Matrix4 mat, float x, float y, float z) {
-        return Matrix4::Translate(mat, Vector3(x, y, z));
+    Mat4 Mat4::Translate(Mat4 mat, float x, float y, float z) {
+        return Mat4::Translate(mat, Vector3(x, y, z));
     }
 
-    Matrix4 Matrix4::Transform(Vector3 s, float theta, Vector3 axis, Vector3 t) {
-        Matrix4 scale_matrix = Matrix4::Scale(Matrix4::Identity(), s);
-        Matrix4 rotation_matrix = Matrix4::Rotate(Matrix4::Identity(), theta, axis);
-        Matrix4 translation_matrix = Matrix4::Translate(Matrix4::Identity(), t);
+    Mat4 Mat4::Transform(Vector3 s, float theta, Vector3 axis, Vector3 t) {
+        Mat4 scale_matrix = Mat4::Scale(Mat4::Identity(), s);
+        Mat4 rotation_matrix = Mat4::Rotate(Mat4::Identity(), theta, axis);
+        Mat4 translation_matrix = Mat4::Translate(Mat4::Identity(), t);
 
         return translation_matrix * rotation_matrix * scale_matrix;
     }
 
-    Matrix4 Matrix4::InverseTransform(Vector3 s, float theta, Vector3 axis, Vector3 t) {
-        Matrix4 inverse_scale_matrix = Matrix4::Scale(Matrix4::Identity(), s.scale(1 / s.x, 1 / s.y, 1 / s.z));
-        Matrix4 inverse_rotation_matrix = Matrix4::Rotate(Matrix4::Identity(), theta, axis).transpose();
-        Matrix4 inverse_translation_matrix = Matrix4::Translate(Matrix4::Identity(), t.scale(-1));
+    Mat4 Mat4::InverseTransform(Vector3 s, float theta, Vector3 axis, Vector3 t) {
+        Mat4 inverse_scale_matrix = Mat4::Scale(Mat4::Identity(), s.scale(1 / s.x, 1 / s.y, 1 / s.z));
+        Mat4 inverse_rotation_matrix = Mat4::Rotate(Mat4::Identity(), theta, axis).transpose();
+        Mat4 inverse_translation_matrix = Mat4::Translate(Mat4::Identity(), t.scale(-1));
 
         return inverse_scale_matrix * inverse_rotation_matrix * inverse_translation_matrix;
     }
 
-    void Matrix4::Decompose(Matrix4 mat, Vector3* out_position, Quaternion* out_orientation, Vector3* out_scale) {
+    void Mat4::Decompose(Mat4 mat, Vector3* out_position, Quaternion* out_orientation, Vector3* out_scale) {
         Vector3 translation = Vector3(mat.v[0].w, mat.v[1].w, mat.v[2].w);
         Vector3 scale = Vector3(0);
         {
@@ -187,7 +187,7 @@ namespace Math {
             column2 = column2.scale(1.0f / scale.y);
             column3 = column3.scale(1.0f / scale.z);
             
-            Matrix4 rotation_matrix = Matrix4(
+            Mat4 rotation_matrix = Mat4(
                 Vector4{column1.x, column2.x, column3.x, 0},
                 Vector4{column1.y, column2.y, column3.y, 0},
                 Vector4{column1.z, column2.z, column3.z, 0},
@@ -203,9 +203,9 @@ namespace Math {
             // R = I * R * I
             // R = R
             Vector3 inverse_scale = Vector3(1.0f / scale.x, 1.0f / scale.y, 1.0f / scale.z);
-            Matrix4 inverse_scale_matrix = Matrix4::scale(Matrix4::Identity(), inverse_scale);
-            Matrix4 inverse_translation_matrix = Matrix4::Translate(Matrix4::Identity(), translation.scale(-1));
-            Matrix4 rotation_matrix = inverse_translation_matrix * mat * inverse_scale_matrix;
+            Mat4 inverse_scale_matrix = Mat4::scale(Mat4::Identity(), inverse_scale);
+            Mat4 inverse_translation_matrix = Mat4::Translate(Mat4::Identity(), translation.scale(-1));
+            Mat4 rotation_matrix = inverse_translation_matrix * mat * inverse_scale_matrix;
             orientation = Quaternion::fromRotationMatrix(rotation_matrix);
             */
         }
@@ -223,7 +223,7 @@ namespace Math {
         }
     }
 
-    Matrix4 Matrix4::Perspective(float fov_degrees, float aspect, float near_plane, float far_plane) {
+    Mat4 Mat4::Perspective(float fov_degrees, float aspect, float near_plane, float far_plane) {
         float fov_radians = DEGREES_TO_RAD(fov_degrees);
 
         const float t = tanf(fov_radians / 2) * near_plane;
@@ -238,7 +238,7 @@ namespace Math {
         const float C = -((far_plane + near_plane) / (far_plane - near_plane));
         const float D = -((p * far_plane) / (far_plane - near_plane));
 
-        Matrix4 ret;
+        Mat4 ret;
         ret.v = {
             Vector4(A,  0,  0,  0),
             Vector4(0,  B,  0,  0),
@@ -250,7 +250,7 @@ namespace Math {
     }
 
     // Found at: https://en.wikipedia.org/wiki/Orthographic_projection
-    Matrix4 Matrix4::Orthographic(float left, float right, float bottom, float top, float near_plane, float far_plane) {
+    Mat4 Mat4::Orthographic(float left, float right, float bottom, float top, float near_plane, float far_plane) {
         const float A = 2.0f / (right - left);
         const float B = 2.0f / (top - bottom);
         const float C = -2.0f / (far_plane - near_plane);
@@ -258,7 +258,7 @@ namespace Math {
         const float E = -(top + bottom) / (top - bottom);
         const float F = -(far_plane + near_plane) / (far_plane - near_plane);
 
-        Matrix4 ret = {
+        Mat4 ret = {
             A,  0,  0,  D,
             0,  B,  0,  E,
             0,  0,  C,  F,
@@ -269,12 +269,12 @@ namespace Math {
     }
 
     // Found at: https://www.khronos.org/opengl/wiki/GluLookAt_code
-    Matrix4 Matrix4::Lookat(Vector3 position, Vector3 target, Vector3 world_up) {
+    Mat4 Mat4::Lookat(Vector3 position, Vector3 target, Vector3 world_up) {
         Vector3 forward = (position - target).normalize();
-        Vector3 right   = Vector3::cross(world_up, forward).normalize();
-        Vector3 up      = Vector3::cross(forward, right).normalize();
+        Vector3 right   = Vector3::Cross(world_up, forward).normalize();
+        Vector3 up      = Vector3::Cross(forward, right).normalize();
 
-        Matrix4 rotation;
+        Mat4 rotation;
         rotation.v = {
             Vector4(right.x,   right.y,   right.z,   0),
             Vector4(up.x,      up.y,      up.z,      0),
@@ -282,7 +282,7 @@ namespace Math {
             Vector4(0,         0,         0,         1)
         };
         
-        Matrix4 translation = Matrix4::Translate(Matrix4::Identity(), -position.x, -position.y, -position.z);
+        Mat4 translation = Mat4::Translate(Mat4::Identity(), -position.x, -position.y, -position.z);
 
         return rotation * translation;
     }
@@ -293,7 +293,7 @@ namespace Math {
                 c * (d * h - e * g);
     }
 
-    Matrix4 Matrix4::inverse(bool &success) {
+    Mat4 Mat4::inverse(bool &success) {
         success = false;
 
         float m00 = this->v[0].x, m01 = this->v[0].y, m02 = this->v[0].z, m03 = this->v[0].w;
@@ -308,11 +308,11 @@ namespace Math {
 
         float det = m00 * c00 - m01 * c01 + m02 * c02 - m03 * c03;
         if (NEAR_ZERO(det)) {
-            return Matrix4::Identity();
+            return Mat4::Identity();
         }
 
         float invDet = 1.0f / det;
-        Matrix4 inv;
+        Mat4 inv;
 
         // Row 0
         inv.v[0].x = invDet * c00;
@@ -343,8 +343,8 @@ namespace Math {
         return inv;
     }
 
-    Matrix4 Matrix4::operator*(const Matrix4 &right) {
-        Matrix4 C;
+    Mat4 Mat4::operator*(const Mat4 &right) {
+        Mat4 C;
 
         for (int i = 0; i < 4; i++) {
             C.v[i].x += this->v[i].x * right.v[0].x;
@@ -371,7 +371,7 @@ namespace Math {
         return C;
     }
 
-    Vector4 Matrix4::operator*(const Vector4 &right) {
+    Vector4 Mat4::operator*(const Vector4 &right) {
         Vector4 ret;
         ret.x += this->v[0].x * right.x;
         ret.x += this->v[0].y * right.y;
@@ -396,16 +396,16 @@ namespace Math {
         return ret;
     }
 
-    Matrix4& Matrix4::operator*=(const Matrix4 &right) {
+    Mat4& Mat4::operator*=(const Mat4 &right) {
         *this = *this * right;
         return *this;
     }
 
-    bool Matrix4::operator==(const Matrix4 &right) {
+    bool Mat4::operator==(const Mat4 &right) {
         return (this->v[0] == right.v[0]) && (this->v[1] == right.v[1]) && (this->v[2] == right.v[2]) && (this->v[3] == right.v[3]);
     }
 
-    bool Matrix4::operator!=(const Matrix4 &right) {
+    bool Mat4::operator!=(const Mat4 &right) {
         return !(*this == right);
     }
 } 

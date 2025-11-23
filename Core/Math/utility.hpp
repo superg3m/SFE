@@ -3,7 +3,7 @@
 namespace Math {
     typedef struct Vector3 Vector3;
 
-    float lerp(float a, float b, float t);
+    float Lerp(float a, float b, float t);
     float inverseLerp(float a, float b, float value);
     Vector3 barycentric(Vector3 a, Vector3 b, Vector3 c, float u, float v);
     float remap(float x, float s_min, float s_max, float e_min, float e_max);

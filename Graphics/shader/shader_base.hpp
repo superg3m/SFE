@@ -32,20 +32,20 @@ struct ShaderBase {
     void use() const;
 
     // Vertex Uniforms
-    void setModel(Math::Matrix4 &model) const;
-    void setView(Math::Matrix4 &view) const;
-    void setProjection(Math::Matrix4 &projection) const;
+    void setModel(Math::Mat4 &model) const;
+    void setView(Math::Mat4 &view) const;
+    void setProjection(Math::Mat4 &projection) const;
 
     void setBool(const char* name, bool value) const;
     void setInt(const char* name, int value) const;
     void setFloat(const char* name, float value) const;
-    void setVec2(const char* name, const Math::Vector2& value) const;
+    void setVec2(const char* name, const Math::Vec2alue) const;
     void setVec2(const char* name, float x, float y) const;
-    void setVec3(const char* name, const Math::Vector3& value) const;
+    void setVec3(const char* name, const Math::Vec3& value) const;
     void setVec3(const char* name, float x, float y, float z) const;
-    void setVec4(const char* name, const Math::Vector4& value) const;
+    void setVec4(const char* name, const Math::Vec4& value) const;
     void setVec4(const char* name, float x, float y, float z, float w) const;
-    void setMat4(const char* name, const Math::Matrix4& mat) const;
+    void setMat4(const char* name, const Math::Mat4& mat) const;
 protected:
     DS::Vector<const char*> shader_paths;
     DS::Hashmap<const char*, GLenum> uniforms;
@@ -60,11 +60,11 @@ protected:
     void setBool(unsigned int location, bool value) const;
     void setInt(unsigned int location, int value) const;
     void setFloat(unsigned int location, float value) const;
-    void setVec2(unsigned int location, const Math::Vector2& value) const;
+    void setVec2(unsigned int location, const Math::Vec2alue) const;
     void setVec2(unsigned int location, float x, float y) const;
-    void setVec3(unsigned int location, const Math::Vector3& value) const;
+    void setVec3(unsigned int location, const Math::Vec3& value) const;
     void setVec3(unsigned int location, float x, float y, float z) const;
-    void setVec4(unsigned int location, const Math::Vector4& value) const;
+    void setVec4(unsigned int location, const Math::Vec4& value) const;
     void setVec4(unsigned int location, float x, float y, float z, float w) const;
-    void setMat4(unsigned int location, const Math::Matrix4& mat) const;
+    void setMat4(unsigned int location, const Math::Mat4& mat) const;
 };

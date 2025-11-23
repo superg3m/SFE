@@ -18,11 +18,11 @@ const float DEFAULTED_SENSITIVITY =  0.1f;
 const float DEFAULTED_ZOOM        =  45.0f;
 
 struct Camera {
-    Math::Vector3 position;
-    Math::Vector3 front;
-    Math::Vector3 up;
-    Math::Vector3 right;
-    Math::Vector3 world_up;
+    Math::Vec3 position;
+    Math::Vec3 front;
+    Math::Vec3 up;
+    Math::Vec3 right;
+    Math::Vec3 world_up;
 
     // euler Angles
     float yaw;
@@ -35,11 +35,11 @@ struct Camera {
 
     // maybe consider adding like lookat'
     Camera() = default;
-    Camera(Math::Vector3 position);
+    Camera(Math::Vec3 position);
     Camera(float x, float y, float z);
-    Math::Matrix4 getViewMatrix();
-    Math::Matrix4 lookat(Math::Vector3 target_position);
-    Math::Matrix4 lookat(float x, float y, float z);
+    Math::Mat4 getViewMatrix();
+    Math::Mat4 lookat(Math::Vec3 target_position);
+    Math::Mat4 lookat(float x, float y, float z);
     void processKeyboard(CameraDirection direction, float deltaTime);
     void processMouseMovement(float xoffset, float yoffset, bool contrain_pitch = true);
     void processMouseScroll(float yoffset);

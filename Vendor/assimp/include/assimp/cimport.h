@@ -462,7 +462,7 @@ ASSIMP_API void aiSetImportPropertyString(
 ASSIMP_API void aiSetImportPropertyMatrix(
         C_STRUCT aiPropertyStore *store,
         const char *szName,
-        const C_STRUCT aiMatrix4x4 *mat);
+        const C_STRUCT aiMat4x4 *mat);
 
 // --------------------------------------------------------------------------------
 /** Construct a quaternion from a 3x3 rotation matrix.
@@ -482,10 +482,10 @@ ASSIMP_API void aiCreateQuaternionFromMatrix(
  * @param scaling Receives the scaling component
  * @param rotation Receives the rotational component
  * @param position Receives the translational component.
- * @see aiMatrix4x4::Decompose (aiVector3D&, aiQuaternion&, aiVector3D&) const;
+ * @see aiMat4x4::Decompose (aiVector3D&, aiQuaternion&, aiVector3D&) const;
  */
 ASSIMP_API void aiDecomposeMatrix(
-        const C_STRUCT aiMatrix4x4 *mat,
+        const C_STRUCT aiMat4x4 *mat,
         C_STRUCT aiVector3D *scaling,
         C_STRUCT aiQuaternion *rotation,
         C_STRUCT aiVector3D *position);
@@ -494,8 +494,8 @@ ASSIMP_API void aiDecomposeMatrix(
 /** Transpose a 4x4 matrix.
  *  @param mat Pointer to the matrix to be transposed
  */
-ASSIMP_API void aiTransposeMatrix4(
-        C_STRUCT aiMatrix4x4 *mat);
+ASSIMP_API void aiTransposeMat4(
+        C_STRUCT aiMat4x4 *mat);
 
 // --------------------------------------------------------------------------------
 /** Transpose a 3x3 matrix.
@@ -518,18 +518,18 @@ ASSIMP_API void aiTransformVecByMatrix3(
  *  @param vec Vector to be transformed.
  *  @param mat Matrix to transform the vector with.
  */
-ASSIMP_API void aiTransformVecByMatrix4(
+ASSIMP_API void aiTransformVecByMat4(
         C_STRUCT aiVector3D *vec,
-        const C_STRUCT aiMatrix4x4 *mat);
+        const C_STRUCT aiMat4x4 *mat);
 
 // --------------------------------------------------------------------------------
 /** Multiply two 4x4 matrices.
  *  @param dst First factor, receives result.
  *  @param src Matrix to be multiplied with 'dst'.
  */
-ASSIMP_API void aiMultiplyMatrix4(
-        C_STRUCT aiMatrix4x4 *dst,
-        const C_STRUCT aiMatrix4x4 *src);
+ASSIMP_API void aiMultiplyMat4(
+        C_STRUCT aiMat4x4 *dst,
+        const C_STRUCT aiMat4x4 *src);
 
 // --------------------------------------------------------------------------------
 /** Multiply two 3x3 matrices.
@@ -551,8 +551,8 @@ ASSIMP_API void aiIdentityMatrix3(
 /** Get a 4x4 identity matrix.
  *  @param mat Matrix to receive its personal identity
  */
-ASSIMP_API void aiIdentityMatrix4(
-        C_STRUCT aiMatrix4x4 *mat);
+ASSIMP_API void aiIdentityMat4(
+        C_STRUCT aiMat4x4 *mat);
 
 // --------------------------------------------------------------------------------
 /** Returns the number of import file formats available in the current Assimp build.
@@ -850,9 +850,9 @@ ASSIMP_API void aiVector3RotateByQuaternion(
  *  @param dst Receives the output matrix
  *  @param mat The 4x4 matrix to use
  */
-ASSIMP_API void aiMatrix3FromMatrix4(
+ASSIMP_API void aiMatrix3FromMat4(
         C_STRUCT aiMatrix3x3 *dst,
-        const C_STRUCT aiMatrix4x4 *mat);
+        const C_STRUCT aiMat4x4 *mat);
 
 // --------------------------------------------------------------------------------
 /** Construct a 3x3 matrix from a quaternion.
@@ -946,8 +946,8 @@ ASSIMP_API void aiMatrix3FromTo(
  *  @param dst Receives the output matrix
  *  @param mat The 3x3 matrix to use
  */
-ASSIMP_API void aiMatrix4FromMatrix3(
-        C_STRUCT aiMatrix4x4 *dst,
+ASSIMP_API void aiMat4FromMatrix3(
+        C_STRUCT aiMat4x4 *dst,
         const C_STRUCT aiMatrix3x3 *mat);
 
 // --------------------------------------------------------------------------------
@@ -957,8 +957,8 @@ ASSIMP_API void aiMatrix4FromMatrix3(
  *  @param rotation The rotation as a hamilton quaternion
  *  @param position The position for the x,y,z axes
  */
-ASSIMP_API void aiMatrix4FromScalingQuaternionPosition(
-        C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4FromScalingQuaternionPosition(
+        C_STRUCT aiMat4x4 *mat,
         const C_STRUCT aiVector3D *scaling,
         const C_STRUCT aiQuaternion *rotation,
         const C_STRUCT aiVector3D *position);
@@ -968,9 +968,9 @@ ASSIMP_API void aiMatrix4FromScalingQuaternionPosition(
  *  @param dst First addend, receives result.
  *  @param src Matrix to be added to 'dst'.
  */
-ASSIMP_API void aiMatrix4Add(
-        C_STRUCT aiMatrix4x4 *dst,
-        const C_STRUCT aiMatrix4x4 *src);
+ASSIMP_API void aiMat4Add(
+        C_STRUCT aiMat4x4 *dst,
+        const C_STRUCT aiMat4x4 *src);
 
 // --------------------------------------------------------------------------------
 /** Check if 4x4 matrices are equal.
@@ -979,9 +979,9 @@ ASSIMP_API void aiMatrix4Add(
  *  @return 1 if the matrices are equal
  *  @return 0 if the matrices are not equal
  */
-ASSIMP_API int aiMatrix4AreEqual(
-        const C_STRUCT aiMatrix4x4 *a,
-        const C_STRUCT aiMatrix4x4 *b);
+ASSIMP_API int aiMat4AreEqual(
+        const C_STRUCT aiMat4x4 *a,
+        const C_STRUCT aiMat4x4 *b);
 
 // --------------------------------------------------------------------------------
 /** Check if 4x4 matrices are equal.
@@ -991,25 +991,25 @@ ASSIMP_API int aiMatrix4AreEqual(
  *  @return 1 if the matrices are equal
  *  @return 0 if the matrices are not equal
  */
-ASSIMP_API int aiMatrix4AreEqualEpsilon(
-        const C_STRUCT aiMatrix4x4 *a,
-        const C_STRUCT aiMatrix4x4 *b,
+ASSIMP_API int aiMat4AreEqualEpsilon(
+        const C_STRUCT aiMat4x4 *a,
+        const C_STRUCT aiMat4x4 *b,
         const float epsilon);
 
 // --------------------------------------------------------------------------------
 /** Invert a 4x4 matrix.
  *  @param result Matrix to invert
  */
-ASSIMP_API void aiMatrix4Inverse(
-        C_STRUCT aiMatrix4x4 *mat);
+ASSIMP_API void aiMat4Inverse(
+        C_STRUCT aiMat4x4 *mat);
 
 // --------------------------------------------------------------------------------
 /** Get the determinant of a 4x4 matrix.
  *  @param mat Matrix to get the determinant from
  *  @return The determinant of the matrix
  */
-ASSIMP_API ai_real aiMatrix4Determinant(
-        const C_STRUCT aiMatrix4x4 *mat);
+ASSIMP_API ai_real aiMat4Determinant(
+        const C_STRUCT aiMat4x4 *mat);
 
 // --------------------------------------------------------------------------------
 /** Returns true of the matrix is the identity matrix.
@@ -1017,8 +1017,8 @@ ASSIMP_API ai_real aiMatrix4Determinant(
  *  @return 1 if \p mat is an identity matrix.
  *  @return 0 if \p mat is not an identity matrix.
  */
-ASSIMP_API int aiMatrix4IsIdentity(
-        const C_STRUCT aiMatrix4x4 *mat);
+ASSIMP_API int aiMat4IsIdentity(
+        const C_STRUCT aiMat4x4 *mat);
 
 // --------------------------------------------------------------------------------
 /** Decompose a transformation matrix into its scaling,
@@ -1029,8 +1029,8 @@ ASSIMP_API int aiMatrix4IsIdentity(
  * @param rotation Receives the output rotation as a Euler angles
  * @param position Receives the output position for the x,y,z axes
  */
-ASSIMP_API void aiMatrix4DecomposeIntoScalingEulerAnglesPosition(
-        const C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4DecomposeIntoScalingEulerAnglesPosition(
+        const C_STRUCT aiMat4x4 *mat,
         C_STRUCT aiVector3D *scaling,
         C_STRUCT aiVector3D *rotation,
         C_STRUCT aiVector3D *position);
@@ -1046,8 +1046,8 @@ ASSIMP_API void aiMatrix4DecomposeIntoScalingEulerAnglesPosition(
  * @param angle Receives the output rotation angle
  * @param position Receives the output position for the x,y,z axes.
  */
-ASSIMP_API void aiMatrix4DecomposeIntoScalingAxisAnglePosition(
-        const C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4DecomposeIntoScalingAxisAnglePosition(
+        const C_STRUCT aiMat4x4 *mat,
         C_STRUCT aiVector3D *scaling,
         C_STRUCT aiVector3D *axis,
         ai_real *angle,
@@ -1061,8 +1061,8 @@ ASSIMP_API void aiMatrix4DecomposeIntoScalingAxisAnglePosition(
  * @param rotation Receives the rotational component
  * @param position Receives the translational component.
  */
-ASSIMP_API void aiMatrix4DecomposeNoScaling(
-        const C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4DecomposeNoScaling(
+        const C_STRUCT aiMat4x4 *mat,
         C_STRUCT aiQuaternion *rotation,
         C_STRUCT aiVector3D *position);
 
@@ -1073,8 +1073,8 @@ ASSIMP_API void aiMatrix4DecomposeNoScaling(
  *  @param y Rotation angle for the y-axis, in radians
  *  @param z Rotation angle for the z-axis, in radians
  */
-ASSIMP_API void aiMatrix4FromEulerAngles(
-        C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4FromEulerAngles(
+        C_STRUCT aiMat4x4 *mat,
         float x, float y, float z);
 
 // --------------------------------------------------------------------------------
@@ -1082,8 +1082,8 @@ ASSIMP_API void aiMatrix4FromEulerAngles(
  *  @param mat Receives the output matrix
  *  @param angle Rotation angle, in radians
  */
-ASSIMP_API void aiMatrix4RotationX(
-        C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4RotationX(
+        C_STRUCT aiMat4x4 *mat,
         const float angle);
 
 // --------------------------------------------------------------------------------
@@ -1091,8 +1091,8 @@ ASSIMP_API void aiMatrix4RotationX(
  *  @param mat Receives the output matrix
  *  @param angle Rotation angle, in radians
  */
-ASSIMP_API void aiMatrix4RotationY(
-        C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4RotationY(
+        C_STRUCT aiMat4x4 *mat,
         const float angle);
 
 // --------------------------------------------------------------------------------
@@ -1100,8 +1100,8 @@ ASSIMP_API void aiMatrix4RotationY(
  *  @param mat Receives the output matrix
  *  @param angle Rotation angle, in radians
  */
-ASSIMP_API void aiMatrix4RotationZ(
-        C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4RotationZ(
+        C_STRUCT aiMat4x4 *mat,
         const float angle);
 
 // --------------------------------------------------------------------------------
@@ -1110,8 +1110,8 @@ ASSIMP_API void aiMatrix4RotationZ(
  *  @param axis Rotation axis, should be a normalized vector
  *  @param angle Rotation angle, in radians
  */
-ASSIMP_API void aiMatrix4FromRotationAroundAxis(
-        C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4FromRotationAroundAxis(
+        C_STRUCT aiMat4x4 *mat,
         const C_STRUCT aiVector3D *axis,
         const float angle);
 
@@ -1120,8 +1120,8 @@ ASSIMP_API void aiMatrix4FromRotationAroundAxis(
  *  @param mat Receives the output matrix
  *  @param translation The translation vector
  */
-ASSIMP_API void aiMatrix4Translation(
-        C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4Translation(
+        C_STRUCT aiMat4x4 *mat,
         const C_STRUCT aiVector3D *translation);
 
 // --------------------------------------------------------------------------------
@@ -1129,8 +1129,8 @@ ASSIMP_API void aiMatrix4Translation(
  *  @param mat Receives the output matrix
  *  @param scaling The scaling vector
  */
-ASSIMP_API void aiMatrix4Scaling(
-        C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4Scaling(
+        C_STRUCT aiMat4x4 *mat,
         const C_STRUCT aiVector3D *scaling);
 
 // --------------------------------------------------------------------------------
@@ -1139,8 +1139,8 @@ ASSIMP_API void aiMatrix4Scaling(
  *  @param from Vector to rotate from
  *  @param to Vector to rotate to
  */
-ASSIMP_API void aiMatrix4FromTo(
-        C_STRUCT aiMatrix4x4 *mat,
+ASSIMP_API void aiMat4FromTo(
+        C_STRUCT aiMat4x4 *mat,
         const C_STRUCT aiVector3D *from,
         const C_STRUCT aiVector3D *to);
 

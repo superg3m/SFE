@@ -305,7 +305,7 @@ struct aiBone {
      * It is sometimes called an inverse-bind matrix,
      * or inverse bind pose matrix.
      */
-    C_STRUCT aiMatrix4x4 mOffsetMatrix;
+    C_STRUCT aiMat4x4 mOffsetMatrix;
 
 #ifdef __cplusplus
 
@@ -1080,10 +1080,10 @@ struct aiSkeletonBone {
      * It is sometimes called an inverse-bind matrix,
      * or inverse bind pose matrix.
      */
-    C_STRUCT aiMatrix4x4 mOffsetMatrix;
+    C_STRUCT aiMat4x4 mOffsetMatrix;
 
     /// Matrix that transforms the locale bone in bind pose.
-    C_STRUCT aiMatrix4x4 mLocalMatrix;
+    C_STRUCT aiMat4x4 mLocalMatrix;
 
 #ifdef __cplusplus
     ///	@brief The class constructor.
