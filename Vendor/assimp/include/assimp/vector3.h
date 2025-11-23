@@ -60,7 +60,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 
 template<typename TReal> class aiMatrix3x3t;
-template<typename TReal> class aiMat4x4t;
+template<typename TReal> class aiMatrix4x4t;
 
 // ---------------------------------------------------------------------------
 /// @brief  Represents a three-dimensional vector.
@@ -100,7 +100,7 @@ public:
 
     /// @brief  Transform vector by matrix
     aiVector3t& operator *= (const aiMatrix3x3t<TReal>& mat);
-    aiVector3t& operator *= (const aiMat4x4t<TReal>& mat);
+    aiVector3t& operator *= (const aiMatrix4x4t<TReal>& mat);
 
     /// @brief  access a single element, const.
     TReal operator[](unsigned int i) const;

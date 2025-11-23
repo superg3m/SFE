@@ -56,7 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Forward declarations
 template <typename TReal> class aiVector3t;
 template <typename TReal> class aiMatrix3x3t;
-template <typename TReal> class aiMat4x4t;
+template <typename TReal> class aiMatrix4x4t;
 
 // ---------------------------------------------------------------------------
 /**
@@ -90,7 +90,7 @@ public:
     bool operator!= (const aiQuaterniont& o) const;
 
     // transform vector by matrix
-    aiQuaterniont& operator *= (const aiMat4x4t<TReal>& mat);
+    aiQuaterniont& operator *= (const aiMatrix4x4t<TReal>& mat);
 
     bool Equal(const aiQuaterniont &o, TReal epsilon = ai_epsilon) const;
 

@@ -52,7 +52,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef __cplusplus
 #include <assimp/matrix3x3.h>
-#include <assimp/Mat4x4.h>
+#include <assimp/matrix4x4.h>
 
 #include <algorithm>
 #include <cmath>
@@ -62,7 +62,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Construction from a 4x4 matrix. The remaining parts of the matrix are ignored.
 template <typename TReal>
 AI_FORCE_INLINE
-aiMatrix3x3t<TReal>::aiMatrix3x3t( const aiMat4x4t<TReal>& pMatrix) {
+aiMatrix3x3t<TReal>::aiMatrix3x3t( const aiMatrix4x4t<TReal>& pMatrix) {
     a1 = pMatrix.a1; a2 = pMatrix.a2; a3 = pMatrix.a3;
     b1 = pMatrix.b1; b2 = pMatrix.b2; b3 = pMatrix.b3;
     c1 = pMatrix.c1; c2 = pMatrix.c2; c3 = pMatrix.c3;
