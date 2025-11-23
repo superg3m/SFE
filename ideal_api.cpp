@@ -95,137 +95,54 @@ void display() {
     glUseProgram(0);
 }
 
-/*
-void init_pole_geometry(kuhl_geometry *geo, GLuint program){
-    #define SG_VERTS_COUNT 6
-    #define SG_POS_COUNT 3
-    #define SG_NORM_COUNT 3
 
-    kuhl_geometry_new(
-        geo, program, SG_VERTS_COUNT, 
-	    GL_TRIANGLES
-    );
+void init_pole_geometry() {
+    DS::Vector<Vertex> vertices = {
+        Vertex(Math::Vector3{-0.05f, +2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{-0.05f, -2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{+0.05f, +2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
 
-    GLfloat vertexPositions[SG_VERTS_COUNT * SG_POS_COUNT] = {
-        -0.05f, +2.5f, +0.0f,
-        -0.05f, -2.5f, +0.0f,
-        +0.05f, +2.5f, +0.0f,
-
-        +0.05f, +2.5f, +0.0f,
-        -0.05f, -2.5f, +0.0f,
-        +0.05f, -2.5f, +0.0f,
+        Vertex(Math::Vector3{+0.05f, +2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{-0.05f, -2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{+0.05f, -2.5f, +0.0f}, Math::Vector3{1, 1, 1}),
     };
+    DS::Vector<unsigned int> indices = DS::Vector<unsigned int>();
 
-	kuhl_geometry_attrib(
-        geo, vertexPositions,
-	    SG_POS_COUNT,
-	    "in_Position",
-	    KG_WARN
-    );
-
-    GLfloat normVert[SG_VERTS_COUNT * SG_NORM_COUNT] = {
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1,
-
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1
-    };
-
-	kuhl_geometry_attrib(
-        geo, normVert,
-	    SG_NORM_COUNT,
-	    "in_Normal",
-	    KG_WARN
-    );
-
-    #undef SG_VERTS_COUNT
-    #undef SG_POS_COUNT
-    #undef SG_NORM_COUNT
+    VertexAttributeFlag flags = VertexAttributeFlag::aPosition | VertexAttributeFlag::aNormal;
+    pole = Graphics::Geometry(flags, vertices, indices);
 }
 
-void init_hexplane_geometry(kuhl_geometry *geo, GLuint program){
-    #define SG_VERTS_COUNT 18
-    #define SG_POS_COUNT 3
-    #define SG_NORM_COUNT 3
+void init_hexplane_geometry() {
+    DS::Vector<Vertex> vertices = {
+        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{-0.5f, +0.0f, +1.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{+0.5f, +0.0f, +1.0f}, Math::Vector3{1, 1, 1}),
 
-    kuhl_geometry_new(
-        geo, program, SG_VERTS_COUNT, 
-	    GL_TRIANGLES
-    );
+        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{+0.5f, +0.0f, +1.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{+1.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
 
-    GLfloat vertexPositions[SG_VERTS_COUNT * SG_POS_COUNT] = {
-        +0.0f, +0.0f, +0.0f,
-        -0.5f, +0.0f, +1.0f,
-        +0.5f, +0.0f, +1.0f,
+        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{+1.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{+0.5f, +0.0f, -1.0f}, Math::Vector3{1, 1, 1}),
 
-        +0.0f, +0.0f, +0.0f,
-        +0.5f, +0.0f, +1.0f,
-        +1.0f, +0.0f, +0.0f,
+        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{+0.5f, +0.0f, -1.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{-0.5f, +0.0f, -1.0f}, Math::Vector3{1, 1, 1}),
 
-        +0.0f, +0.0f, +0.0f,
-        +1.0f, +0.0f, +0.0f,
-        +0.5f, +0.0f, -1.0f,
+        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{-0.5f, +0.0f, -1.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{-1.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
 
-        +0.0f, +0.0f, +0.0f,
-        +0.5f, +0.0f, -1.0f,
-        -0.5f, +0.0f, -1.0f,
-
-        +0.0f, +0.0f, +0.0f,
-        -0.5f, +0.0f, -1.0f,
-        -1.0f, +0.0f, +0.0f,
-
-        +0.0f, +0.0f, +0.0f,
-        -1.0f, +0.0f, +0.0f,
-        -0.5f, +0.0f, +1.0f,
+        Vertex(Math::Vector3{+0.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{-1.0f, +0.0f, +0.0f}, Math::Vector3{1, 1, 1}),
+        Vertex(Math::Vector3{-0.5f, +0.0f, +1.0f}, Math::Vector3{1, 1, 1}),
     };
+    DS::Vector<unsigned int> indices = DS::Vector<unsigned int>();
 
-	kuhl_geometry_attrib(
-        geo, vertexPositions,
-	    SG_POS_COUNT,
-	    "in_Position",
-	    KG_WARN
-    );
-
-    GLfloat normVert[SG_VERTS_COUNT * SG_NORM_COUNT] = {
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1,
-        
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1,
-
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1,
-
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1,
-
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1,
-
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1,
-    };
-
-	kuhl_geometry_attrib(
-        geo, normVert,
-	    SG_NORM_COUNT,
-	    "in_Normal",
-	    KG_WARN
-    );
-
-    #undef SG_VERTS_COUNT
-    #undef SG_POS_COUNT
-    #undef SG_NORM_COUNT
+    VertexAttributeFlag flags = VertexAttributeFlag::aPosition | VertexAttributeFlag::aNormal;
+    hexplane = Graphics::Geometry(flags, vertices, indices);
 }
-*/
 
 int main(int argc, char** argv) {
 	glfwInit();
@@ -266,8 +183,8 @@ int main(int argc, char** argv) {
 
     model_shader = ShaderModel({""});
 
-	// init_pole_geometry(&pole, program);
-    // init_hexplane_geometry(&hexplane, program);
+	init_pole_geometry();
+    init_hexplane_geometry();
 
     animals[0] = Graphics::Geometry::Model("./models/merry/cow.ply");
     animals_rot[0] = Math::Matrix4::Rotate(animals_rot[0], 270, 0, 1, 0);

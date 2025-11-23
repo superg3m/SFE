@@ -72,6 +72,11 @@ namespace Graphics {
         this->next = nullptr;
     }
 
+    Geometry::Geometry(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type) {
+        this->draw_type = draw_type;
+        this->setup(flags, vertices, indices);
+    }
+
     Geometry Geometry::Quad() {
         DS::Vector<Vertex> quad_vertices = {
             //         Position                        Normal                    UV
@@ -299,11 +304,6 @@ namespace Graphics {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-    }
-
-    Geometry::Geometry(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type) {
-        this->draw_type = draw_type;
-        this->setup(flags, vertices, indices);
     }
 
     // This has to be different...
