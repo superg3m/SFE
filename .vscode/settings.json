@@ -55,6 +55,8 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "algorithm": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "iterator": "cpp",
+        "memory_resource": "cpp"
     }
 }

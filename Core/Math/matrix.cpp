@@ -6,7 +6,10 @@
 
 namespace Math {
     Mat4::Mat4() {
-        *this = Mat4::Identity();
+        this->v[0] = Vec4(1, 0, 0, 0);
+        this->v[1] = Vec4(0, 1, 0, 0);
+        this->v[2] = Vec4(0, 0, 1, 0);
+        this->v[3] = Vec4(0, 0, 0, 1);
     }
 
     Mat4::Mat4(Vec4 r0, Vec4 r1, Vec4 r2, Vec4 r3) {
@@ -19,10 +22,10 @@ namespace Math {
         float m20, float m21, float m22, float m23,
         float m30, float m31, float m32, float m33
     ) {
-        v[0] = Vec4(m00, m01, m02, m03);
-        v[1] = Vec4(m10, m11, m12, m13);
-        v[2] = Vec4(m20, m21, m22, m23);
-        v[3] = Vec4(m30, m31, m32, m33);
+        this->v[0] = Vec4(m00, m01, m02, m03);
+        this->v[1] = Vec4(m10, m11, m12, m13);
+        this->v[2] = Vec4(m20, m21, m22, m23);
+        this->v[3] = Vec4(m30, m31, m32, m33);
     }
 
     Mat4 Mat4::transpose() {
@@ -341,7 +344,7 @@ namespace Math {
     }
 
     Mat4 Mat4::operator*(const Mat4 &right) {
-        Mat4 C;
+        Mat4 C = Mat4(Vec4(0), Vec4(0), Vec4(0), Vec4(0));
 
         for (int i = 0; i < 4; i++) {
             C.v[i].x += this->v[i].x * right.v[0].x;

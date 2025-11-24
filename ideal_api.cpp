@@ -46,7 +46,7 @@ void display() {
     }
 
     Math::Mat4 rot_mat = Math::Mat4::Identity(); 
-    Math::Mat4::Rotate(rot_mat, saved_rot, 0, 1, 0);
+    rot_mat = Math::Mat4::Rotate(rot_mat, saved_rot, 0, 1, 0);
 
     float fov = camera.zoom;
     float aspect = WIDTH / HEIGHT;
@@ -60,11 +60,7 @@ void display() {
     uniform_color_shader.setView(view);
     for (int i = 0; i < 4; i++) {
         Math::Mat4 model = Math::Mat4::Identity();
-        // model = rot_mat * model;
-        model = translate_mats[i];
-        uniform_color_shader.setModel(model);
-
-        // Math::Mat4 model = rot_mat * translate_mats[i];
+        model = rot_mat * translate_mats[i] * rot_mat;
         uniform_color_shader.setModel(model);
         pole.draw();
 
@@ -213,7 +209,7 @@ int main(int argc, char** argv) {
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
-    camera = Camera(0.1f, 0, 10);
+    camera = Camera(1.0f, 0, 10);
 	while(!glfwWindowShouldClose(window)) {
 		display();
 
