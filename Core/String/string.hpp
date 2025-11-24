@@ -23,8 +23,8 @@ namespace String {
     bool endsWith(const char* str, u64 str_length, const char* ends_with, u64 ends_with_length);
 
     void copy(char* s1, byte_t s1_capacity, const char* s2, u64 s2_length);
-    void append(char* str, u64 str_length, byte_t str_capacity, const char* to_append, u64 to_append_length);
-    void append(char* str, u64 str_length, byte_t str_capacity, char to_append);
-    void insert(char* str, u64 str_length, byte_t str_capacity, const char* to_insert, u64 to_insert_length, u64 index);
-    void insert(char* str, u64 str_length, byte_t str_capacity, char to_insert, u64 index);
+    void append(char* str, u64 &str_length_out, byte_t str_capacity, const char* to_append, u64 to_append_length);
+    void append(char* str, u64 &str_length_out, byte_t str_capacity, char to_append);
+    void insert(char* str, u64 &str_length_out, byte_t str_capacity, const char* to_insert, u64 to_insert_length, u64 index);
+    void insert(char* str, u64 &str_length_out, byte_t str_capacity, char to_insert, u64 index);
 }

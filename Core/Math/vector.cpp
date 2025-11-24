@@ -447,4 +447,147 @@ namespace Math {
     bool Vec4::operator!=(const Vec4 &right) {
         return !(*this == right);
     }
+
+
+    IVec4::IVec4() {
+        this->x = 0.0f;
+        this->y = 0.0f;
+        this->z = 0.0f;
+        this->w = 0.0f;
+    }
+
+    IVec4::IVec4(int fill) {
+        this->x = fill;
+        this->y = fill;
+        this->z = fill;
+        this->w = fill;
+    }
+
+    IVec4::IVec4(int x, int y, int z, int w) {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->w = w;
+    }
+
+    float IVec4::magnitude() {
+        return sqrtf(SQUARED(this->x) + SQUARED(this->y) + SQUARED(this->z) + SQUARED(this->w));
+    }
+
+    float IVec4::magnitudeSquared() {
+        return SQUARED(this->x) + SQUARED(this->y) + SQUARED(this->z) + SQUARED(this->w);
+    }
+
+    IVec4 IVec4::normalize() {
+        IVec4 ret(0, 0, 0, 0);
+        const float magnitude = this->magnitude();
+        if (magnitude == 0) {
+            return IVec4(0, 0, 0, 0);
+        }
+
+        ret.x = this->x / magnitude;
+        ret.y = this->y / magnitude;
+        ret.z = this->z / magnitude;
+        ret.w = this->w / magnitude;
+
+        return ret;
+    }
+
+    IVec4 IVec4::scale(int scale) const {
+        return IVec4(this->x * scale, this->y * scale, this->z * scale, this->w * scale);
+    }
+
+    IVec4 IVec4::scale(IVec4 s) const {
+        return IVec4(this->x * s.x, this->y * s.y, this->z * s.z, this->w * s.w);
+    }
+
+    IVec4 IVec4::scale(int scale_x, int scale_y, int scale_z, int scale_w) const {
+        return IVec4(this->x * scale_x, this->y * scale_y, this->z * scale_z, this->w * scale_w);
+    }
+
+    float IVec4::Distance(IVec4 a, IVec4 b) {
+        return sqrtf(SQUARED(b.x - a.x) + SQUARED(b.y - a.y) + SQUARED(b.z - a.z) + SQUARED(b.w - a.w));
+    }
+
+    float IVec4::DistanceSquared(IVec4 a, IVec4 b) {
+        return SQUARED(b.x - a.x) + SQUARED(b.y - a.y) + SQUARED(b.z - a.z) + SQUARED(b.w - a.w);
+    }
+
+    IVec4 IVec4::Closest(IVec4 a, IVec4 b, IVec4 target) {
+        float a_distance = IVec4::DistanceSquared(a, target);
+        float b_distance = IVec4::DistanceSquared(b, target);
+
+        if (a_distance <= b_distance) {
+            return a;
+        }
+
+        return b;
+    }
+
+    float IVec4::Dot(IVec4 a, IVec4 b) {
+        return (a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w);
+    }
+
+    IVec4 IVec4::Lerp(IVec4 a, IVec4 b, float t) {
+        IVec4 ab = (b - a);
+        return a + (ab.scale(t));
+    }
+
+
+    IVec4 IVec4::operator+(const IVec4 &right) {
+        return IVec4(this->x + right.x, this->y + right.y, this->z + right.z, this->w + right.w);
+    }
+    IVec4& IVec4::operator+=(const IVec4 &right) {
+        this->x += right.x;
+        this->y += right.y;
+        this->z += right.z;
+        this->w += right.w;
+
+        return *this;
+    }
+
+    IVec4 IVec4::operator-(const IVec4 &right) {
+        return IVec4(this->x - right.x, this->y - right.y, this->z - right.z, this->w - right.w);
+    }
+    IVec4& IVec4::operator-=(const IVec4 &right) {
+        this->x -= right.x;
+        this->y -= right.y;
+        this->z -= right.z;
+        this->w -= right.w;
+
+        return *this;
+    }
+
+
+    IVec4 IVec4::operator*(const IVec4 &right) {
+        return IVec4(this->x * right.x, this->y * right.y, this->z * right.z, this->w * right.w);
+    }
+    IVec4& IVec4::operator*=(const IVec4 &right) {
+        this->x *= right.x;
+        this->y *= right.y;
+        this->z *= right.z;
+        this->w *= right.w;
+
+        return *this;
+    }
+
+
+    IVec4 IVec4::operator/(const IVec4 &right) {
+        return IVec4(this->x / right.x, this->y / right.y, this->z / right.z, this->w / right.w);
+    }
+    IVec4& IVec4::operator/=(const IVec4 &right) {
+        this->x /= right.x;
+        this->y /= right.y;
+        this->z /= right.z;
+        this->w /= right.w;
+
+        return *this;
+    }
+
+    bool IVec4::operator==(const IVec4 &right) {
+        return NEAR_ZERO(this->x - right.x) && NEAR_ZERO(this->y - right.y) && NEAR_ZERO(this->z - right.z) && NEAR_ZERO(this->w - right.w);
+    }
+    bool IVec4::operator!=(const IVec4 &right) {
+        return !(*this == right);
+    }
 };

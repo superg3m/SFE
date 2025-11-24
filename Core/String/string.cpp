@@ -184,39 +184,44 @@ namespace String {
         Memory::copy(s1, s1_capacity, s2, s2_length);
     }
 
-    void insert(char* str, u64 str_length, byte_t str_capacity, const char* to_insert, u64 to_insert_length, u64 index) {
+    void insert(char* str, u64 &str_length_out, byte_t str_capacity, const char* to_insert, u64 to_insert_length, u64 index) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(to_insert);
+        RUNTIME_ASSERT(str_length_out);
 
-        u64 new_length = str_length + to_insert_length;
-        RUNTIME_ASSERT_MSG(new_length < str_capacity, "ckg_str_insert: str_capacity is %lld but new valid cstring length is %d + %d + 1(null_term)= %d\n", str_capacity, str_length, to_insert_length, new_length + 1);
+        u64 new_length = str_length_out + to_insert_length;
+        RUNTIME_ASSERT_MSG(new_length < str_capacity, "ckg_str_insert: str_capacity is %lld but new valid cstring capacity is %d + %d + 1(null_term)= %d\n", str_capacity, str_length_out, to_insert_length, new_length + 1);
         
         u8* move_source_ptr = (u8*)(str + index);
         u8* move_dest_ptr = (u8*)(move_source_ptr + to_insert_length);
 
-        Memory::copy(move_dest_ptr, str_capacity - (index + to_insert_length), move_source_ptr, str_length - index);
+        Memory::copy(move_dest_ptr, str_capacity - (index + to_insert_length), move_source_ptr, str_length_out - index);
         u8* copy_dest_ptr = (u8*)(str + index);
         Memory::copy(copy_dest_ptr, str_capacity, to_insert, to_insert_length);
+
+        str_length_out += to_insert_length;
     }
 
-    void insert(char* str, u64 str_length, byte_t str_capacity, char to_insert, u64 index) {
+    void insert(char* str, u64& str_length_out, byte_t str_capacity, char to_insert, u64 index) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(to_insert);
 
         u64 to_insert_length = 1;
-        bool expression = (str_length + to_insert_length) < str_capacity;
-        RUNTIME_ASSERT_MSG(expression, "ckg_str_insert_char: str overflow new_capacity_required: %d >= current_capacity: %lld\n",  str_length + to_insert_length, str_capacity);
+        bool expression = (str_length_out + to_insert_length) < str_capacity;
+        RUNTIME_ASSERT_MSG(expression, "ckg_str_insert_char: str overflow new_capacity_required: %d >= current_capacity: %lld\n", str_length_out + to_insert_length, str_capacity);
 
         char* source_ptr = str + index;
-        Memory::copy(source_ptr + 1, str_capacity - (index + 1), source_ptr, str_length - index);
+        Memory::copy(source_ptr + 1, str_capacity - (index + 1), source_ptr, str_length_out - index);
         str[index] = to_insert;
+
+        str_length_out += 1;
     }
 
-    void append(char* str, u64 str_length, byte_t str_capacity, const char* to_append, u64 to_append_length) {
-        String::insert(str, str_length, str_capacity, to_append, to_append_length, str_length);
+    void append(char* str, u64 &out_str_length, byte_t str_capacity, const char* to_append, u64 to_append_length) {
+        String::insert(str, out_str_length, str_capacity, to_append, to_append_length, out_str_length);
     }
 
-    void append(char* str, byte_t str_length, byte_t str_capacity, char to_append) {
-        String::insert(str, str_length, str_capacity, to_append, str_length);
+    void append(char* str, u64 &out_str_length, byte_t str_capacity, char to_append) {
+        String::insert(str, out_str_length, str_capacity, to_append, out_str_length);
     }
 }

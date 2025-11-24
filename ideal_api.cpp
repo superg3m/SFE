@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-ShaderUniformColor uniform_color_shader;
+ShaderDiffuse diffuse_shader;
 Graphics::Geometry pole;
 Graphics::Geometry hexplane;
 // Graphics::Geometry animals[4];
@@ -55,13 +55,13 @@ void display() {
     Math::Mat4 perspective = Math::Mat4::Perspective(fov, aspect, near_plane, far_plane);
     Math::Mat4 view = camera.getViewMatrix();
 
-    uniform_color_shader.use();
-    uniform_color_shader.setProjection(perspective);
-    uniform_color_shader.setView(view);
+    diffuse_shader.use();
+    diffuse_shader.setProjection(perspective);
+    diffuse_shader.setView(view);
     for (int i = 0; i < 4; i++) {
         Math::Mat4 model = Math::Mat4::Identity();
         model = rot_mat * translate_mats[i] * rot_mat;
-        uniform_color_shader.setModel(model);
+        diffuse_shader.setModel(model);
         pole.draw();
 
         Math::Mat4 translate_mat = translate_mats[i];
@@ -73,7 +73,7 @@ void display() {
         }
 
         model = rot_mat * translate_mat * animals_rot[i];
-        uniform_color_shader.setModel(model);
+        diffuse_shader.setModel(model);
         if (i != 3) {
             //animals[i].draw();
         }
@@ -83,14 +83,14 @@ void display() {
     model = Math::Mat4::Scale(model, 2);
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, 2.5f, 0);
-    uniform_color_shader.setModel(model);
+    diffuse_shader.setModel(model);
     hexplane.draw();
 
     model = Math::Mat4::Identity();
     model = Math::Mat4::Scale(model, 2);
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, -2.5f, 0);
-    uniform_color_shader.setModel(model);
+    diffuse_shader.setModel(model);
     hexplane.draw();
     
     glUseProgram(0);
@@ -186,12 +186,12 @@ int main(int argc, char** argv) {
     Memory::GeneralAllocator allocator = Memory::GeneralAllocator();
     Memory::bindAllocator(&allocator);
 
-    uniform_color_shader = ShaderUniformColor({"../../ShaderSource/Uniform/uniform.vert", "../../ShaderSource/Uniform/uniform.frag"});
+    diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
 
 	init_pole_geometry();
     init_hexplane_geometry();
 
-    // animals[0] = Graphics::Geometry::Model("./models/merry/cow.ply");
+    animals[0] = Graphics::Geometry::Model("./models/merry/cow.ply");
     animals_rot[0] = Math::Mat4::Rotate(animals_rot[0], 270, 0, 1, 0);
     translate_mats[0] = Math::Mat4::Translate(translate_mats[0], -2, 0, 0);
 

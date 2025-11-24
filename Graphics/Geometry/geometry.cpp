@@ -306,6 +306,125 @@ namespace Graphics {
         glBindVertexArray(0);
     }
 
+    void Geometry::loadMeshFromScene(const char *path, u64 path_length, const aiScene* scene) {
+        Geometry* current = this;
+        unsigned int total_vertex_count = 0;
+        unsigned int total_index_count = 0;
+        for (int i = 0; i < scene->mNumMeshes; i++) {
+            total_vertex_count += scene->mMeshes[i]->mNumVertices;
+            total_index_count  += scene->mMeshes[i]->mNumFaces * 3;
+
+            if (i > 0) {
+                current->next = (Geometry*)Memory::alloc(sizeof(Geometry));
+                current->next->root = this;
+                current = current->next;
+            }
+        }
+        this->vertices = DS::Vector<Vertex>(total_vertex_count);
+        this->indices = DS::Vector<GLuint>(total_index_count);
+
+        /*
+        { // materials start
+            DS::Vector<Material> material_cache = DS::Vector<Material>(scene->mNumMaterials);
+            
+            u64 index = String::lastIndexOf(path, path_length, STRING_LIT_ARG("/"));
+            DS::View<char> directory = DS::View<char>(path, index);
+
+            for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
+                const aiMaterial* ai_material = scene->mMaterials[i];
+
+                aiColor4D ambient_color(0.0f, 0.0f, 0.0f, 0.0f);
+                Math::Vec3 white = Math::Vec3(1.0f);
+
+                if (ai_material->Get(AI_MATKEY_COLOR_AMBIENT, ambient_color) == AI_SUCCESS) {
+                    this->materials[i].ambient_color.r = ambient_color.r;
+                    this->materials[i].ambient_color.g = ambient_color.g;
+                    this->materials[i].ambient_color.b = ambient_color.b;
+                } else {
+                    this->materials[i].ambient_color = white;
+                }
+
+                aiColor3D diffuse_color(0.0f, 0.0f, 0.0f);
+
+                if (ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color) == AI_SUCCESS) {
+                    this->materials[i].diffuse_color.r = diffuse_color.r;
+                    this->materials[i].diffuse_color.g = diffuse_color.g;
+                    this->materials[i].diffuse_color.b = diffuse_color.b;
+                }
+
+                aiColor3D specular_color(0.0f, 0.0f, 0.0f);
+
+                if (ai_material->Get(AI_MATKEY_COLOR_SPECULAR, specular_color) == AI_SUCCESS) {
+                    this->materials[i].specular_color.r = specular_color.r;
+                    this->materials[i].specular_color.g = specular_color.g;
+                    this->materials[i].specular_color.b = specular_color.b;
+                }
+
+                float opacity = 1.0f;
+                if (ai_material->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS) {
+                    this->materials[i].opacity = opacity;
+                } else {
+                    LOG_WARN("Mesh Failed opacity matkey?\n");
+                }
+
+                for (int type_int = 0; type_int < TEXTURE_COUNT; type_int++) {
+                    TextureType type = static_cast<TextureType>(type_int);
+
+                    if (textureTypeToAssimpType.count(type) == 0) {
+                        continue;
+                    }
+
+                    aiTextureType ai_type = textureTypeToAssimpType.at(type);
+                    if (ai_material->GetTextureCount(ai_type) <= 0) {
+                        continue;
+                    }
+
+                    aiString str;
+                    if (ai_material->GetTexture(ai_type, 0, &str, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+                        u64 filename_length = 0;
+                        const u64 filename_capacity = directory.length + 1 + str.length + 1;
+                        char filename[filename_capacity];
+                        String::append(filename, filename_length, filename_capacity, directory.data, directory.length);
+                        String::append(filename, filename_length, filename_capacity, '/');
+                        String::append(filename, filename_length, filename_capacity, str.C_Str(), str.length);
+                        filename[filename_capacity - 1] = '\0';
+
+                        const aiTexture* ai_texture = scene->GetEmbeddedTexture(str.C_Str());
+                        if (ai_texture) {
+                            int width, height, nrChannel = 0;
+                            u8* image_data = stbi_load_from_memory((u8*)ai_texture->pcData, ai_texture->mWidth, &width, &height, &nrChannel, 0);
+                            GLTextureID id = TextureLoader::loadTextureFromMemory(image_data, width, height, nrChannel);
+                            if (TextureLoader::textures.count(filename) == 0) {
+                                TextureLoader::registerTexture(filename, id);
+                            }
+
+                            LOG_DEBUG("Material: %d | has embedded Texture of type: %s\n", i, texture_to_string[type]);
+                            this->materials[i].textures[type] = TextureLoader::textures.at(filename);
+                        } else {
+                            LOG_DEBUG("Material: %d | has external texture of type: %s\n", i, texture_to_string[type]);
+                            if (TextureLoader::textures.count(filename) == 0) {
+                                TextureLoader::registerTexture(filename, filename.c_str(), this->texture_flags);
+                            }
+                            this->materials[i].textures[type] = TextureLoader::textures.at(filename);
+                        }
+                    } else {
+                        LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
+                    }
+                }
+            }
+        } // materials end
+        */
+
+        processNode(scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));
+        setup(VertexAttributeFlag::PNTBundle);
+
+        this->vertices.clear();
+        this->vertices.shrink_to_fit();
+
+        this->indices.clear();
+        this->indices.shrink_to_fit();
+    }
+
     // This has to be different...
     /*
     Geometry* Geometry::processAssimpMesh(aiMesh* ai_mesh, const aiScene* scene,Math::Mat4 parent_transform) {
@@ -379,113 +498,7 @@ namespace Graphics {
         }
     }
 
-    void Mesh::loadMeshFromScene(const std::string &path, const aiScene* scene) {
-        { // Precompute Memory
-            this->meshes.reserve(scene->mNumMeshes);
-            this->materials.resize(scene->mNumMaterials);
-
-            unsigned int total_vertex_count = 0;
-            unsigned int total_index_count = 0;
-            for (unsigned int i = 0 ; i < this->meshes.size() ; i++) {
-                total_vertex_count += scene->mMeshes[i]->mNumVertices;
-                total_index_count  += scene->mMeshes[i]->mNumFaces * 3;
-            }
-
-            this->vertices.reserve(total_vertex_count);
-            this->indices.reserve(total_index_count);
-        } // Precompute Memory
-
-        DS::Vector<Material> material_cache[]
-
-        { // materials start
-            std::string directory = path.substr(0, path.find_last_of('/'));
-            for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
-                const aiMaterial* ai_material = scene->mMaterials[i];
-
-                aiColor4D ambient_color(0.0f, 0.0f, 0.0f, 0.0f);
-                Math::Vec3 white = Math::Vec3(1.0f);
-
-                if (ai_material->Get(AI_MATKEY_COLOR_AMBIENT, ambient_color) == AI_SUCCESS) {
-                    this->materials[i].ambient_color.r = ambient_color.r;
-                    this->materials[i].ambient_color.g = ambient_color.g;
-                    this->materials[i].ambient_color.b = ambient_color.b;
-                } else {
-                    this->materials[i].ambient_color = white;
-                }
-
-                aiColor3D diffuse_color(0.0f, 0.0f, 0.0f);
-
-                if (ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color) == AI_SUCCESS) {
-                    this->materials[i].diffuse_color.r = diffuse_color.r;
-                    this->materials[i].diffuse_color.g = diffuse_color.g;
-                    this->materials[i].diffuse_color.b = diffuse_color.b;
-                }
-
-                aiColor3D specular_color(0.0f, 0.0f, 0.0f);
-
-                if (ai_material->Get(AI_MATKEY_COLOR_SPECULAR, specular_color) == AI_SUCCESS) {
-                    this->materials[i].specular_color.r = specular_color.r;
-                    this->materials[i].specular_color.g = specular_color.g;
-                    this->materials[i].specular_color.b = specular_color.b;
-                }
-
-                float opacity = 1.0f;
-                if (ai_material->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS) {
-                    this->materials[i].opacity = opacity;
-                } else {
-                    LOG_WARN("Mesh Failed opacity matkey?\n");
-                }
-
-                for (int type_int = 0; type_int < TEXTURE_COUNT; type_int++) {
-                    TextureType type = static_cast<TextureType>(type_int);
-
-                    if (textureTypeToAssimpType.count(type) == 0) {
-                        continue;
-                    }
-
-                    aiTextureType ai_type = textureTypeToAssimpType.at(type);
-                    if (ai_material->GetTextureCount(ai_type) <= 0) {
-                        continue;
-                    }
-
-                    aiString str;
-                    if (ai_material->GetTexture(ai_type, 0, &str, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-                        std::string filename = directory + '/' + std::string(str.C_Str());
-                        const aiTexture* ai_texture = scene->GetEmbeddedTexture(str.C_Str());
-
-                        if (ai_texture) {
-                            int width, height, nrChannel = 0;
-                            u8* image_data = stbi_load_from_memory((u8*)ai_texture->pcData, ai_texture->mWidth, &width, &height, &nrChannel, 0);
-                            GLTextureID id = TextureLoader::loadTextureFromMemory(image_data, width, height, nrChannel);
-                            if (TextureLoader::textures.count(filename) == 0) {
-                                TextureLoader::registerTexture(filename, id);
-                            }
-
-                            LOG_DEBUG("Material: %d | has embedded Texture of type: %s\n", i, texture_to_string[type]);
-                            this->materials[i].textures[type] = TextureLoader::textures.at(filename);
-                        } else {
-                            LOG_DEBUG("Material: %d | has external texture of type: %s\n", i, texture_to_string[type]);
-                            if (TextureLoader::textures.count(filename) == 0) {
-                                TextureLoader::registerTexture(filename, filename.c_str(), this->texture_flags);
-                            }
-                            this->materials[i].textures[type] = TextureLoader::textures.at(filename);
-                        }
-                    } else {
-                        LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
-                    }
-                }
-            }
-        } // materials end
-
-        processNode(scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));
-        setup(VertexAttributeFlag::PNTBundle);
-
-        this->vertices.clear();
-        this->vertices.shrink_to_fit();
-
-        this->indices.clear();
-        this->indices.shrink_to_fit();
-    }
+    
 
     void Mesh::loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags) {
         this->materials.resize(1);

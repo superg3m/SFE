@@ -21,6 +21,7 @@ namespace Graphics {
 		Material material;
 		Math::AABB aabb;
 		Geometry* next = nullptr;
+		Geometry* root = nullptr;
 
 		Geometry();
 		Geometry(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type = GL_TRIANGLES);
@@ -34,14 +35,14 @@ namespace Graphics {
 		void draw();
 
 		private:
-			DS::Vector<Vertex> vertices;
-			DS::Vector<GLuint> indices;
+			DS::Vector<Vertex> vertices; // only the root will have vertices
+			DS::Vector<GLuint> indices;  // only the root will have indices
 
 			void setup(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indicies);
 
 			// void loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags);
 
-			// void loadMeshFromScene(const std::string &path, const aiScene* scene);
+			void loadMeshFromScene(const char *path, const aiScene* scene);
 			// Geometry* processAssimpMesh(aiMesh* ai_mesh,  const aiScene* scene, Math::Mat4 parent_transform);
 			// void processNode(aiNode* node, const aiScene* scene, Math::Mat4 parent_transform);
 	};

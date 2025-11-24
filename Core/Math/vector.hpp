@@ -172,4 +172,57 @@ namespace Math {
         bool operator==(const Vec4 &right);
         bool operator!=(const Vec4 &right);
     };
+
+    struct IVec4 {
+        union {
+            struct {
+                int x;
+                int y;
+                int z;
+                int w;
+            };
+        };
+
+        IVec4();
+        explicit IVec4(int fill);
+        explicit IVec4(int x, int y, int z, int w);
+
+        float magnitude();
+        float magnitudeSquared();
+        IVec4 normalize();
+        IVec4 scale(int scale) const;
+        IVec4 scale(IVec4 s) const;
+        IVec4 scale(int scale_x, int scale_y, int scale_z, int scale_w) const;
+
+        /**
+         * @brief The return value tells you:
+         * -1: the vectors are 180 degrees from eachother in other words they vectors are pointing in opposite directions
+         *  0: the vectors are perpendicular or orthogonal to eachother
+         *  1: the vectors are going the same direction
+         * 
+         * @param a 
+         * @param b 
+         * @return float 
+         */
+        static float Dot(IVec4 a, IVec4 b);
+        static IVec4 Lerp(IVec4 a, IVec4 b, float t);
+        static float Distance(IVec4 a, IVec4 b);
+        static float DistanceSquared(IVec4 a, IVec4 b);
+        static IVec4 Closest(IVec4 a, IVec4 b, IVec4 target = IVec4(0)); // normally the target is the origin
+
+        IVec4 operator+(const IVec4 &right);
+        IVec4& operator+=(const IVec4 &right);
+
+        IVec4 operator-(const IVec4 &right);
+        IVec4& operator-=(const IVec4 &right);
+
+        IVec4 operator*(const IVec4 &right);
+        IVec4& operator*=(const IVec4 &right);
+
+        IVec4 operator/(const IVec4 &right);
+        IVec4& operator/=(const IVec4 &right);
+
+        bool operator==(const IVec4 &right);
+        bool operator!=(const IVec4 &right);
+    };
 };

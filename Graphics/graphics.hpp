@@ -8,3 +8,4 @@
 #include <Shader/shader_base.hpp>
 #include <Shader/shader_model.hpp>
 #include <Shader/shader_uniform_color.hpp>
+#include <Shader/shader_diffuse.hpp>
