@@ -164,6 +164,17 @@ namespace DS {
             byte_t new_allocation_size = (this->m_capacity * sizeof(T));
             this->m_data = (T*)Memory::realloc(this->m_data, old_allocation_size, new_allocation_size);
         }
+
+        void clear() {
+            this->m_count = 0;
+        }
+
+        void shrink_to_fit() {
+            this->capacity = this->m_count;
+            byte_t shrunken_allocation_size = (this->m_capacity * sizeof(T));
+            
+            this->m_data = (T*)Memory::realloc(this->m_data, shrunken_allocation_size, shrunken_allocation_size);
+        }
     private:
         T* m_data = nullptr;
         u64 m_count = 0;

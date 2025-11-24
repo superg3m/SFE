@@ -8,6 +8,17 @@
 #include <Math/aabb.hpp>
 #include <DataStructure/contiguous.hpp>
 
+static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
+    Math::Mat4 ret;
+
+    ret.v[0].x = ai_matrix.a1; ret.v[1].x = ai_matrix.b1; ret.v[2].x = ai_matrix.c1; ret.v[3].x = ai_matrix.d1; 
+    ret.v[0].y = ai_matrix.a2; ret.v[1].y = ai_matrix.b2; ret.v[2].y = ai_matrix.c2; ret.v[3].y = ai_matrix.d2;
+    ret.v[0].z = ai_matrix.a3; ret.v[1].z = ai_matrix.b3; ret.v[2].z = ai_matrix.c3; ret.v[3].z = ai_matrix.d3;
+    ret.v[0].w = ai_matrix.a4; ret.v[1].w = ai_matrix.b4; ret.v[2].w = ai_matrix.c4; ret.v[3].w = ai_matrix.d4;
+
+    return ret;
+}
+
 static Math::AABB CalculateAABB(const DS::Vector<Vertex>& vertices) {
     float x_min = FLT_MAX;
     float y_min = FLT_MAX;
@@ -416,7 +427,7 @@ namespace Graphics {
         */
 
         processNode(scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));
-        setup(VertexAttributeFlag::PNTBundle);
+        setup(VertexAttributeFlag::PNTBundle, this->vertices, this->indices);
 
         this->vertices.clear();
         this->vertices.shrink_to_fit();
