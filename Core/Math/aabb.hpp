@@ -4,17 +4,17 @@
 
 namespace Math {
     struct AABB {
-        Vector3 min;
-        Vector3 max;
+        Vec3 min;
+        Vec3 max;
 
         AABB();
-        AABB(Vector3 min, Vector3 max);
+        AABB(Vec3 min, Vec3 max);
         AABB(float min_x, float min_y, float min_z, float max_x, float max_y, float max_z);
 
-        Vector3 getCenter();
-        Vector3 getExtents();
+        Vec3 getCenter();
+        Vec3 getExtents();
 
-        static AABB FromCenterExtents(Vector3 center, Vector3 extents);
-        static bool Intersection(AABB aabb, Vector3 p0, Vector3 p1);
+        static AABB FromCenterExtents(Vec3 center, Vec3 extents);
+        static bool Intersection(AABB aabb, Vec3 p0, Vec3 p1);
     };
 }

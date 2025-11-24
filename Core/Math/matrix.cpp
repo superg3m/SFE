@@ -6,13 +6,10 @@
 
 namespace Math {
     Mat4::Mat4() {
-        v[0] = Vector4(0, 0, 0, 0);
-        v[1] = Vector4(0, 0, 0, 0);
-        v[2] = Vector4(0, 0, 0, 0);
-        v[3] = Vector4(0, 0, 0, 0);
+        *this = Mat4::Identity();
     }
 
-    Mat4::Mat4(Vector4 r0, Vector4 r1, Vector4 r2, Vector4 r3) {
+    Mat4::Mat4(Vec4 r0, Vec4 r1, Vec4 r2, Vec4 r3) {
         this->v = {r0, r1, r2, r3};
     }
 
@@ -22,10 +19,10 @@ namespace Math {
         float m20, float m21, float m22, float m23,
         float m30, float m31, float m32, float m33
     ) {
-        v[0] = Vector4(m00, m01, m02, m03);
-        v[1] = Vector4(m10, m11, m12, m13);
-        v[2] = Vector4(m20, m21, m22, m23);
-        v[3] = Vector4(m30, m31, m32, m33);
+        v[0] = Vec4(m00, m01, m02, m03);
+        v[1] = Vec4(m10, m11, m12, m13);
+        v[2] = Vec4(m20, m21, m22, m23);
+        v[3] = Vec4(m30, m31, m32, m33);
     }
 
     Mat4 Mat4::transpose() {
@@ -57,10 +54,10 @@ namespace Math {
     Mat4 Mat4::Identity() {
         Mat4 ret;
         ret.v = {
-            Vector4(1, 0, 0, 0),
-            Vector4(0, 1, 0, 0),
-            Vector4(0, 0, 1, 0),
-            Vector4(0, 0, 0, 1)
+            Vec4(1, 0, 0, 0),
+            Vec4(0, 1, 0, 0),
+            Vec4(0, 0, 1, 0),
+            Vec4(0, 0, 0, 1)
         };
 
         return ret;
@@ -68,37 +65,37 @@ namespace Math {
 
     Mat4 Mat4::FromColumnMajor(const float mat[16]) {
         Mat4 ret = {
-            Vector4{mat[0], mat[4], mat[8], mat[12]},
-            Vector4{mat[1], mat[5], mat[9], mat[13]},
-            Vector4{mat[2], mat[6], mat[10], mat[14]},
-            Vector4{mat[3], mat[7], mat[11], mat[15]},
+            Vec4{mat[0], mat[4], mat[8], mat[12]},
+            Vec4{mat[1], mat[5], mat[9], mat[13]},
+            Vec4{mat[2], mat[6], mat[10], mat[14]},
+            Vec4{mat[3], mat[7], mat[11], mat[15]},
         };
 
         return ret;
     }
 
     Mat4 Mat4::Scale(Mat4 mat, float scale) {
-        return Mat4::Scale(mat, Vector3(scale, scale, scale));
+        return Mat4::Scale(mat, Vec3(scale, scale, scale));
     }
 
-    Mat4 Mat4::Scale(Mat4 mat, Vector3 s) {
+    Mat4 Mat4::Scale(Mat4 mat, Vec3 s) {
         Mat4 scale_matrix;
         scale_matrix.v = {
-            Vector4(s.x,  0.0f, 0.0f, 0.0f),
-            Vector4(0.0f, s.y,  0.0f, 0.0f),
-            Vector4(0.0f, 0.0f, s.z,  0.0f),
-            Vector4(0.0f, 0.0f, 0.0f, 1.0f) 
+            Vec4(s.x,  0.0f, 0.0f, 0.0f),
+            Vec4(0.0f, s.y,  0.0f, 0.0f),
+            Vec4(0.0f, 0.0f, s.z,  0.0f),
+            Vec4(0.0f, 0.0f, 0.0f, 1.0f) 
         };
 
         return scale_matrix * mat;
     }
 
     Mat4 Mat4::Scale(Mat4 mat, float scale_x, float scale_y, float scale_z) {
-        return Mat4::Scale(mat, Vector3(scale_x, scale_y, scale_z));
+        return Mat4::Scale(mat, Vec3(scale_x, scale_y, scale_z));
     }
 
 
-    Mat4 Mat4::Rotate(Mat4 mat, float theta, Vector3 axis) {
+    Mat4 Mat4::Rotate(Mat4 mat, float theta, Vec3 axis) {
         float rad = DEGREES_TO_RAD(theta);
         float c = cosf(rad);
         float s = sinf(rad);
@@ -111,43 +108,43 @@ namespace Math {
 
         Mat4 rot;
         rot.v = {
-            Vector4(t * x * x + c,     t * x * y - z * s, t * x * z + y * s, 0.0f),
-            Vector4(t * x * y + z * s, t * y * y + c,     t * y * z - x * s, 0.0f),
-            Vector4(t * x * z - y * s, t * y * z + x * s, t * z * z + c,     0.0f),
-            Vector4(0.0f,              0.0f,              0.0f,              1.0f)
+            Vec4(t * x * x + c,     t * x * y - z * s, t * x * z + y * s, 0.0f),
+            Vec4(t * x * y + z * s, t * y * y + c,     t * y * z - x * s, 0.0f),
+            Vec4(t * x * z - y * s, t * y * z + x * s, t * z * z + c,     0.0f),
+            Vec4(0.0f,              0.0f,              0.0f,              1.0f)
         };
 
         return rot * mat;
     }
 
     Mat4 Mat4::Rotate(Mat4 mat, float theta, float rot_x, float rot_y, float rot_z) {
-        return Mat4::Rotate(mat, theta, Vector3(rot_x, rot_y, rot_z));
+        return Mat4::Rotate(mat, theta, Vec3(rot_x, rot_y, rot_z));
     }
 
     Mat4 Mat4::Rotate(Mat4 mat, Quaternion quat) {
         float theta;
-        Vector3 axis;
+        Vec3 axis;
         quat.getAngleAxis(theta, axis);
         return Mat4::Rotate(mat, theta, axis);
     }
 
-    Mat4 Mat4::Translate(Mat4 mat, Vector3 t) {
+    Mat4 Mat4::Translate(Mat4 mat, Vec3 t) {
         Mat4 translate_matrix;
         translate_matrix.v = {
-            Vector4(1.0f, 0.0f, 0.0f, t.x),
-            Vector4(0.0f, 1.0f, 0.0f, t.y),
-            Vector4(0.0f, 0.0f, 1.0f, t.z),
-            Vector4(0.0f, 0.0f, 0.0f, 1.0f)
+            Vec4(1.0f, 0.0f, 0.0f, t.x),
+            Vec4(0.0f, 1.0f, 0.0f, t.y),
+            Vec4(0.0f, 0.0f, 1.0f, t.z),
+            Vec4(0.0f, 0.0f, 0.0f, 1.0f)
         };
 
         return translate_matrix * mat;
     }
 
     Mat4 Mat4::Translate(Mat4 mat, float x, float y, float z) {
-        return Mat4::Translate(mat, Vector3(x, y, z));
+        return Mat4::Translate(mat, Vec3(x, y, z));
     }
 
-    Mat4 Mat4::Transform(Vector3 s, float theta, Vector3 axis, Vector3 t) {
+    Mat4 Mat4::Transform(Vec3 s, float theta, Vec3 axis, Vec3 t) {
         Mat4 scale_matrix = Mat4::Scale(Mat4::Identity(), s);
         Mat4 rotation_matrix = Mat4::Rotate(Mat4::Identity(), theta, axis);
         Mat4 translation_matrix = Mat4::Translate(Mat4::Identity(), t);
@@ -155,7 +152,7 @@ namespace Math {
         return translation_matrix * rotation_matrix * scale_matrix;
     }
 
-    Mat4 Mat4::InverseTransform(Vector3 s, float theta, Vector3 axis, Vector3 t) {
+    Mat4 Mat4::InverseTransform(Vec3 s, float theta, Vec3 axis, Vec3 t) {
         Mat4 inverse_scale_matrix = Mat4::Scale(Mat4::Identity(), s.scale(1 / s.x, 1 / s.y, 1 / s.z));
         Mat4 inverse_rotation_matrix = Mat4::Rotate(Mat4::Identity(), theta, axis).transpose();
         Mat4 inverse_translation_matrix = Mat4::Translate(Mat4::Identity(), t.scale(-1));
@@ -163,35 +160,35 @@ namespace Math {
         return inverse_scale_matrix * inverse_rotation_matrix * inverse_translation_matrix;
     }
 
-    void Mat4::Decompose(Mat4 mat, Vector3* out_position, Quaternion* out_orientation, Vector3* out_scale) {
-        Vector3 translation = Vector3(mat.v[0].w, mat.v[1].w, mat.v[2].w);
-        Vector3 scale = Vector3(0);
+    void Mat4::Decompose(Mat4 mat, Vec3* out_position, Quaternion* out_orientation, Vec3* out_scale) {
+        Vec3 translation = Vec3(mat.v[0].w, mat.v[1].w, mat.v[2].w);
+        Vec3 scale = Vec3(0);
         {
-            Vector3 column1 = Vector3(mat.v[0].x, mat.v[1].x, mat.v[2].x);
-            Vector3 column2 = Vector3(mat.v[0].y, mat.v[1].y, mat.v[2].y);
-            Vector3 column3 = Vector3(mat.v[0].z, mat.v[1].z, mat.v[2].z);
+            Vec3 column1 = Vec3(mat.v[0].x, mat.v[1].x, mat.v[2].x);
+            Vec3 column2 = Vec3(mat.v[0].y, mat.v[1].y, mat.v[2].y);
+            Vec3 column3 = Vec3(mat.v[0].z, mat.v[1].z, mat.v[2].z);
         
             float scale_x = column1.magnitude();
             float scale_y = column2.magnitude();
             float scale_z = column3.magnitude();
-            scale = Vector3(scale_x, scale_y, scale_z);
+            scale = Vec3(scale_x, scale_y, scale_z);
         }
 
         Quaternion orientation = Quaternion::Identity();
         {
-            Vector3 column1 = Vector3(mat.v[0].x, mat.v[1].x, mat.v[2].x);
-            Vector3 column2 = Vector3(mat.v[0].y, mat.v[1].y, mat.v[2].y);
-            Vector3 column3 = Vector3(mat.v[0].z, mat.v[1].z, mat.v[2].z);
+            Vec3 column1 = Vec3(mat.v[0].x, mat.v[1].x, mat.v[2].x);
+            Vec3 column2 = Vec3(mat.v[0].y, mat.v[1].y, mat.v[2].y);
+            Vec3 column3 = Vec3(mat.v[0].z, mat.v[1].z, mat.v[2].z);
             
             column1 = column1.scale(1.0f / scale.x);
             column2 = column2.scale(1.0f / scale.y);
             column3 = column3.scale(1.0f / scale.z);
             
             Mat4 rotation_matrix = Mat4(
-                Vector4{column1.x, column2.x, column3.x, 0},
-                Vector4{column1.y, column2.y, column3.y, 0},
-                Vector4{column1.z, column2.z, column3.z, 0},
-                Vector4{0,         0,         0,         0}
+                Vec4{column1.x, column2.x, column3.x, 0},
+                Vec4{column1.y, column2.y, column3.y, 0},
+                Vec4{column1.z, column2.z, column3.z, 0},
+                Vec4{0,         0,         0,         0}
             );
             orientation = Quaternion::FromRotationMatrix(rotation_matrix);
 
@@ -202,7 +199,7 @@ namespace Math {
             // R = T⁻¹ * TR * I
             // R = I * R * I
             // R = R
-            Vector3 inverse_scale = Vector3(1.0f / scale.x, 1.0f / scale.y, 1.0f / scale.z);
+            Vec3 inverse_scale = Vec3(1.0f / scale.x, 1.0f / scale.y, 1.0f / scale.z);
             Mat4 inverse_scale_matrix = Mat4::scale(Mat4::Identity(), inverse_scale);
             Mat4 inverse_translation_matrix = Mat4::Translate(Mat4::Identity(), translation.scale(-1));
             Mat4 rotation_matrix = inverse_translation_matrix * mat * inverse_scale_matrix;
@@ -240,10 +237,10 @@ namespace Math {
 
         Mat4 ret;
         ret.v = {
-            Vector4(A,  0,  0,  0),
-            Vector4(0,  B,  0,  0),
-            Vector4(0,  0,  C,  D),
-            Vector4(0,  0, -1,  0)
+            Vec4(A,  0,  0,  0),
+            Vec4(0,  B,  0,  0),
+            Vec4(0,  0,  C,  D),
+            Vec4(0,  0, -1,  0)
         };
 
         return ret;
@@ -269,17 +266,17 @@ namespace Math {
     }
 
     // Found at: https://www.khronos.org/opengl/wiki/GluLookAt_code
-    Mat4 Mat4::Lookat(Vector3 position, Vector3 target, Vector3 world_up) {
-        Vector3 forward = (position - target).normalize();
-        Vector3 right   = Vector3::Cross(world_up, forward).normalize();
-        Vector3 up      = Vector3::Cross(forward, right).normalize();
+    Mat4 Mat4::Lookat(Vec3 position, Vec3 target, Vec3 world_up) {
+        Vec3 forward = (position - target).normalize();
+        Vec3 right   = Vec3::Cross(world_up, forward).normalize();
+        Vec3 up      = Vec3::Cross(forward, right).normalize();
 
         Mat4 rotation;
         rotation.v = {
-            Vector4(right.x,   right.y,   right.z,   0),
-            Vector4(up.x,      up.y,      up.z,      0),
-            Vector4(forward.x, forward.y, forward.z, 0),
-            Vector4(0,         0,         0,         1)
+            Vec4(right.x,   right.y,   right.z,   0),
+            Vec4(up.x,      up.y,      up.z,      0),
+            Vec4(forward.x, forward.y, forward.z, 0),
+            Vec4(0,         0,         0,         1)
         };
         
         Mat4 translation = Mat4::Translate(Mat4::Identity(), -position.x, -position.y, -position.z);
@@ -371,8 +368,8 @@ namespace Math {
         return C;
     }
 
-    Vector4 Mat4::operator*(const Vector4 &right) {
-        Vector4 ret;
+    Vec4 Mat4::operator*(const Vec4 &right) {
+        Vec4 ret;
         ret.x += this->v[0].x * right.x;
         ret.x += this->v[0].y * right.y;
         ret.x += this->v[0].z * right.z;

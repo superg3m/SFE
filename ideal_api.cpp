@@ -3,10 +3,10 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-static ShaderModel model_shader;
-static Graphics::Geometry pole;
-static Graphics::Geometry hexplane;
-static Graphics::Geometry animals[4];
+ShaderUniformColor uniform_color_shader;
+Graphics::Geometry pole;
+Graphics::Geometry hexplane;
+// Graphics::Geometry animals[4];
 Math::Mat4 translate_mats[4];
 Math::Mat4 animals_rot[4];
 
@@ -24,6 +24,10 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 		return;
     }
 
+    if (key == GLFW_KEY_ESCAPE) {
+        glfwSetWindowShouldClose(window, true);
+    }
+
 	if(key == GLFW_KEY_SPACE) {
 		is_rotating = !is_rotating;
 	}
@@ -34,6 +38,9 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 }
 
 void display() {
+    glClearColor(0.5f, 0.2, 0.2f, 0);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
     if(is_rotating == 1) {
         saved_rot = fmod(glfwGetTime() * 45.0f, 360);
     }
@@ -48,12 +55,17 @@ void display() {
     Math::Mat4 perspective = Math::Mat4::Perspective(fov, aspect, near_plane, far_plane);
     Math::Mat4 view = camera.getViewMatrix();
 
-    model_shader.use();
-    model_shader.setProjection(perspective);
-    model_shader.setView(view);
+    uniform_color_shader.use();
+    uniform_color_shader.setProjection(perspective);
+    uniform_color_shader.setView(view);
     for (int i = 0; i < 4; i++) {
-        Math::Mat4 model = rot_mat * translate_mats[i];
-        model_shader.setModel(model);
+        Math::Mat4 model = Math::Mat4::Identity();
+        // model = rot_mat * model;
+        model = translate_mats[i];
+        uniform_color_shader.setModel(model);
+
+        // Math::Mat4 model = rot_mat * translate_mats[i];
+        uniform_color_shader.setModel(model);
         pole.draw();
 
         Math::Mat4 translate_mat = translate_mats[i];
@@ -65,9 +77,9 @@ void display() {
         }
 
         model = rot_mat * translate_mat * animals_rot[i];
-        model_shader.setModel(model);
+        uniform_color_shader.setModel(model);
         if (i != 3) {
-            animals[i].draw();
+            //animals[i].draw();
         }
     }
  
@@ -75,14 +87,14 @@ void display() {
     model = Math::Mat4::Scale(model, 2);
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, 2.5f, 0);
-    model_shader.setModel(model);
+    uniform_color_shader.setModel(model);
     hexplane.draw();
 
     model = Math::Mat4::Identity();
     model = Math::Mat4::Scale(model, 2);
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, -2.5f, 0);
-    model_shader.setModel(model);
+    uniform_color_shader.setModel(model);
     hexplane.draw();
     
     glUseProgram(0);
@@ -174,35 +186,55 @@ int main(int argc, char** argv) {
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-    model_shader = ShaderModel({""});
+    Memory::GeneralAllocator allocator = Memory::GeneralAllocator();
+    Memory::bindAllocator(&allocator);
+
+    DS::Hashmap<const char*, GLenum> m1 =  DS::Hashmap<const char*, GLenum>(2);
+    m1.put("test", 1);
+    m1.put("test3", 3);
+
+    DS::Hashmap<const char*, GLenum> m2 = m1;
+    // 0x0000000137b72240 | 0x0000000137a14280
+    uniform_color_shader = ShaderUniformColor({"../../ShaderSource/Uniform/uniform.vert", "../../ShaderSource/Uniform/uniform.frag"});
 
 	init_pole_geometry();
     init_hexplane_geometry();
 
-    animals[0] = Graphics::Geometry::Model("./models/merry/cow.ply");
+    // animals[0] = Graphics::Geometry::Model("./models/merry/cow.ply");
     animals_rot[0] = Math::Mat4::Rotate(animals_rot[0], 270, 0, 1, 0);
     translate_mats[0] = Math::Mat4::Translate(translate_mats[0], -2, 0, 0);
 
-    animals[1] = Graphics::Geometry::Model("./models/merry/hippo.ply");
+    // animals[1] = Graphics::Geometry::Model("./models/merry/hippo.ply");
     animals_rot[1] = Math::Mat4::Rotate(animals_rot[1], 90, 0, 1, 0);
     translate_mats[1] = Math::Mat4::Translate(translate_mats[1], 2, 0, 0);
 
-    animals[2] = Graphics::Geometry::Model("./models/merry/lion.ply");
+    // animals[2] = Graphics::Geometry::Model("./models/merry/lion.ply");
     animals_rot[2] = Math::Mat4::Rotate(animals_rot[2], 0, 0, 1, 0);
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
-    camera = Camera(0, 0, 10);
+    camera = Camera(0.1f, 0, 10);
 	while(!glfwWindowShouldClose(window)) {
 		display();
+
 		glfwPollEvents();
+        glfwSwapBuffers(window);
 	}
 
 	exit(EXIT_SUCCESS);
 }
 
-
 /*
+Math::Vec3 getCirclePoint(Math::Vec3 center, float radius, float theta) {
+    float rad = DEGREES_TO_RAD(theta);
+
+    float offset_x = cos(rad) * radius;
+    float offset_z = sin(rad) * radius;
+
+    return Math::Vec3(center.x + offset_x, center.y, center.z + offset_z);
+}
+
+
 void draw_circle() {
     Math::Vec3 CENTER = Math::Vec3(0);
     const float RADIUS = 1.0f;
@@ -212,14 +244,16 @@ void draw_circle() {
     for (int i = 0; i < SEGMENT_COUNT; i++) { 
         Math::Vec3 square_point = getSquarePoint(CENTER, DELTA_THETA * i, RADIUS);
         Math::Vec3 circle_point = getCirclePoint(CENTER, DELTA_THETA * i, RADIUS);
+        uv.x = ((DELTA_THETA * i) / SEGMENT_COUNT); // you can divide by 4 to make it on each the sides
+        uv.y = 0 to 1; // if you are botton triangle you are 0.0f, if you are top triangle you are 1.0f
 
         // derive the quad segmenet from center
-        Math::Vec3 p0;
-        Math::Vec3 p1;
-        Math::Vec3 p2;
-        Math::Vec3 p3;
-
-
+        Math::Vec3 p0; // BL (Bottom Left)
+        Math::Vec3 p1; // TL
+        Math::Vec3 p2; // BR
+        Math::Vec3 p3; // TR
+        Math::Vec3 p4; // TL
+        Math::Vec3 p5; // BR
 
         Math::Vec3 quad_normal = Math::Vec3::Cross(p1 - p0, p2 - p0);
 

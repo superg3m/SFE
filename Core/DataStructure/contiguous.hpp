@@ -9,6 +9,12 @@
 namespace DS {
     template <typename T>
     struct Vector {
+        Vector() {
+            this->m_count = 0;
+            this->m_capacity = 0;
+            this->m_data = nullptr;
+        }
+
         Vector(std::initializer_list<T> list) {
             this->m_count = list.size();
             this->m_capacity = this->m_count * 2;
@@ -17,7 +23,7 @@ namespace DS {
             Memory::copy(this->m_data, this->m_capacity * sizeof(T), list.begin(), list.size() * sizeof(T));
         }
 
-        Vector(u64 capacity = 1) {
+        Vector(u64 capacity) {
             this->m_count = 0;
             this->m_capacity = capacity;
 
@@ -236,6 +242,14 @@ namespace DS {
         }
 
         void grow() {
+            if (this->m_capacity == 0 || this->m_data == nullptr) {
+                // this->m_count = 0;
+                // this->m_capacity = capacity;
+
+                // this->m_data = (T*)Memory::alloc(this->m_capacity * sizeof(T));
+                // return;
+            }
+
             byte_t old_allocation_size = (this->m_capacity * sizeof(T));
             this->m_capacity *= 2;
             byte_t new_allocation_size = (this->m_capacity * sizeof(T));

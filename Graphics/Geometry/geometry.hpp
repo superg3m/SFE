@@ -11,8 +11,8 @@ namespace Graphics {
 		GLuint VAO = 0; 
 		GLuint VBO = 0; 
 		GLuint EBO = 0;
-		GLuint vertex_count;
-		GLuint index_count;
+		GLuint vertex_count = 0;
+		GLuint index_count = 0;
 		GLenum draw_type; // GL_TRIANGLES, GL_LINES, ...
 
 		u32 base_vertex  = 0; // offset to next vertex in the vertex buffer
@@ -20,7 +20,7 @@ namespace Graphics {
 
 		Material material;
 		Math::AABB aabb;
-		Geometry* next;
+		Geometry* next = nullptr;
 
 		Geometry();
 		Geometry(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type = GL_TRIANGLES);

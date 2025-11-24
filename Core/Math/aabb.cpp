@@ -3,11 +3,11 @@
 
 
 namespace Math {
-    AABB AABB::FromCenterExtents(Vector3 center, Vector3 extents) {
+    AABB AABB::FromCenterExtents(Vec3 center, Vec3 extents) {
         return AABB(center - extents, center + extents);
     }
 
-    bool AABB::Intersection(AABB aabb, Vector3 p0, Vector3 p1) {
+    bool AABB::Intersection(AABB aabb, Vec3 p0, Vec3 p1) {
         float tmin = -10000;
         float tmax = 10000;
     
@@ -47,11 +47,11 @@ namespace Math {
     }
 
     AABB::AABB() {
-        this->min = Vector3(0, 0, 0);
-        this->max = Vector3(0, 0, 0);
+        this->min = Vec3(0, 0, 0);
+        this->max = Vec3(0, 0, 0);
     }
 
-    AABB::AABB(Vector3 min, Vector3 max) {
+    AABB::AABB(Vec3 min, Vec3 max) {
         this->min = min;
         this->max = max;
     }
@@ -66,12 +66,12 @@ namespace Math {
         this->max.z = max_z;
     }
 
-    Vector3 AABB::getCenter() {
-        Vector3 extents = this->getExtents();
-        return Vector3(min.x + extents.x, min.y + extents.y, min.z + extents.z);
+    Vec3 AABB::getCenter() {
+        Vec3 extents = this->getExtents();
+        return Vec3(min.x + extents.x, min.y + extents.y, min.z + extents.z);
     }
 
-    Vector3 AABB::getExtents() {
+    Vec3 AABB::getExtents() {
         return (max - min).scale(0.5f);
     }
 }

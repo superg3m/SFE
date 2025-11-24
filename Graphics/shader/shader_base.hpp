@@ -39,7 +39,7 @@ struct ShaderBase {
     void setBool(const char* name, bool value) const;
     void setInt(const char* name, int value) const;
     void setFloat(const char* name, float value) const;
-    void setVec2(const char* name, const Math::Vec2alue) const;
+    void setVec2(const char* name, const Math::Vec2& value) const;
     void setVec2(const char* name, float x, float y) const;
     void setVec3(const char* name, const Math::Vec3& value) const;
     void setVec3(const char* name, float x, float y, float z) const;
@@ -60,7 +60,7 @@ protected:
     void setBool(unsigned int location, bool value) const;
     void setInt(unsigned int location, int value) const;
     void setFloat(unsigned int location, float value) const;
-    void setVec2(unsigned int location, const Math::Vec2alue) const;
+    void setVec2(unsigned int location, const Math::Vec2& value) const;
     void setVec2(unsigned int location, float x, float y) const;
     void setVec3(unsigned int location, const Math::Vec3& value) const;
     void setVec3(unsigned int location, float x, float y, float z) const;

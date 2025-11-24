@@ -28,7 +28,7 @@ struct Texture {
     GLTextureID id = -1;
 };
 
-struct Material {
+ struct Material {
     Texture color_map;
     Texture specular_map;
     Texture normal_map;

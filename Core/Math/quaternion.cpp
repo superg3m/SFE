@@ -4,10 +4,10 @@
 namespace Math {
     Quaternion::Quaternion() {
         this->w = 1;
-        this->v = Vector3(0, 0, 0);
+        this->v = Vec3(0, 0, 0);
     }
 
-    Quaternion::Quaternion(float theta, Vector3 axis) {
+    Quaternion::Quaternion(float theta, Vec3 axis) {
         float radians = DEGREES_TO_RAD(theta);
         this->w = cosf(radians / 2.0f);
         if (NEAR_ZERO(this->w)) {
@@ -19,13 +19,13 @@ namespace Math {
     }
 
     Quaternion::Quaternion(float theta, float x, float y, float z) {
-        *this = Quaternion(theta, Vector3(x, y, z));
+        *this = Quaternion(theta, Vec3(x, y, z));
     }
 
     Quaternion Quaternion::inverse() {
         Quaternion ret(1, 0, 0, 0);
 
-        float magnitude_squared = SQUARED(this->w) + Vector3::Dot(this->v, this->v);
+        float magnitude_squared = SQUARED(this->w) + Vec3::Dot(this->v, this->v);
         if (magnitude_squared == 0.0f) { 
             return Quaternion::Identity();
         }
@@ -48,7 +48,7 @@ namespace Math {
     }
 
     Quaternion Quaternion::normalize() {
-        Vector4 temp = Vector4(this->w, this->v.x, this->v.y, this->v.z).normalize();
+        Vec4 temp = Vec4(this->w, this->v.x, this->v.y, this->v.z).normalize();
         
         Quaternion ret;
         ret.w = temp.x;
@@ -63,7 +63,7 @@ namespace Math {
         return {1, 0, 0, 0};
     }
 
-    Quaternion Quaternion::Literal(float w, Vector3 axis) {
+    Quaternion Quaternion::Literal(float w, Vec3 axis) {
         Quaternion ret;
         ret.w = w;
         ret.v = axis;
@@ -74,12 +74,12 @@ namespace Math {
     Quaternion Quaternion::Literal(float w, float x, float y, float z) {
         Quaternion ret;
         ret.w = w;
-        ret.v = Vector3(x, y, z);
+        ret.v = Vec3(x, y, z);
 
         return ret;
     }
 
-    Quaternion Quaternion::FromEuler(Vector3 euler_angles_degrees) {
+    Quaternion Quaternion::FromEuler(Vec3 euler_angles_degrees) {
         float roll_rad_half = DEGREES_TO_RAD(euler_angles_degrees.x) * 0.5f;
         float pitch_rad_half = DEGREES_TO_RAD(euler_angles_degrees.y) * 0.5f;
         float yaw_rad_half = DEGREES_TO_RAD(euler_angles_degrees.z) * 0.5f;
@@ -100,7 +100,7 @@ namespace Math {
         return q;
     }
 
-    Quaternion Quaternion::FromAngleAxis(float angle, Vector3 axis) {
+    Quaternion Quaternion::FromAngleAxis(float angle, Vec3 axis) {
         float half_angle = DEGREES_TO_RAD(angle) * 0.5f;
         float sinf_half = sinf(half_angle);
         float cosf_half = cosf(half_angle);
@@ -204,12 +204,12 @@ namespace Math {
         return result;
     }
 
-    void Quaternion::getAngleAxis(float &theta, Vector3 &vec) {
+    void Quaternion::getAngleAxis(float &theta, Vec3 &vec) {
         Quaternion quat = this->normalize();
         float sinf_half_theta = quat.v.magnitude();
 
         if (sinf_half_theta < EPSILON) {
-            vec = Vector3(1, 0, 0);
+            vec = Vec3(1, 0, 0);
         } else {
             vec = quat.v.scale(1.0f / sinf_half_theta);
         }
@@ -283,8 +283,8 @@ namespace Math {
 
     Quaternion Quaternion::operator*(const Quaternion &right) {
         Quaternion ret = Quaternion::Identity();
-        ret.w = (this->w * right.w) - Vector3::Dot(this->v, right.v);
-        ret.v = (this->v.scale(right.w) + right.v.scale(this->w)) + Vector3::Cross(this->v, right.v);
+        ret.w = (this->w * right.w) - Vec3::Dot(this->v, right.v);
+        ret.v = (this->v.scale(right.w) + right.v.scale(this->w)) + Vec3::Cross(this->v, right.v);
         
         return ret;
     }
@@ -293,7 +293,7 @@ namespace Math {
         return *this;
     }
 
-    Vector3 Quaternion::operator*(const Vector3 &right) {
+    Vec3 Quaternion::operator*(const Vec3 &right) {
         Quaternion q = *this;
         Quaternion p = Quaternion::Literal(0, right);
 

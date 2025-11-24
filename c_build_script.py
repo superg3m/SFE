@@ -92,9 +92,9 @@ procedures_config = {
         ]
     ),
 
-    "sfe test": ProcedureConfig(
+    "sfe exe": ProcedureConfig(
         build_directory = f"./{build_postfix}",
-        output_name = f"sfe_test.exe",
+        output_name = f"sfe.exe",
         source_files = [
             "../../ideal_api.cpp",
         ],

@@ -47,6 +47,7 @@ namespace Memory {
 
     void* GeneralAllocator::realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size) {
         RUNTIME_ASSERT_MSG(this->valid, "Allocator is invalid!\n");
+        RUNTIME_ASSERT(data);
         RUNTIME_ASSERT(old_allocation_size != 0);
         RUNTIME_ASSERT(new_allocation_size != 0);
 

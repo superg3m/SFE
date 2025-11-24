@@ -26,6 +26,8 @@ namespace Memory {
         bool valid = false;
     };
 
+    void bindAllocator(BaseAllocator* allocator);
+
     struct GeneralAllocator : public BaseAllocator {
         GeneralAllocator();
         ~GeneralAllocator();

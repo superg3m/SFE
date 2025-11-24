@@ -75,7 +75,7 @@ unsigned int ShaderBase::createShaderProgram(DS::Vector<const char*> shader_path
     unsigned int program_id = glCreateProgram();
     this->shader_paths = shader_paths;
 
-    DS::Vector<unsigned int> shader_sourceIDs; 
+    DS::Vector<unsigned int> shader_sourceIDs = DS::Vector<unsigned int>(shader_paths.count()); 
     for (const char* path : shader_paths) {
         unsigned int shader_source_id = this->shaderSourceCompile(path);
         glAttachShader(program_id, shader_source_id);
@@ -104,6 +104,7 @@ unsigned int ShaderBase::createShaderProgram(DS::Vector<const char*> shader_path
 
     GLint uniform_count = 0;
     glGetProgramiv(program_id, GL_ACTIVE_UNIFORMS, &uniform_count);
+    this->uniforms = DS::Hashmap<const char *, GLenum>(uniform_count);
     for (int i = 0; i < uniform_count; i++) {
         GLint size;
         GLenum type;
@@ -165,7 +166,7 @@ void ShaderBase::setVec4(const char* name, float x, float y, float z, float w) c
     glUniform4f(this->getUniformLocation(name, GL_FLOAT_VEC4), x, y, z, w);
 }
 void ShaderBase::setMat4(const char* name, const Math::Mat4& mat) const {
-    glUniformMat4fv(this->getUniformLocation(name, GL_FLOAT_MAT4), 1, GL_TRUE, &mat.v[0].x);
+    glUniformMatrix4fv(this->getUniformLocation(name, GL_FLOAT_MAT4), 1, GL_TRUE, &mat.v[0].x);
 }
 
 // protected
@@ -197,5 +198,5 @@ void ShaderBase::setVec4(unsigned int location, float x, float y, float z, float
     glUniform4f(location, x, y, z, w);
 }
 void ShaderBase::setMat4(unsigned int location, const Math::Mat4& mat) const {
-    glUniformMat4fv(location, 1, GL_TRUE, &mat.v[0].x);
+    glUniformMatrix4fv(location, 1, GL_TRUE, &mat.v[0].x);
 }

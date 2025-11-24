@@ -28,7 +28,13 @@ namespace DS {
             V value;
         };
 
-        Hashmap(u64 capacity = 1) {
+        Hashmap() {
+            this->m_count = 0;
+            this->m_capacity = 0;
+            this->m_entries = nullptr;
+        }
+
+        Hashmap(u64 capacity) {
             constexpr bool key_is_trivial = std::is_trivially_copyable_v<K>;
             constexpr bool key_is_pointer = std::is_pointer_v<K>;
             constexpr bool key_is_cstring = std::is_same_v<K, char*> || std::is_same_v<K, const char*>;
@@ -107,6 +113,7 @@ namespace DS {
                 this->m_equal_func = other.m_equal_func;
 
                 this->m_entries = (HashmapEntry*)Memory::alloc(m_capacity * sizeof(HashmapEntry));
+                Memory::copy(this->m_entries, this->m_capacity * sizeof(HashmapEntry), other.m_entries,  this->m_capacity * sizeof(HashmapEntry));
             }
 
             return *this;
