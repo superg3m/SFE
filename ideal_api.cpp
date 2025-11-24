@@ -66,16 +66,13 @@ void display() {
 
         Math::Mat4 translate_mat = translate_mats[i];
         if (is_translating) {
-            float x = translate_mat.v[0].w;
-            float y = sin(glfwGetTime() * (1 + i)) - 0.5f;
-            float z = translate_mat.v[2].w;
-            Math::Mat4::Translate(translate_mat, x, y, z);
+            translate_mat.v[1].w = sin(glfwGetTime() * (1 + i)) - 0.5f;
         }
 
         model = rot_mat * translate_mat * animals_rot[i];
         diffuse_shader.setModel(model);
         if (i != 3) {
-            //animals[i].draw();
+            animals[i].draw();
         }
     }
  
@@ -191,15 +188,15 @@ int main(int argc, char** argv) {
 	init_pole_geometry();
     init_hexplane_geometry();
 
-    animals[0] = Graphics::Geometry::Model("../../models/merry/cow.ply");
+    animals[0] = Graphics::Geometry::Model("../../Models/cow.ply");
     animals_rot[0] = Math::Mat4::Rotate(animals_rot[0], 270, 0, 1, 0);
     translate_mats[0] = Math::Mat4::Translate(translate_mats[0], -2, 0, 0);
 
-    // animals[1] = Graphics::Geometry::Model("./models/merry/hippo.ply");
+    animals[1] = Graphics::Geometry::Model("../../Models/hippo.ply");
     animals_rot[1] = Math::Mat4::Rotate(animals_rot[1], 90, 0, 1, 0);
     translate_mats[1] = Math::Mat4::Translate(translate_mats[1], 2, 0, 0);
 
-    // animals[2] = Graphics::Geometry::Model("./models/merry/lion.ply");
+    animals[2] = Graphics::Geometry::Model("../../Models/lion.ply");
     animals_rot[2] = Math::Mat4::Rotate(animals_rot[2], 0, 0, 1, 0);
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
