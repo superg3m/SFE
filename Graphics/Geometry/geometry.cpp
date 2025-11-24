@@ -285,22 +285,40 @@ namespace Graphics {
     void Geometry::draw() {
         glBindVertexArray(this->VAO);
 
+    #if 1
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->index_count > 0) {
                 glDrawElementsBaseVertex(
-                    draw_type, geo->index_count, 
+                    this->draw_type, geo->index_count, 
                     GL_UNSIGNED_INT, 
                     (void*)(sizeof(unsigned int) * geo->base_index), 
                     geo->base_vertex
                 );
             } else {
                 glDrawArrays(
-                    draw_type,
+                    this->draw_type,
                     geo->base_vertex,
                     geo->vertex_count
                 );
             }
         }
+    #else 
+        Geometry* geo = this;
+        if (geo->index_count > 0) {
+            glDrawElementsBaseVertex(
+                draw_type, geo->index_count, 
+                GL_UNSIGNED_INT, 
+                (void*)(sizeof(unsigned int) * geo->base_index), 
+                geo->base_vertex
+            );
+        } else {
+            glDrawArrays(
+                draw_type,
+                geo->base_vertex,
+                geo->vertex_count
+            );
+        }
+    #endif
 
         glBindVertexArray(0);
     }
@@ -313,11 +331,11 @@ namespace Graphics {
 
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, this->vertex_count * sizeof(Vertex), this->vertices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, this->vertices.count() * sizeof(Vertex), this->vertices.data(), GL_STATIC_DRAW);
 
         glGenBuffers(1, &EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->index_count * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.count() * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW);
 
         // bool hasPosition   = hasVertexAttributeFlag(flags, VertexAttributeFlag::aPosition);
         // bool hasNormal     = hasVertexAttributeFlag(flags, VertexAttributeFlag::aNormal);
@@ -468,7 +486,7 @@ namespace Graphics {
         setup(VertexAttributeFlag::PNTBundle);
     }
 
-    void Geometry::processNode(Geometry* root, aiNode* node, const aiScene* scene, Math::Mat4 parent_transform) {
+    Geometry* Geometry::processNode(Geometry* root, aiNode* node, const aiScene* scene, Math::Mat4 parent_transform) {
         Geometry* current = root;
         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
@@ -478,8 +496,10 @@ namespace Graphics {
 
         Math::Mat4 new_parent_transform = parent_transform * convertAssimpMatrixToGM(node->mTransformation);
         for (unsigned int i = 0; i < node->mNumChildren; i++) {
-            processNode(current, node->mChildren[i], scene, new_parent_transform);
+            current = processNode(current, node->mChildren[i], scene, new_parent_transform);
         }
+
+        return current;
     }
 
     void Geometry::processAssimpMesh(Geometry* root, aiMesh* ai_mesh, const aiScene* scene,Math::Mat4 parent_transform) {

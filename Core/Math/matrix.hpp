@@ -5,7 +5,7 @@
 #include <Math/vector.hpp>
 
 namespace Math {
-    typedef struct Quaternion Quaternion;
+    typedef struct Quat Quat;
 
     // Matrices are ROW-MAJOR
     struct Mat4 {
@@ -30,12 +30,12 @@ namespace Math {
         static Mat4 Scale(Mat4 mat, float scale_x, float scale_y, float scale_z);
         static Mat4 Rotate(Mat4 mat, float theta, Vec3 axis);
         static Mat4 Rotate(Mat4 mat, float theta, float rot_x, float rot_y, float rot_z);
-        static Mat4 Rotate(Mat4 mat, Quaternion quat);
+        static Mat4 Rotate(Mat4 mat, Quat quat);
         static Mat4 Translate(Mat4 mat, Vec3 t);
         static Mat4 Translate(Mat4 mat, float x, float y, float z);
         static Mat4 Transform(Vec3 s, float theta, Vec3 axis, Vec3 t);
         static Mat4 InverseTransform(Vec3 s, float theta, Vec3 axis, Vec3 t);
-        static void Decompose(Mat4 mat, Vec3* out_position, Quaternion* out_orientation, Vec3* out_scale);
+        static void Decompose(Mat4 mat, Vec3* out_position, Quat* out_orientation, Vec3* out_scale);
         
         static Mat4 Perspective(float fov_degrees, float aspect, float near_plane, float far_plane);
         static Mat4 Orthographic(float left, float right, float bottom, float top, float near_plane, float far_plane);

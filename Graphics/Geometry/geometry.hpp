@@ -16,7 +16,7 @@ namespace Graphics {
 		GLuint EBO = 0;
 		GLuint vertex_count = 0;
 		GLuint index_count = 0;
-		GLenum draw_type; // GL_TRIANGLES, GL_LINES, ...
+		GLenum draw_type = GL_TRIANGLES; // GL_TRIANGLES, GL_LINES, ...
 
 		u32 base_vertex  = 0; // offset to next vertex in the vertex buffer
 		u32 base_index   = 0; // offset to next index in the index buffer
@@ -46,7 +46,7 @@ namespace Graphics {
 
 			void loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags);
 			void loadMeshFromScene(const char *path, u64 path_length, const aiScene* scene);
-			void processNode(Geometry* root, aiNode* node, const aiScene* scene, Math::Mat4 parent_transform);
+			Geometry* processNode(Geometry* root, aiNode* node, const aiScene* scene, Math::Mat4 parent_transform);
 			void processAssimpMesh(Geometry* root, aiMesh* ai_mesh,  const aiScene* scene, Math::Mat4 parent_transform);
 	};
 }

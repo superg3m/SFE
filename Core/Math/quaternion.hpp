@@ -4,43 +4,44 @@
 #include <Math/matrix.hpp>
 
 namespace Math {
-    struct Quaternion {
+    struct Quat {
         float w;
         Vec3 v;
 
-        Quaternion();
-        Quaternion(float theta, Vec3 axis);
-        Quaternion(float theta, float x, float y, float z);
+        Quat();
+        Quat(float theta, Vec3 axis);
+        Quat(float theta, float x, float y, float z);
 
-        Quaternion inverse();
-        Quaternion normalize();
-        Quaternion scale(float scale);
+        Quat inverse();
+        Quat normalize();
+        Quat scale(float scale);
         Mat4 getMat4();
         void getAngleAxis(float &theta, Vec3 &vec);
 
-        static Quaternion Identity();
-        static Quaternion Literal(float w, Vec3 axis);
-        static Quaternion Literal(float w, float x, float y, float z);
-        static Quaternion FromEuler(Vec3 euler_angles_degrees);
-        static Quaternion FromAngleAxis(float w, Vec3 axis);
-        static Quaternion FromRotationMatrix(const float m[16]);
-        static Quaternion FromRotationMatrix(Mat4 mat);
-        static Quaternion SLerp(Quaternion q, Quaternion r, float t);
-        static float Dot(Quaternion a, Quaternion b);
+        static Quat Identity();
+        static Quat Literal(float w, Vec3 axis);
+        static Quat Literal(float w, float x, float y, float z);
+        static Quat FromEuler(Vec3 euler_angles_degrees);
+        static Quat FromEuler(float theta_x, float theta_y, float theta_z);
+        static Quat FromAngleAxis(float w, Vec3 axis);
+        static Quat FromRotationMatrix(const float m[16]);
+        static Quat FromRotationMatrix(Mat4 mat);
+        static Quat SLerp(Quat q, Quat r, float t);
+        static float Dot(Quat a, Quat b);
 
-        Quaternion operator+(const Quaternion &right);
-        Quaternion& operator+=(const Quaternion &right);
+        Quat operator+(const Quat &right);
+        Quat& operator+=(const Quat &right);
         
-        Quaternion operator-(const Quaternion &right);
-        Quaternion& operator-=(const Quaternion &right);
+        Quat operator-(const Quat &right);
+        Quat& operator-=(const Quat &right);
 
-        Quaternion operator*(const Quaternion &right);
-        Quaternion& operator*=(const Quaternion &right);
+        Quat operator*(const Quat &right);
+        Quat& operator*=(const Quat &right);
 
         Vec3 operator*(const Vec3 &right);
 
-        bool operator==(const Quaternion &right);
-        bool operator!=(const Quaternion &right);
+        bool operator==(const Quat &right);
+        bool operator!=(const Quat &right);
     };
 } 
 

@@ -93,8 +93,12 @@ void display() {
     hexplane.draw();
 
     model = Math::Mat4::Identity();
+    model = Math::Mat4::Scale(model, 5);
+    model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 90, 0));
+    model = rot_mat * model;
+    model = Math::Mat4::Translate(model, 0, 5, 0);
     diffuse_shader.setModel(model);
-    //church.draw(); 
+    church.draw(); 
     
     glUseProgram(0);
 }
@@ -208,7 +212,7 @@ int main(int argc, char** argv) {
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
 
-    //church = Graphics::Geometry::Model("../../Models/church.glb");
+    church = Graphics::Geometry::Model("../../Models/church.glb");
 
     camera = Camera(0, 0, 10);
 	while(!glfwWindowShouldClose(window)) {

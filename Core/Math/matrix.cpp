@@ -124,7 +124,7 @@ namespace Math {
         return Mat4::Rotate(mat, theta, Vec3(rot_x, rot_y, rot_z));
     }
 
-    Mat4 Mat4::Rotate(Mat4 mat, Quaternion quat) {
+    Mat4 Mat4::Rotate(Mat4 mat, Quat quat) {
         float theta;
         Vec3 axis;
         quat.getAngleAxis(theta, axis);
@@ -163,7 +163,7 @@ namespace Math {
         return inverse_scale_matrix * inverse_rotation_matrix * inverse_translation_matrix;
     }
 
-    void Mat4::Decompose(Mat4 mat, Vec3* out_position, Quaternion* out_orientation, Vec3* out_scale) {
+    void Mat4::Decompose(Mat4 mat, Vec3* out_position, Quat* out_orientation, Vec3* out_scale) {
         Vec3 translation = Vec3(mat.v[0].w, mat.v[1].w, mat.v[2].w);
         Vec3 scale = Vec3(0);
         {
@@ -177,7 +177,7 @@ namespace Math {
             scale = Vec3(scale_x, scale_y, scale_z);
         }
 
-        Quaternion orientation = Quaternion::Identity();
+        Quat orientation = Quat::Identity();
         {
             Vec3 column1 = Vec3(mat.v[0].x, mat.v[1].x, mat.v[2].x);
             Vec3 column2 = Vec3(mat.v[0].y, mat.v[1].y, mat.v[2].y);
@@ -193,7 +193,7 @@ namespace Math {
                 Vec4{column1.z, column2.z, column3.z, 0},
                 Vec4{0,         0,         0,         0}
             );
-            orientation = Quaternion::FromRotationMatrix(rotation_matrix);
+            orientation = Quat::FromRotationMatrix(rotation_matrix);
 
             /*
             // TRS = M
@@ -206,7 +206,7 @@ namespace Math {
             Mat4 inverse_scale_matrix = Mat4::scale(Mat4::Identity(), inverse_scale);
             Mat4 inverse_translation_matrix = Mat4::Translate(Mat4::Identity(), translation.scale(-1));
             Mat4 rotation_matrix = inverse_translation_matrix * mat * inverse_scale_matrix;
-            orientation = Quaternion::fromRotationMatrix(rotation_matrix);
+            orientation = Quat::fromRotationMatrix(rotation_matrix);
             */
         }
 

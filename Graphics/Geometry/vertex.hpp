@@ -68,6 +68,7 @@ enum class VertexAttributeFlag : uint32_t {
     aBoneIDs      = 0x40,
     aBoneWeights  = 0x80,
 
+    PNBundle = aPosition | aNormal,
     PNTBundle = aPosition | aNormal | aTexCoord,
     TangentBundle = PNTBundle | aTangent | aBitangent,
     ColorBundle = TangentBundle | aColor,

@@ -2,12 +2,12 @@
 #include <Math/quaternion.hpp>
 
 namespace Math {
-    Quaternion::Quaternion() {
+    Quat::Quat() {
         this->w = 1;
         this->v = Vec3(0, 0, 0);
     }
 
-    Quaternion::Quaternion(float theta, Vec3 axis) {
+    Quat::Quat(float theta, Vec3 axis) {
         float radians = DEGREES_TO_RAD(theta);
         this->w = cosf(radians / 2.0f);
         if (NEAR_ZERO(this->w)) {
@@ -18,16 +18,16 @@ namespace Math {
         this->v = axis.scale(sinf(radians / 2.0f));
     }
 
-    Quaternion::Quaternion(float theta, float x, float y, float z) {
-        *this = Quaternion(theta, Vec3(x, y, z));
+    Quat::Quat(float theta, float x, float y, float z) {
+        *this = Quat(theta, Vec3(x, y, z));
     }
 
-    Quaternion Quaternion::inverse() {
-        Quaternion ret(1, 0, 0, 0);
+    Quat Quat::inverse() {
+        Quat ret(1, 0, 0, 0);
 
         float magnitude_squared = SQUARED(this->w) + Vec3::Dot(this->v, this->v);
         if (magnitude_squared == 0.0f) { 
-            return Quaternion::Identity();
+            return Quat::Identity();
         }
 
         ret.w = this->w / magnitude_squared;
@@ -36,8 +36,8 @@ namespace Math {
         return ret;
     }
 
-    Quaternion Quaternion::scale(float scale) {
-        Quaternion ret;
+    Quat Quat::scale(float scale) {
+        Quat ret;
 
         ret.w   = this->w   * scale;
         ret.v.x = this->v.x * scale;
@@ -47,10 +47,10 @@ namespace Math {
         return ret;
     }
 
-    Quaternion Quaternion::normalize() {
+    Quat Quat::normalize() {
         Vec4 temp = Vec4(this->w, this->v.x, this->v.y, this->v.z).normalize();
         
-        Quaternion ret;
+        Quat ret;
         ret.w = temp.x;
         ret.v.x = temp.y;
         ret.v.y = temp.z;
@@ -59,27 +59,31 @@ namespace Math {
         return ret;
     }
 
-    Quaternion Quaternion::Identity() {
+    Quat Quat::Identity() {
         return {1, 0, 0, 0};
     }
 
-    Quaternion Quaternion::Literal(float w, Vec3 axis) {
-        Quaternion ret;
+    Quat Quat::Literal(float w, Vec3 axis) {
+        Quat ret;
         ret.w = w;
         ret.v = axis;
 
         return ret;
     }
 
-    Quaternion Quaternion::Literal(float w, float x, float y, float z) {
-        Quaternion ret;
+    Quat Quat::Literal(float w, float x, float y, float z) {
+        Quat ret;
         ret.w = w;
         ret.v = Vec3(x, y, z);
 
         return ret;
     }
 
-    Quaternion Quaternion::FromEuler(Vec3 euler_angles_degrees) {
+    Quat Quat::FromEuler(float theta_x, float theta_y, float theta_z) {
+        return FromEuler(Vec3(theta_x, theta_y, theta_z));
+    }
+
+    Quat Quat::FromEuler(Vec3 euler_angles_degrees) {
         float roll_rad_half = DEGREES_TO_RAD(euler_angles_degrees.x) * 0.5f;
         float pitch_rad_half = DEGREES_TO_RAD(euler_angles_degrees.y) * 0.5f;
         float yaw_rad_half = DEGREES_TO_RAD(euler_angles_degrees.z) * 0.5f;
@@ -91,7 +95,7 @@ namespace Math {
         float cz = cosf(yaw_rad_half);
         float sz = sinf(yaw_rad_half);
 
-        Quaternion q = Quaternion::Identity();
+        Quat q = Quat::Identity();
         q.w = cx * cy * cz + sx * sy * sz;
         q.v.x = sx * cy * cz - cx * sy * sz;
         q.v.y = cx * sy * cz + sx * cy * sz;
@@ -100,12 +104,12 @@ namespace Math {
         return q;
     }
 
-    Quaternion Quaternion::FromAngleAxis(float angle, Vec3 axis) {
+    Quat Quat::FromAngleAxis(float angle, Vec3 axis) {
         float half_angle = DEGREES_TO_RAD(angle) * 0.5f;
         float sinf_half = sinf(half_angle);
         float cosf_half = cosf(half_angle);
 
-        Quaternion q = Quaternion::Identity();
+        Quat q = Quat::Identity();
         axis = axis.normalize();
 
         q.w     = cosf_half;
@@ -116,8 +120,8 @@ namespace Math {
         return q;
     }
 
-    Quaternion Quaternion::FromRotationMatrix(const float m[16]) {
-        Quaternion q;
+    Quat Quat::FromRotationMatrix(const float m[16]) {
+        Quat q;
 
         float m00 = m[0],  m01 = m[1],  m02 = m[2];
         float m10 = m[4],  m11 = m[5],  m12 = m[6];
@@ -163,11 +167,11 @@ namespace Math {
         return q;
     }
 
-    Quaternion Quaternion::FromRotationMatrix(Mat4 mat) {
-        return Quaternion::FromRotationMatrix(&mat.v[0].x);
+    Quat Quat::FromRotationMatrix(Mat4 mat) {
+        return Quat::FromRotationMatrix(&mat.v[0].x);
     }
 
-    Mat4 Quaternion::getMat4() {
+    Mat4 Quat::getMat4() {
         Mat4 result = Mat4::Identity();
 
         float x2 = this->v.x * this->v.x;
@@ -204,8 +208,8 @@ namespace Math {
         return result;
     }
 
-    void Quaternion::getAngleAxis(float &theta, Vec3 &vec) {
-        Quaternion quat = this->normalize();
+    void Quat::getAngleAxis(float &theta, Vec3 &vec) {
+        Quat quat = this->normalize();
         float sinf_half_theta = quat.v.magnitude();
 
         if (sinf_half_theta < EPSILON) {
@@ -220,10 +224,10 @@ namespace Math {
         theta = RAD_TO_DEGREES(theta);
     }
 
-    Quaternion Quaternion::SLerp(Quaternion q, Quaternion r, float t) {
+    Quat Quat::SLerp(Quat q, Quat r, float t) {
         q = q.normalize();
         r = r.normalize();
-        float dot = Quaternion::Dot(q, r);
+        float dot = Quat::Dot(q, r);
 
         if (dot < 0.0f) {
             r = r.scale(-1.0f);
@@ -231,22 +235,22 @@ namespace Math {
         }
 
         if (dot > 0.9995f) {
-            Quaternion lerp = q + (r - q).scale(t);
+            Quat lerp = q + (r - q).scale(t);
             return lerp.normalize();
         }
 
         float theta_0 = acosf(dot);
         float theta = theta_0 * t;
 
-        Quaternion q3 = r - q.scale(dot);
+        Quat q3 = r - q.scale(dot);
         q3 = q3.normalize();
 
-        Quaternion term1 = q.scale(cosf(theta));
-        Quaternion term2 = q3.scale(sinf(theta));
+        Quat term1 = q.scale(cosf(theta));
+        Quat term2 = q3.scale(sinf(theta));
         return term1 + term2;
     }
 
-    float Quaternion::Dot(Quaternion a, Quaternion b) {
+    float Quat::Dot(Quat a, Quat b) {
         float dot = a.w   * b.w   +
                     a.v.x * b.v.x +
                     a.v.y * b.v.y +
@@ -255,55 +259,55 @@ namespace Math {
         return dot;
     }
 
-    Quaternion Quaternion::operator+(const Quaternion &right) {
-        Quaternion ret = Quaternion::Identity();
+    Quat Quat::operator+(const Quat &right) {
+        Quat ret = Quat::Identity();
 
         ret.w = this->w + right.w;
         ret.v = this->v + right.v;
 
         return ret;
     }
-    Quaternion& Quaternion::operator+=(const Quaternion &right) {
+    Quat& Quat::operator+=(const Quat &right) {
         *this = *this + right;
         return *this;
     }
 
-    Quaternion Quaternion::operator-(const Quaternion &right) {
-        Quaternion ret = Quaternion::Identity();
+    Quat Quat::operator-(const Quat &right) {
+        Quat ret = Quat::Identity();
 
         ret.w = this->w - right.w;
         ret.v = this->v - right.v;
 
         return ret;
     }
-    Quaternion& Quaternion::operator-=(const Quaternion &right) {
+    Quat& Quat::operator-=(const Quat &right) {
         *this = *this - right;
         return *this;
     }
 
-    Quaternion Quaternion::operator*(const Quaternion &right) {
-        Quaternion ret = Quaternion::Identity();
+    Quat Quat::operator*(const Quat &right) {
+        Quat ret = Quat::Identity();
         ret.w = (this->w * right.w) - Vec3::Dot(this->v, right.v);
         ret.v = (this->v.scale(right.w) + right.v.scale(this->w)) + Vec3::Cross(this->v, right.v);
         
         return ret;
     }
-    Quaternion& Quaternion::operator*=(const Quaternion &right) {
+    Quat& Quat::operator*=(const Quat &right) {
         *this = *this * right;
         return *this;
     }
 
-    Vec3 Quaternion::operator*(const Vec3 &right) {
-        Quaternion q = *this;
-        Quaternion p = Quaternion::Literal(0, right);
+    Vec3 Quat::operator*(const Vec3 &right) {
+        Quat q = *this;
+        Quat p = Quat::Literal(0, right);
 
         return ((q * p) * q.inverse()).v;
     }
 
-    bool Quaternion::operator==(const Quaternion &right) {
+    bool Quat::operator==(const Quat &right) {
         return NEAR_ZERO(this->w - right.w) && (this->v == right.v);
     }
-    bool Quaternion::operator!=(const Quaternion &right) {
+    bool Quat::operator!=(const Quat &right) {
         return !(*this == right);
     }
 }
