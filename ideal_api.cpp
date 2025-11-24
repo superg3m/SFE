@@ -16,8 +16,8 @@ static int is_rotating = 1;
 static int is_translating = 1;
 
 Camera camera;
-float WIDTH = 800;
-float HEIGHT = 600;
+float WIDTH = 900;
+float HEIGHT = 900;
 
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if(action == GLFW_PRESS) {
@@ -38,7 +38,7 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 }
 
 void display() {
-    glClearColor(0.5f, 0.2, 0.2f, 0);
+    glClearColor(0.2f, 0.2f, 0.2f, 0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
     if(is_rotating == 1) {
@@ -181,16 +181,11 @@ int main(int argc, char** argv) {
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glEnable(GL_FRAMEBUFFER_SRGB);
 
     Memory::GeneralAllocator allocator = Memory::GeneralAllocator();
     Memory::bindAllocator(&allocator);
 
-    DS::Hashmap<const char*, GLenum> m1 =  DS::Hashmap<const char*, GLenum>(2);
-    m1.put("test", 1);
-    m1.put("test3", 3);
-
-    DS::Hashmap<const char*, GLenum> m2 = m1;
-    // 0x0000000137b72240 | 0x0000000137a14280
     uniform_color_shader = ShaderUniformColor({"../../ShaderSource/Uniform/uniform.vert", "../../ShaderSource/Uniform/uniform.frag"});
 
 	init_pole_geometry();
@@ -209,7 +204,7 @@ int main(int argc, char** argv) {
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
-    camera = Camera(1.0f, 0, 10);
+    camera = Camera(0, 0, 10);
 	while(!glfwWindowShouldClose(window)) {
 		display();
 
