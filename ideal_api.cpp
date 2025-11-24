@@ -10,6 +10,8 @@ Graphics::Geometry animals[4];
 Math::Mat4 translate_mats[4];
 Math::Mat4 animals_rot[4];
 
+Graphics::Geometry church;
+
 float saved_rot = 0.0f;
 float saved_translation = 0.0f;
 static int is_rotating = 1;
@@ -89,6 +91,10 @@ void display() {
     model = Math::Mat4::Translate(model, 0, -2.5f, 0);
     diffuse_shader.setModel(model);
     hexplane.draw();
+
+    model = Math::Mat4::Identity();
+    diffuse_shader.setModel(model);
+    //church.draw(); 
     
     glUseProgram(0);
 }
@@ -200,6 +206,9 @@ int main(int argc, char** argv) {
     animals_rot[2] = Math::Mat4::Rotate(animals_rot[2], 0, 0, 1, 0);
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
+
+
+    //church = Graphics::Geometry::Model("../../Models/church.glb");
 
     camera = Camera(0, 0, 10);
 	while(!glfwWindowShouldClose(window)) {

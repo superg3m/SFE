@@ -84,6 +84,8 @@ namespace Graphics {
         this->draw_type = draw_type;
         this->vertices = vertices;
         this->indices = indices;
+        this->vertex_count = this->vertices.count();
+        this->index_count = this->indices.count();
 
         this->setup(flags);
     }
@@ -106,6 +108,9 @@ namespace Graphics {
         ret.draw_type = GL_TRIANGLES;
         ret.vertices = quad_vertices;
         ret.indices = quad_indices;
+        ret.vertex_count = ret.vertices.count();
+        ret.index_count = ret.indices.count();
+
         ret.setup(VertexAttributeFlag::PNTBundle);
 
         return ret;
@@ -135,6 +140,8 @@ namespace Graphics {
         Geometry ret;
         ret.draw_type = GL_LINES;
         ret.vertices = aabb_vertices;
+        ret.vertex_count = ret.vertices.count();
+        ret.index_count = ret.indices.count();
         ret.setup(VertexAttributeFlag::PNTBundle);
 
         return ret;
@@ -193,6 +200,8 @@ namespace Graphics {
         ret.draw_type = GL_TRIANGLES;
         ret.vertices = cube_vertices;
         ret.indices = cube_indices;
+        ret.vertex_count = ret.vertices.count();
+        ret.index_count = ret.indices.count();
         ret.setup(VertexAttributeFlag::PNTBundle);
 
         return ret;
@@ -250,6 +259,8 @@ namespace Graphics {
         ret.draw_type = GL_TRIANGLES;
         ret.vertices = sphere_vertices;
         ret.indices = sphere_indices;
+        ret.vertex_count = ret.vertices.count();
+        ret.index_count = ret.indices.count();
         ret.setup(VertexAttributeFlag::PNTBundle);
 
         return ret;
@@ -296,9 +307,6 @@ namespace Graphics {
 
     void Geometry::setup(VertexAttributeFlag flags, bool should_destory_data) {
         this->aabb = CalculateAABB(vertices);
-
-        this->vertex_count = (GLuint)this->vertices.count();
-        this->index_count = (GLuint)this->indices.count();
 
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
