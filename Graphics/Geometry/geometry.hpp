@@ -1,4 +1,7 @@
 #include <glad/glad.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include <Common/common.hpp>
 #include <DataStructure/ds.hpp>
@@ -37,13 +40,13 @@ namespace Graphics {
 		private:
 			DS::Vector<Vertex> vertices; // only the root will have vertices
 			DS::Vector<GLuint> indices;  // only the root will have indices
+			DS::Vector<Material> materials;
 
-			void setup(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indicies);
+			void setup(VertexAttributeFlag flags, bool should_destory_data = true);
 
-			// void loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags);
-
-			void loadMeshFromScene(const char *path, const aiScene* scene);
-			// Geometry* processAssimpMesh(aiMesh* ai_mesh,  const aiScene* scene, Math::Mat4 parent_transform);
-			// void processNode(aiNode* node, const aiScene* scene, Math::Mat4 parent_transform);
+			void loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags);
+			void loadMeshFromScene(const char *path, u64 path_length, const aiScene* scene);
+			void processNode(Geometry* root, aiNode* node, const aiScene* scene, Math::Mat4 parent_transform);
+			void processAssimpMesh(Geometry* root, aiMesh* ai_mesh,  const aiScene* scene, Math::Mat4 parent_transform);
 	};
 }

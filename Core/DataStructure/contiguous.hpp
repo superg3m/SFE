@@ -47,6 +47,7 @@ namespace DS {
             // LOG_WARN("PERFORMING A VECTOR COPY!\n");
 
             // RUNTIME_ASSERT(this->m_data == nullptr);
+            if (other.m_data == nullptr) return *this;
 
             this->m_count = other.m_count;
             this->m_capacity = other.m_capacity;
@@ -172,7 +173,7 @@ namespace DS {
         void shrink_to_fit() {
             this->capacity = this->m_count;
             byte_t shrunken_allocation_size = (this->m_capacity * sizeof(T));
-            
+
             this->m_data = (T*)Memory::realloc(this->m_data, shrunken_allocation_size, shrunken_allocation_size);
         }
     private:

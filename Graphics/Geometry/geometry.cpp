@@ -1,7 +1,4 @@
 #include <Geometry/geometry.hpp>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include <float.h>
 
@@ -85,7 +82,10 @@ namespace Graphics {
 
     Geometry::Geometry(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type) {
         this->draw_type = draw_type;
-        this->setup(flags, vertices, indices);
+        this->vertices = vertices;
+        this->indices = indices;
+
+        this->setup(flags);
     }
 
     Geometry Geometry::Quad() {
@@ -104,7 +104,9 @@ namespace Graphics {
 
         Geometry ret;
         ret.draw_type = GL_TRIANGLES;
-        ret.setup(VertexAttributeFlag::PNTBundle, quad_vertices, quad_indices);
+        ret.vertices = quad_vertices;
+        ret.indices = quad_indices;
+        ret.setup(VertexAttributeFlag::PNTBundle);
 
         return ret;
     }
@@ -132,7 +134,8 @@ namespace Graphics {
 
         Geometry ret;
         ret.draw_type = GL_LINES;
-        ret.setup(VertexAttributeFlag::PNTBundle, aabb_vertices, {});
+        ret.vertices = aabb_vertices;
+        ret.setup(VertexAttributeFlag::PNTBundle);
 
         return ret;
     }
@@ -188,7 +191,9 @@ namespace Graphics {
 
         Geometry ret;
         ret.draw_type = GL_TRIANGLES;
-        ret.setup(VertexAttributeFlag::PNTBundle, cube_vertices, cube_indices);
+        ret.vertices = cube_vertices;
+        ret.indices = cube_indices;
+        ret.setup(VertexAttributeFlag::PNTBundle);
 
         return ret;
     }
@@ -243,7 +248,25 @@ namespace Graphics {
 
         Geometry ret;
         ret.draw_type = GL_TRIANGLES;
-        ret.setup(VertexAttributeFlag::PNTBundle, sphere_vertices, sphere_indices);
+        ret.vertices = sphere_vertices;
+        ret.indices = sphere_indices;
+        ret.setup(VertexAttributeFlag::PNTBundle);
+
+        return ret;
+    }
+
+    Geometry Geometry::Model(const char* path) {
+        Geometry ret;
+        ret.draw_type = GL_TRIANGLES;
+
+        Assimp::Importer importer;
+        unsigned int assimp_flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices;
+        const aiScene* scene = importer.ReadFile(path, assimp_flags);
+        if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+            LOG_ERROR("ASSIMP ERROR: %s\n", importer.GetErrorString());
+        }
+
+        ret.loadMeshFromScene(path, String::length(path), scene);
 
         return ret;
     }
@@ -271,22 +294,22 @@ namespace Graphics {
         glBindVertexArray(0);
     }
 
-    void Geometry::setup(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices) {
+    void Geometry::setup(VertexAttributeFlag flags, bool should_destory_data) {
         this->aabb = CalculateAABB(vertices);
 
-        this->vertex_count = (GLuint)vertices.count();
-        this->index_count = (GLuint)indices.count();
+        this->vertex_count = (GLuint)this->vertices.count();
+        this->index_count = (GLuint)this->indices.count();
 
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
 
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, this->vertex_count * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, this->vertex_count * sizeof(Vertex), this->vertices.data(), GL_STATIC_DRAW);
 
         glGenBuffers(1, &EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->index_count * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->index_count * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW);
 
         // bool hasPosition   = hasVertexAttributeFlag(flags, VertexAttributeFlag::aPosition);
         // bool hasNormal     = hasVertexAttributeFlag(flags, VertexAttributeFlag::aNormal);
@@ -315,6 +338,12 @@ namespace Graphics {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
+        if (should_destory_data) {
+            this->vertices.~Vector();
+            this->indices.~Vector();
+            this->materials.~Vector();
+        }
     }
 
     void Geometry::loadMeshFromScene(const char *path, u64 path_length, const aiScene* scene) {
@@ -333,6 +362,7 @@ namespace Graphics {
         }
         this->vertices = DS::Vector<Vertex>(total_vertex_count);
         this->indices = DS::Vector<GLuint>(total_index_count);
+        this->materials = DS::Vector<Material>(scene->mNumMaterials);
 
         /*
         { // materials start
@@ -426,26 +456,30 @@ namespace Graphics {
         } // materials end
         */
 
-        processNode(scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));
-        setup(VertexAttributeFlag::PNTBundle, this->vertices, this->indices);
-
-        this->vertices.clear();
-        this->vertices.shrink_to_fit();
-
-        this->indices.clear();
-        this->indices.shrink_to_fit();
+        processNode(this, scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));
+        setup(VertexAttributeFlag::PNTBundle);
     }
 
-    // This has to be different...
-    /*
-    Geometry* Geometry::processAssimpMesh(aiMesh* ai_mesh, const aiScene* scene,Math::Mat4 parent_transform) {
-        Geometry* geo = (Geometry*)Memory::alloc(sizeof(Geometry));
-        geo->base_vertex = (unsigned int)this->vertices.count();
-        geo->base_index = (unsigned int)this->indices.count();
-        geo->material = material_cache[ai_mesh->mMaterialIndex];
-        geo->index_count = ai_mesh->mNumFaces * 3;
-        geo->vertex_count = ai_mesh->mNumVertices;
-        this->next = geo;
+    void Geometry::processNode(Geometry* root, aiNode* node, const aiScene* scene, Math::Mat4 parent_transform) {
+        Geometry* current = root;
+        for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+            aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+            processAssimpMesh(current, mesh, scene, parent_transform);
+            current = current->next;
+        }
+
+        Math::Mat4 new_parent_transform = parent_transform * convertAssimpMatrixToGM(node->mTransformation);
+        for (unsigned int i = 0; i < node->mNumChildren; i++) {
+            processNode(current, node->mChildren[i], scene, new_parent_transform);
+        }
+    }
+
+    void Geometry::processAssimpMesh(Geometry* root, aiMesh* ai_mesh, const aiScene* scene,Math::Mat4 parent_transform) {
+        root->base_vertex = (unsigned int)this->vertices.count();
+        root->base_index = (unsigned int)this->indices.count();
+        root->material = this->materials[ai_mesh->mMaterialIndex];
+        root->index_count = ai_mesh->mNumFaces * 3;
+        root->vertex_count = ai_mesh->mNumVertices;
         
         { // Geometry Start
             const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
@@ -482,52 +516,19 @@ namespace Graphics {
                 }
             }
         } // Geometry End
-
-        return geo;
     }
 
-    Math::Mat4 convertAssimpMatrixToGM(aiMat4x4 ai_matrix) {
-        Math::Mat4 ret;
-
-        ret.v[0].x = ai_matrix.a1; ret.v[1].x = ai_matrix.b1; ret.v[2].x = ai_matrix.c1; ret.v[3].x = ai_matrix.d1; 
-        ret.v[0].y = ai_matrix.a2; ret.v[1].y = ai_matrix.b2; ret.v[2].y = ai_matrix.c2; ret.v[3].y = ai_matrix.d2;
-        ret.v[0].z = ai_matrix.a3; ret.v[1].z = ai_matrix.b3; ret.v[2].z = ai_matrix.c3; ret.v[3].z = ai_matrix.d3;
-        ret.v[0].w = ai_matrix.a4; ret.v[1].w = ai_matrix.b4; ret.v[2].w = ai_matrix.c4; ret.v[3].w = ai_matrix.d4;
-
-        return ret;
-    }
-
-    void Mesh::processNode(aiNode* node, const aiScene* scene, Math::Mat4 parent_transform) {
-        for (unsigned int i = 0; i < node->mNumMeshes; i++) {
-            aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-            this->meshes.push_back(processMesh(mesh, scene, parent_transform));
-        }
-
-        Math::Mat4 new_parent_transform = parent_transform * convertAssimpMatrixToGM(node->mTransformation);
-        for (unsigned int i = 0; i < node->mNumChildren; i++) {
-            processNode(node->mChildren[i], scene, new_parent_transform);
-        }
-    }
-
-    
-
-    void Mesh::loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags) {
-        this->materials.resize(1);
-        this->meshes.resize(1);
-        this->meshes[0].vertex_count = (unsigned int)vertices.size();
-        this->meshes[0].index_count  = (unsigned int)indices.size();
-        this->meshes[0].base_vertex  = 0;
-        this->meshes[0].base_index   = 0;
-        this->meshes[0].material_index = 0;
+    void Geometry::loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags) {
+        this->vertex_count = (unsigned int)vertices.count();
+        this->index_count  = (unsigned int)indices.count();
+        this->base_vertex  = 0;
+        this->base_index   = 0;
 
         this->vertices = vertices;
         this->indices = indices;
 
-        setup(flags);
+        this->setup(flags, false);
     }
-    */
-
-
 }
 
 // Look at this for model loading!

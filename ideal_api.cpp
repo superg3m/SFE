@@ -6,7 +6,7 @@
 ShaderDiffuse diffuse_shader;
 Graphics::Geometry pole;
 Graphics::Geometry hexplane;
-// Graphics::Geometry animals[4];
+Graphics::Geometry animals[4];
 Math::Mat4 translate_mats[4];
 Math::Mat4 animals_rot[4];
 
@@ -191,7 +191,7 @@ int main(int argc, char** argv) {
 	init_pole_geometry();
     init_hexplane_geometry();
 
-    animals[0] = Graphics::Geometry::Model("./models/merry/cow.ply");
+    animals[0] = Graphics::Geometry::Model("../../models/merry/cow.ply");
     animals_rot[0] = Math::Mat4::Rotate(animals_rot[0], 270, 0, 1, 0);
     translate_mats[0] = Math::Mat4::Translate(translate_mats[0], -2, 0, 0);
 
