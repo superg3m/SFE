@@ -10,6 +10,8 @@ void ShaderUniformColor::compile() {
     this->uColor_Location = getUniformLocation("uColor", GL_FLOAT_VEC3);
 }
 
+void ShaderUniformColor::setMaterial(const Material& material) const {}
+
 void ShaderUniformColor::setColor(Math::Vec3 color) {
     this->use();
     this->setVec3(this->uColor_Location, color);

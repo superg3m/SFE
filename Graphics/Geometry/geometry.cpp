@@ -1,9 +1,8 @@
-#include <Geometry/geometry.hpp>
-
 #include <float.h>
 
-#include <Math/aabb.hpp>
 #include <DataStructure/contiguous.hpp>
+#include <Geometry/geometry.hpp>
+#include <Shader/shader_base.hpp>
 
 static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
     Math::Mat4 ret;
@@ -282,11 +281,12 @@ namespace Graphics {
         return ret;
     }
 
-    void Geometry::draw() {
-        glBindVertexArray(this->VAO);
+    void Geometry::draw(const ShaderBase* shader) {
+        glBindVertexArray(this->VAO); // make this Renderer::bindVAO(this->VAO); // for caching
 
-    #if 1
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
+            shader->setMaterial(geo->material);
+
             if (geo->index_count > 0) {
                 glDrawElementsBaseVertex(
                     this->draw_type, geo->index_count, 
@@ -302,23 +302,6 @@ namespace Graphics {
                 );
             }
         }
-    #else 
-        Geometry* geo = this;
-        if (geo->index_count > 0) {
-            glDrawElementsBaseVertex(
-                draw_type, geo->index_count, 
-                GL_UNSIGNED_INT, 
-                (void*)(sizeof(unsigned int) * geo->base_index), 
-                geo->base_vertex
-            );
-        } else {
-            glDrawArrays(
-                draw_type,
-                geo->base_vertex,
-                geo->vertex_count
-            );
-        }
-    #endif
 
         glBindVertexArray(0);
     }

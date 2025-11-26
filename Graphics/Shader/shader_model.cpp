@@ -62,6 +62,22 @@ void ShaderModel::compile() {
     this->uMaterial_Location.color = this->getUniformLocation("uMaterial.color", GL_FLOAT_VEC3);
 }
 
+void ShaderModel::setMaterial(const Material &material) const {
+    this->use();
+
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, material.color_map.id);
+    this->setInt(uMaterial_Location.color_map, 0);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, material.specular_map.id);
+    this->setInt(uMaterial_Location.specular_map, 1);
+
+    this->setFloat(uMaterial_Location.shininess, material.shininess);
+    this->setFloat(uMaterial_Location.opacity, material.opacity);
+    this->setVec3(uMaterial_Location.color, material.color);
+}
+
 void ShaderModel::setSpotLight(SpotLight &spot_light) const {
     this->use();
 
@@ -111,20 +127,4 @@ void ShaderModel::setViewPosition(Math::Vec3 &view_position) const {
 void ShaderModel::setUseFlashlight(bool useFlashlight) const {
     this->use();
     this->setBool(this->uUseFlashlight_Location, useFlashlight);
-}
-
-void ShaderModel::setMaterial(Material &material) const {
-    this->use();
-
-    glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_2D, material.color_map.id);
-    this->setInt(uMaterial_Location.color_map, 0);
-
-    glActiveTexture(GL_TEXTURE0 + 1);
-    glBindTexture(GL_TEXTURE_2D, material.specular_map.id);
-    this->setInt(uMaterial_Location.specular_map, 1);
-
-    this->setFloat(uMaterial_Location.shininess, material.shininess);
-    this->setFloat(uMaterial_Location.opacity, material.opacity);
-    this->setVec3(uMaterial_Location.color, material.color);
 }

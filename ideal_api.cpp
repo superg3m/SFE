@@ -64,7 +64,7 @@ void display() {
         Math::Mat4 model = Math::Mat4::Identity();
         model = rot_mat * translate_mats[i] * rot_mat;
         diffuse_shader.setModel(model);
-        pole.draw();
+        pole.draw(&diffuse_shader);
 
         Math::Mat4 translate_mat = translate_mats[i];
         if (is_translating) {
@@ -74,7 +74,7 @@ void display() {
         model = rot_mat * translate_mat * animals_rot[i];
         diffuse_shader.setModel(model);
         if (i != 3) {
-            animals[i].draw();
+            animals[i].draw(&diffuse_shader);
         }
     }
  
@@ -83,14 +83,14 @@ void display() {
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, 2.5f, 0);
     diffuse_shader.setModel(model);
-    hexplane.draw();
+    hexplane.draw(&diffuse_shader);
 
     model = Math::Mat4::Identity();
     model = Math::Mat4::Scale(model, 2);
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, -2.5f, 0);
     diffuse_shader.setModel(model);
-    hexplane.draw();
+    hexplane.draw(&diffuse_shader);
 
     model = Math::Mat4::Identity();
     model = Math::Mat4::Scale(model, 5);
@@ -98,7 +98,7 @@ void display() {
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, 5, 0);
     diffuse_shader.setModel(model);
-    church.draw(); 
+    church.draw(&diffuse_shader); 
     
     glUseProgram(0);
 }

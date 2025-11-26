@@ -5,7 +5,9 @@
 struct ShaderDiffuse : public ShaderBase {
     ShaderDiffuse() = default;
     ShaderDiffuse(DS::Vector<const char*> shader_paths);
+
     void compile() override;
+    void setMaterial(const Material &material) const override;
 
     void setLightPosition(const Math::Vec3& light_postion);
 private:

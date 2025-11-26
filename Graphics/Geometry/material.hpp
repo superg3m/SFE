@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Common/common.hpp>
 #include <Math/math.hpp>
-#include <Shader/shader_base.hpp>
 
 using GLTextureID = int;
 enum TextureType {
@@ -28,7 +26,7 @@ struct Texture {
     GLTextureID id = -1;
 };
 
- struct Material {
+struct Material {
     Texture color_map;
     Texture specular_map;
     Texture normal_map;

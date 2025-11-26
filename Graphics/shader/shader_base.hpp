@@ -27,11 +27,11 @@ static const char* glEnumToString(GLenum type) {
 
 struct ShaderBase {
     unsigned int program_id = 0;
+
     virtual void compile() = 0;
+    virtual void setMaterial(const Material &material) const = 0;
 
     void use() const;
-
-    // Vertex Uniforms
     void setModel(Math::Mat4 &model) const;
     void setView(Math::Mat4 &view) const;
     void setProjection(Math::Mat4 &projection) const;

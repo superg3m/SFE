@@ -7,10 +7,11 @@
 struct ShaderSkybox : public ShaderBase {
     ShaderSkybox() = default;
     ShaderSkybox(DS::Vector<const char*> shader_paths);
+
     void compile() override;
+    void setMaterial(const Material &material) const override;
     
     void setSkyboxTexture(GLTextureID texture) const;
-
 private:
     unsigned int uSkyboxTexture_Location;
 };

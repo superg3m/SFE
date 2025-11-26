@@ -14,3 +14,7 @@ void ShaderDiffuse::compile() {
 void ShaderDiffuse::setLightPosition(const Math::Vec3& light_postion) {
     this->setVec3(this->uLightPosition_Location, light_postion);
 }
+
+void ShaderDiffuse::setMaterial(const Material& material) const {
+
+}

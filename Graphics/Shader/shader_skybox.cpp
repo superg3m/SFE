@@ -11,6 +11,8 @@ void ShaderSkybox::compile() {
     this->uSkyboxTexture_Location = this->getUniformLocation("uSkyboxTexture", GL_SAMPLER_CUBE);
 }
 
+void ShaderSkybox::setMaterial(const Material& material) const {}
+
 void ShaderSkybox::setSkyboxTexture(GLTextureID texture) const {
     this->use();
 

@@ -9,7 +9,9 @@
 #include <Geometry/material.hpp>
 #include <Geometry/vertex.hpp>
 
+typedef struct ShaderBase ShaderBase;
 namespace Graphics {
+	
 	struct Geometry {
 		GLuint VAO = 0; 
 		GLuint VBO = 0; 
@@ -35,7 +37,7 @@ namespace Graphics {
 		static Geometry Sphere(int segments);
 		static Geometry Model(const char* path);
 
-		void draw();
+		void draw(const ShaderBase* shader);
 
 		private:
 			DS::Vector<Vertex> vertices; // only the root will have vertices
