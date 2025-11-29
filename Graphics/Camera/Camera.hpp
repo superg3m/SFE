@@ -24,16 +24,13 @@ struct Camera {
     Math::Vec3 right;
     Math::Vec3 world_up;
 
-    // euler Angles
     float yaw;
     float pitch;
-
-    // camera options
+    
     float mouse_sensitivity;
     float movement_speed;
     float zoom;
 
-    // maybe consider adding like lookat'
     Camera() = default;
     Camera(Math::Vec3 position);
     Camera(float x, float y, float z);
