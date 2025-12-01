@@ -171,7 +171,7 @@ namespace DS {
         }
 
         void shrink_to_fit() {
-            this->capacity = this->m_count;
+            this->m_capacity = this->m_count;
             byte_t shrunken_allocation_size = (this->m_capacity * sizeof(T));
 
             this->m_data = (T*)Memory::realloc(this->m_data, shrunken_allocation_size, shrunken_allocation_size);
@@ -295,15 +295,15 @@ namespace DS {
         bool enqueue(T value) {
             RUNTIME_ASSERT_MSG(!this->full(), "You may not enqueue if the ring queue is full!\n");
 
-            this->data[this->m_write] = value;
+            this->m_data[this->m_write] = value;
             this->m_count += 1;
-            this->write = (this->write + 1) % this->m_capacity;
+            this->m_write = (this->m_write + 1) % this->m_capacity;
         }
         
         T dequeue() {
             RUNTIME_ASSERT_MSG(!this->empty(), "You may not dequeue if the ring queue is empty!\n");
 
-            T ret = this->data[this->m_read];
+            T ret = this->m_data[this->m_read];
             this->m_count -= 1;
             this->m_read = (this->m_read + 1) % this->m_capacity;
 

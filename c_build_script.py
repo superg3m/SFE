@@ -89,7 +89,8 @@ procedures_config = {
             "../../Vendor/glad/include", 
             "../../Vendor/glfw",
             "../../Vendor/assimp/include",
-        ]
+        ],
+        compiler_inject_into_args=[]
     ),
 
     "sfe exe": ProcedureConfig(
