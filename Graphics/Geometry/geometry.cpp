@@ -473,6 +473,46 @@ namespace Graphics {
         Geometry* current = root;
         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+
+            RUNTIME_ASSERT_MSG(mesh->mPrimitiveTypes != 0, "Primitive type not set by ASSIMP in mesh.\n");
+            if((mesh->mPrimitiveTypes & (mesh->mPrimitiveTypes-1)) != 0) {
+                LOG_ERROR(
+                    "This mesh has more than one primitive"
+                    "type in it. The model should be loaded with the "
+                    "aiProcess_SortByPType flag set.\n"
+                );
+
+                RUNTIME_ASSERT(false);
+            }
+
+            /* We assume that each mesh has its own primitive type. Here
+            * we identify that type by number and by the OpenGL name.. */
+            unsigned int meshPrimitiveType;
+            if(mesh->mPrimitiveTypes & aiPrimitiveType_POINT) {
+                meshPrimitiveType = 1;
+                current->draw_type = GL_POINTS;
+            } else if(mesh->mPrimitiveTypes & aiPrimitiveType_LINE) {
+                meshPrimitiveType = 2;
+                current->draw_type = GL_LINES;
+            } else if(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE) {
+                meshPrimitiveType = 3;
+                current->draw_type = GL_TRIANGLES;
+            } else if(mesh->mPrimitiveTypes & aiPrimitiveType_POLYGON) {
+                LOG_ERROR(
+                    "Mesh %u (%u/%u meshes in node \"%s\"): We only "
+                    "support drawing triangle, line, or point meshes. "
+                    "This mesh contained polygons, and we are skipping it. "
+                    "To resolve this problem, ensure that the file is loaded "
+                    "with aiProcess_Triangulate to force ASSIMP to triangulate "
+                    "the model.\n",
+                    node->mMeshes[i], i+1, node->mNumMeshes, node->mName.data
+                );
+
+                RUNTIME_ASSERT(false);
+            } else {
+                RUNTIME_ASSERT_MSG(false, "Unknown primitive type in mesh.\n");
+            }
+
             processAssimpMesh(current, mesh, scene, parent_transform);
             current = current->next;
         }
@@ -485,48 +525,260 @@ namespace Graphics {
         return current;
     }
 
-    void Geometry::processAssimpMesh(Geometry* root, aiMesh* ai_mesh, const aiScene* scene,Math::Mat4 parent_transform) {
+    void Geometry::processAssimpMesh(Geometry* root, aiMesh* mesh, const aiScene* scene,Math::Mat4 parent_transform) {
         root->base_vertex = (unsigned int)this->vertices.count();
         root->base_index = (unsigned int)this->indices.count();
-        root->material = this->materials[ai_mesh->mMaterialIndex];
-        root->index_count = ai_mesh->mNumFaces * 3;
-        root->vertex_count = ai_mesh->mNumVertices;
+        root->material = this->materials[mesh->mMaterialIndex];
+        root->index_count = mesh->mNumFaces * 3;
+        root->vertex_count = mesh->mNumVertices;
         
-        { // Geometry Start
-            const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
-            Vertex v = Vertex();
-            for (unsigned int j = 0; j < ai_mesh->mNumVertices; j++) {
-                const aiVector3D& ai_position = ai_mesh->mVertices[j];
+        Vertex v = Vertex();
+        const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
+        for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+            const aiVector3D& ai_position = mesh->mVertices[j];
 
-                Math::Vec4 transformed_position = parent_transform * Math::Vec4(ai_position.x, ai_position.y, ai_position.z, 1.0f);
-                v.aPosition = Math::Vec3(transformed_position.x, transformed_position.y, transformed_position.z);
+            Math::Vec4 transformed_position = parent_transform * Math::Vec4(ai_position.x, ai_position.y, ai_position.z, 1.0f);
+            v.aPosition = Math::Vec3(transformed_position.x, transformed_position.y, transformed_position.z);
 
-                if (ai_mesh->mNormals) {
-                    const aiVector3D& pNormal = ai_mesh->mNormals[j];
-                    Math::Vec4 transformed_normal = parent_transform * Math::Vec4(pNormal.x, pNormal.y, pNormal.z, 0.0f); // W component is 0 for vectors
-                    v.aNormal = Math::Vec3(transformed_normal.x, transformed_normal.y, transformed_normal.z).normalize(); // Normalize after transform
-                } else {
-                    aiVector3D Normal(0.0f, 1.0f, 0.0f);
-                    v.aNormal = Math::Vec3(Normal.x, Normal.y, Normal.z);
-                }
-
-                const aiVector3D& uv = ai_mesh->HasTextureCoords(0) ? ai_mesh->mTextureCoords[0][j] : Zero3D;
-                v.aTexCoord = Math::Vec2(uv.x, uv.y);
-
-                this->vertices.push(v);
+            if (mesh->mNormals) {
+                const aiVector3D& pNormal = mesh->mNormals[j];
+                Math::Vec4 transformed_normal = parent_transform * Math::Vec4(pNormal.x, pNormal.y, pNormal.z, 0.0f); // W component is 0 for vectors
+                v.aNormal = Math::Vec3(transformed_normal.x, transformed_normal.y, transformed_normal.z).normalize(); // Normalize after transform
+            } else {
+                LOG_ERROR("Mesh doesn't have normals?\n");
             }
 
-            for (unsigned int j = 0; j < ai_mesh->mNumFaces; j++) {
-                const aiFace& Face = ai_mesh->mFaces[j];
-                if (Face.mNumIndices == 3) {
-                    this->indices.push(Face.mIndices[0]);
-                    this->indices.push(Face.mIndices[1]);
-                    this->indices.push(Face.mIndices[2]);
-                } else {
-                    LOG_ERROR("Mesh '%s' has non-triangular face with %d indices. Skipping.\n", ai_mesh->mName.C_Str(), Face.mNumIndices);
+            if(mesh->mTangents) {
+                const aiVector3D& pTangents = mesh->mTangents[j];
+                Math::Vec4 transformed_tangents = parent_transform * Math::Vec4(pTangents.x, pTangents.y, pTangents.z, 0.0f);
+                v.aTangent = Math::Vec3(transformed_tangents);
+            } else {
+                // LOG_ERROR("Mesh doesn't have tangents?\n");
+            }
+
+            if(mesh->mBitangents) {
+                const aiVector3D& pBitangents = mesh->mBitangents[j];
+                Math::Vec4 transformed_bitangents = parent_transform * Math::Vec4(pBitangents.x, pBitangents.y, pBitangents.z, 0.0f);
+                v.aBitangent = Math::Vec3(transformed_bitangents);
+            } else {
+                // LOG_ERROR("Mesh doesn't have bi-tangents?\n");
+            }
+
+            bool has_vertex_colors = mesh->mColors[0] != nullptr;
+
+            if(has_vertex_colors) {
+                v.aColor = Math::Vec3(mesh->mColors[0]->r, mesh->mColors[0]->g, mesh->mColors[0]->b);
+            } else { 
+                aiColor4D diffuse;
+                const aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+                if(AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse)) {
+                    v.aColor = Math::Vec3(diffuse.r, diffuse.g, diffuse.b);
                 }
             }
-        } // Geometry End
+
+            const aiVector3D& uv = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][j] : Zero3D;
+            v.aTexCoord = Math::Vec2(uv.x, uv.y);
+
+            #if 0
+                /* Fill in bone information */
+                if(mesh->mBones && mesh->mNumBones > 0)
+                {
+                    RUNTIME_ASSERT_MSG(mesh->mNumBones <= MAX_BONES, 
+                        "This mesh has %d bones but we only support %d",
+                        mesh->mNumBones, MAX_BONES
+                    );
+
+                    float *indices = kuhl_malloc(sizeof(float)*mesh->mNumVertices*4);
+                    float *weights = kuhl_malloc(sizeof(float)*mesh->mNumVertices*4);
+                    /* For each vertex */
+                    for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                    {
+                        /* Zero out weights */
+                        for(int j=0; j<4; j++)
+                        {
+                            // If weight is zero, it doesn't matter what the index
+                            // is as long as it isn't out of bounds.
+                            indices[i*4+j] = 0;
+                            weights[i*4+j] = 0;
+                        }
+
+                        int count = 0; /* How many bones refer to this vertex? */
+                            
+                        /* For each bone */
+                        for(unsigned int j=0; j<mesh->mNumBones; j++)
+                        {
+                            /* Each vertex that this bone refers to. */
+                            for(unsigned int k=0; k<mesh->mBones[j]->mNumWeights; k++)
+                            {
+                                /* If this bone refers to a vertex that matches the one
+                                that we are on, use the data and send it to the vertex program.
+                                */
+                                unsigned int idx = mesh->mBones[j]->mWeights[k].mVertexId;
+                                float wght       = mesh->mBones[j]->mWeights[k].mWeight;
+                                if(idx == i)
+                                {
+                                    indices[i*4+count] = (float) j;
+                                    weights[i*4+count] = wght;
+                                    count++;
+                                } // end if vertices match
+                            } // end for each vertex the bone refers to
+                        } // end for each bone
+                    } // end for each vertex in mesh
+
+                    for(unsigned int i=0; i<mesh->mNumVertices; i++) {
+                        if(weights[i*4+0] == 0) {
+                            msg(MSG_FATAL, "Every vertex should have at least one weight but vertex %ud has no weights!", i);
+                            exit(EXIT_FAILURE);
+                        }
+                    }
+                    kuhl_geometry_attrib(geom, indices, 4, "in_BoneIndex", 0);
+                    kuhl_geometry_attrib(geom, weights, 4, "in_BoneWeight", 0);
+                    free(indices);
+                    free(weights);
+                } // end if there are bones 
+
+                { // materials start
+                    std::string directory = path.substr(0, path.find_last_of('/'));
+                    for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
+                        const aiMaterial* ai_material = scene->mMaterials[i];
+
+                        aiColor4D ambient_color(0.0f, 0.0f, 0.0f, 0.0f);
+                        GM_Vec3 white = GM_Vec3(1.0f);
+
+                        if (ai_material->Get(AI_MATKEY_COLOR_AMBIENT, ambient_color) == AI_SUCCESS) {
+                            this->materials[i].ambient_color.r = ambient_color.r;
+                            this->materials[i].ambient_color.g = ambient_color.g;
+                            this->materials[i].ambient_color.b = ambient_color.b;
+                        } else {
+                            this->materials[i].ambient_color = white;
+                        }
+
+                        aiColor3D diffuse_color(0.0f, 0.0f, 0.0f);
+
+                        if (ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color) == AI_SUCCESS) {
+                            this->materials[i].diffuse_color.r = diffuse_color.r;
+                            this->materials[i].diffuse_color.g = diffuse_color.g;
+                            this->materials[i].diffuse_color.b = diffuse_color.b;
+                        }
+
+                        aiColor3D specular_color(0.0f, 0.0f, 0.0f);
+
+                        if (ai_material->Get(AI_MATKEY_COLOR_SPECULAR, specular_color) == AI_SUCCESS) {
+                            this->materials[i].specular_color.r = specular_color.r;
+                            this->materials[i].specular_color.g = specular_color.g;
+                            this->materials[i].specular_color.b = specular_color.b;
+                        }
+
+                        float opacity = 1.0f;
+                        if (ai_material->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS) {
+                            this->materials[i].opacity = opacity;
+                        } else {
+                            LOG_WARN("Mesh Failed opacity matkey?\n");
+                        }
+
+                        for (int type_int = 0; type_int < TEXTURE_COUNT; type_int++) {
+                            TextureType type = static_cast<TextureType>(type_int);
+
+                            if (textureTypeToAssimpType.count(type) == 0) {
+                                continue;
+                            }
+
+                            aiTextureType ai_type = textureTypeToAssimpType.at(type);
+                            if (ai_material->GetTextureCount(ai_type) <= 0) {
+                                continue;
+                            }
+
+                            aiString str;
+                            if (ai_material->GetTexture(ai_type, 0, &str, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+                                std::string filename = directory + '/' + std::string(str.C_Str());
+                                const aiTexture* ai_texture = scene->GetEmbeddedTexture(str.C_Str());
+
+                                if (ai_texture) {
+                                    int width, height, nrChannel = 0;
+                                    u8* image_data = stbi_load_from_memory((u8*)ai_texture->pcData, ai_texture->mWidth, &width, &height, &nrChannel, 0);
+                                    GLTextureID id = TextureLoader::loadTextureFromMemory(image_data, width, height, nrChannel);
+                                    if (TextureLoader::textures.count(filename) == 0) {
+                                        TextureLoader::registerTexture(filename, id);
+                                    }
+
+                                    CKG_LOG_DEBUG("Material: %d | has embedded Texture of type: %s\n", i, texture_to_string[type]);
+                                    this->materials[i].textures[type] = TextureLoader::textures.at(filename);
+                                } else {
+                                    CKG_LOG_DEBUG("Material: %d | has external texture of type: %s\n", i, texture_to_string[type]);
+                                    if (TextureLoader::textures.count(filename) == 0) {
+                                        TextureLoader::registerTexture(filename, filename.c_str(), this->texture_flags);
+                                    }
+                                    this->materials[i].textures[type] = TextureLoader::textures.at(filename);
+                                }
+                            } else {
+                                CKG_LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
+                            }
+                        }
+                    }
+                } // materials end
+
+                /* Go through all texture types that ASSIMP supports. */
+                for(int tt=0; tt<TEX_TYPE_LEN; tt++)
+                {
+                    /* Find our texture and tell our kuhl_geometry object about
+                    * it. */
+                    struct aiString texPath;	//contains filename of texture
+                    int texIndex = 0;
+                    if(AI_SUCCESS == aiGetMaterialTexture(sc->mMaterials[mesh->mMaterialIndex],
+                                                        texTypeList[tt], texIndex, &texPath,
+                                                        NULL, NULL, NULL, NULL, NULL, NULL))
+                    {
+                        GLuint texture = 0;
+                        for(int i=0; i<textureIdMapSize; i++)
+                        {
+                            char *fullpath = kuhl_private_assimp_fullpath(texPath.data, modelFilename, textureDirname);
+                            if(strcmp(textureIdMap[i].textureFileName, fullpath) == 0)
+                                texture = textureIdMap[i].textureID;
+                            free(fullpath);
+                        }
+                        if(texture == 0)
+                        {
+                            msg(MSG_WARNING, "Mesh %u uses %s texture '%s'."
+                                "This texture should have been loaded earlier, but we can't find it now.",
+                                nd->mMeshes[n], texTypeListStr[tt], texPath.data);
+                        }
+                        else
+                        {
+                            /* If model uses texture and we found the texture file,
+                            Make sure we repeat instead of clamp textures */
+                            glBindTexture(GL_TEXTURE_2D, texture);
+                            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+                            kuhl_errorcheck();
+
+                            if(texTypeList[tt] == aiTextureType_DIFFUSE)
+                                // use "tex" variable name for diffuse textures.
+                                kuhl_geometry_texture(geom, texture, "tex", 0);
+                            else
+                            {
+                                // use variable names like tex_SPECULAR, tex_NORMALS, etc.
+                                char glsl_var_name[100]="";
+                                snprintf(glsl_var_name, 100, "tex_%s", texTypeListStr[tt]);
+                                kuhl_geometry_texture(geom, texture, glsl_var_name, 0);
+                            }
+                        }
+                    } // end if assimp provides this texture 
+                } // end loop through all of assimp supported texture types.
+            #endif
+
+            this->vertices.push(v);
+        }
+
+        for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
+            const aiFace& Face = mesh->mFaces[j];
+            if (Face.mNumIndices == 3) {
+                this->indices.push(Face.mIndices[0]);
+                this->indices.push(Face.mIndices[1]);
+                this->indices.push(Face.mIndices[2]);
+            } else {
+                LOG_ERROR("Mesh '%s' has non-triangular face with %d indices. Skipping.\n", mesh->mName.C_Str(), Face.mNumIndices);
+            }
+        }
     }
 
     void Geometry::loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags) {

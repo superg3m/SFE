@@ -9,6 +9,8 @@
 #include <Geometry/material.hpp>
 #include <Geometry/vertex.hpp>
 
+#define MAX_BONES 128
+
 typedef struct ShaderBase ShaderBase;
 namespace Graphics {
 	
