@@ -525,7 +525,7 @@ namespace Graphics {
         return current;
     }
 
-    void Geometry::processAssimpMesh(Geometry* root, aiMesh* mesh, const aiScene* scene,Math::Mat4 parent_transform) {
+    void Geometry::processAssimpMesh(Geometry* root, aiMesh* mesh, const aiScene* scene, Math::Mat4 parent_transform) {
         root->base_vertex = (unsigned int)this->vertices.count();
         root->base_index = (unsigned int)this->indices.count();
         root->material = this->materials[mesh->mMaterialIndex];
@@ -564,9 +564,7 @@ namespace Graphics {
                 // LOG_ERROR("Mesh doesn't have bi-tangents?\n");
             }
 
-            bool has_vertex_colors = mesh->mColors[0] != nullptr;
-
-            if(has_vertex_colors) {
+            if(mesh->mColors[0]) {
                 v.aColor = Math::Vec3(mesh->mColors[0]->r, mesh->mColors[0]->g, mesh->mColors[0]->b);
             } else { 
                 aiColor4D diffuse;
@@ -578,6 +576,81 @@ namespace Graphics {
 
             const aiVector3D& uv = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][j] : Zero3D;
             v.aTexCoord = Math::Vec2(uv.x, uv.y);
+
+            #if 0
+            { // materials start
+                std::string directory = path.substr(0, path.find_last_of('/'));
+                for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
+                    const aiMaterial* ai_material = scene->mMaterials[i];
+
+                    aiColor4D ambient_color(0.0f, 0.0f, 0.0f, 0.0f);
+                    if (ai_material->Get(AI_MATKEY_COLOR_AMBIENT, ambient_color) == AI_SUCCESS) {
+                        this->materials[i].ambient_color.r = ambient_color.r;
+                        this->materials[i].ambient_color.g = ambient_color.g;
+                        this->materials[i].ambient_color.b = ambient_color.b;
+                    }
+
+                    aiColor3D diffuse_color(0.0f, 0.0f, 0.0f);
+                    if (ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color) == AI_SUCCESS) {
+                        this->materials[i].diffuse_color.r = diffuse_color.r;
+                        this->materials[i].diffuse_color.g = diffuse_color.g;
+                        this->materials[i].diffuse_color.b = diffuse_color.b;
+                    }
+
+                    aiColor3D specular_color(0.0f, 0.0f, 0.0f);
+                    if (ai_material->Get(AI_MATKEY_COLOR_SPECULAR, specular_color) == AI_SUCCESS) {
+                        this->materials[i].specular_color.r = specular_color.r;
+                        this->materials[i].specular_color.g = specular_color.g;
+                        this->materials[i].specular_color.b = specular_color.b;
+                    }
+
+                    float opacity = 1.0f;
+                    if (ai_material->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS) {
+                        this->materials[i].opacity = opacity;
+                    } else {
+                        LOG_WARN("Mesh Failed opacity matkey?\n");
+                    }
+
+                    for (int type_int = 0; type_int < TEXTURE_COUNT; type_int++) {
+                        aiTextureType type = static_cast<aiTextureType>(type_int);
+                        if (ai_material->GetTextureCount(type) <= 0) {
+                            continue;
+                        }
+
+                        aiString str;
+                        if (ai_material->GetTexture(type, 0, &str, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+                            std::string filename = directory + '/' + std::string(str.C_Str());
+                            const aiTexture* ai_texture = scene->GetEmbeddedTexture(str.C_Str());
+
+                            if (ai_texture) {
+                                int width, height, nrChannel = 0;
+                                /*
+                                u8* image_data = stbi_load_from_memory((u8*)ai_texture->pcData, ai_texture->mWidth, &width, &height, &nrChannel, 0);
+                                GLTextureID id = TextureLoader::loadTextureFromMemory(image_data, width, height, nrChannel);
+                                if (TextureLoader::textures.count(filename) == 0) {
+                                    TextureLoader::registerTexture(filename, id);
+                                }
+                     
+
+                                LOG_DEBUG("Material: %d | has embedded Texture of type: %s\n", i, texture_to_string[type]);
+                                this->materials[i].textures[type] = TextureLoader::textures.at(filename);
+                                */
+                            } else {
+                                LOG_DEBUG("Material: %d | has external texture of type: %s\n", i, texture_to_string[type]);
+                                /*
+                                if (TextureLoader::textures.count(filename) == 0) {
+                                    TextureLoader::registerTexture(filename, filename.c_str(), this->texture_flags);
+                                }
+                                this->materials[i].textures[type] = TextureLoader::textures.at(filename);
+                                */
+                            }
+                        } else {
+                            LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
+                        }
+                    }
+                }
+            }
+            #endif
 
             #if 0
                 /* Fill in bone information */
@@ -636,134 +709,6 @@ namespace Graphics {
                     free(indices);
                     free(weights);
                 } // end if there are bones 
-
-                { // materials start
-                    std::string directory = path.substr(0, path.find_last_of('/'));
-                    for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
-                        const aiMaterial* ai_material = scene->mMaterials[i];
-
-                        aiColor4D ambient_color(0.0f, 0.0f, 0.0f, 0.0f);
-                        GM_Vec3 white = GM_Vec3(1.0f);
-
-                        if (ai_material->Get(AI_MATKEY_COLOR_AMBIENT, ambient_color) == AI_SUCCESS) {
-                            this->materials[i].ambient_color.r = ambient_color.r;
-                            this->materials[i].ambient_color.g = ambient_color.g;
-                            this->materials[i].ambient_color.b = ambient_color.b;
-                        } else {
-                            this->materials[i].ambient_color = white;
-                        }
-
-                        aiColor3D diffuse_color(0.0f, 0.0f, 0.0f);
-
-                        if (ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color) == AI_SUCCESS) {
-                            this->materials[i].diffuse_color.r = diffuse_color.r;
-                            this->materials[i].diffuse_color.g = diffuse_color.g;
-                            this->materials[i].diffuse_color.b = diffuse_color.b;
-                        }
-
-                        aiColor3D specular_color(0.0f, 0.0f, 0.0f);
-
-                        if (ai_material->Get(AI_MATKEY_COLOR_SPECULAR, specular_color) == AI_SUCCESS) {
-                            this->materials[i].specular_color.r = specular_color.r;
-                            this->materials[i].specular_color.g = specular_color.g;
-                            this->materials[i].specular_color.b = specular_color.b;
-                        }
-
-                        float opacity = 1.0f;
-                        if (ai_material->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS) {
-                            this->materials[i].opacity = opacity;
-                        } else {
-                            LOG_WARN("Mesh Failed opacity matkey?\n");
-                        }
-
-                        for (int type_int = 0; type_int < TEXTURE_COUNT; type_int++) {
-                            TextureType type = static_cast<TextureType>(type_int);
-
-                            if (textureTypeToAssimpType.count(type) == 0) {
-                                continue;
-                            }
-
-                            aiTextureType ai_type = textureTypeToAssimpType.at(type);
-                            if (ai_material->GetTextureCount(ai_type) <= 0) {
-                                continue;
-                            }
-
-                            aiString str;
-                            if (ai_material->GetTexture(ai_type, 0, &str, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-                                std::string filename = directory + '/' + std::string(str.C_Str());
-                                const aiTexture* ai_texture = scene->GetEmbeddedTexture(str.C_Str());
-
-                                if (ai_texture) {
-                                    int width, height, nrChannel = 0;
-                                    u8* image_data = stbi_load_from_memory((u8*)ai_texture->pcData, ai_texture->mWidth, &width, &height, &nrChannel, 0);
-                                    GLTextureID id = TextureLoader::loadTextureFromMemory(image_data, width, height, nrChannel);
-                                    if (TextureLoader::textures.count(filename) == 0) {
-                                        TextureLoader::registerTexture(filename, id);
-                                    }
-
-                                    CKG_LOG_DEBUG("Material: %d | has embedded Texture of type: %s\n", i, texture_to_string[type]);
-                                    this->materials[i].textures[type] = TextureLoader::textures.at(filename);
-                                } else {
-                                    CKG_LOG_DEBUG("Material: %d | has external texture of type: %s\n", i, texture_to_string[type]);
-                                    if (TextureLoader::textures.count(filename) == 0) {
-                                        TextureLoader::registerTexture(filename, filename.c_str(), this->texture_flags);
-                                    }
-                                    this->materials[i].textures[type] = TextureLoader::textures.at(filename);
-                                }
-                            } else {
-                                CKG_LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
-                            }
-                        }
-                    }
-                } // materials end
-
-                /* Go through all texture types that ASSIMP supports. */
-                for(int tt=0; tt<TEX_TYPE_LEN; tt++)
-                {
-                    /* Find our texture and tell our kuhl_geometry object about
-                    * it. */
-                    struct aiString texPath;	//contains filename of texture
-                    int texIndex = 0;
-                    if(AI_SUCCESS == aiGetMaterialTexture(sc->mMaterials[mesh->mMaterialIndex],
-                                                        texTypeList[tt], texIndex, &texPath,
-                                                        NULL, NULL, NULL, NULL, NULL, NULL))
-                    {
-                        GLuint texture = 0;
-                        for(int i=0; i<textureIdMapSize; i++)
-                        {
-                            char *fullpath = kuhl_private_assimp_fullpath(texPath.data, modelFilename, textureDirname);
-                            if(strcmp(textureIdMap[i].textureFileName, fullpath) == 0)
-                                texture = textureIdMap[i].textureID;
-                            free(fullpath);
-                        }
-                        if(texture == 0)
-                        {
-                            msg(MSG_WARNING, "Mesh %u uses %s texture '%s'."
-                                "This texture should have been loaded earlier, but we can't find it now.",
-                                nd->mMeshes[n], texTypeListStr[tt], texPath.data);
-                        }
-                        else
-                        {
-                            /* If model uses texture and we found the texture file,
-                            Make sure we repeat instead of clamp textures */
-                            glBindTexture(GL_TEXTURE_2D, texture);
-                            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-                            kuhl_errorcheck();
-
-                            if(texTypeList[tt] == aiTextureType_DIFFUSE)
-                                // use "tex" variable name for diffuse textures.
-                                kuhl_geometry_texture(geom, texture, "tex", 0);
-                            else
-                            {
-                                // use variable names like tex_SPECULAR, tex_NORMALS, etc.
-                                char glsl_var_name[100]="";
-                                snprintf(glsl_var_name, 100, "tex_%s", texTypeListStr[tt]);
-                                kuhl_geometry_texture(geom, texture, glsl_var_name, 0);
-                            }
-                        }
-                    } // end if assimp provides this texture 
-                } // end loop through all of assimp supported texture types.
             #endif
 
             this->vertices.push(v);

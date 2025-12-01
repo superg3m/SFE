@@ -75,7 +75,9 @@ void ShaderModel::setMaterial(const Material &material) const {
 
     this->setFloat(uMaterial_Location.shininess, material.shininess);
     this->setFloat(uMaterial_Location.opacity, material.opacity);
-    this->setVec3(uMaterial_Location.color, material.color);
+    this->setVec3(uMaterial_Location.color, material.ambient_color);
+    this->setVec3(uMaterial_Location.color, material.diffuse_color);
+    this->setVec3(uMaterial_Location.color, material.specular_color);
 }
 
 void ShaderModel::setSpotLight(SpotLight &spot_light) const {
