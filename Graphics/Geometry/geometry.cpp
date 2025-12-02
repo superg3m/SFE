@@ -76,7 +76,6 @@ namespace Graphics {
 
         this->base_vertex = 0;
         this->base_index = 0;
-        this->material = {0};
 
         this->next = nullptr;
     }
@@ -407,7 +406,7 @@ namespace Graphics {
             if (ai_material->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS) {
                 this->materials[i].opacity = opacity;
             } else {
-                LOG_WARN("Mesh Failed opacity matkey?\n");
+                // LOG_WARN("Mesh Failed opacity matkey?\n");
             }
 
             for (int type_int = 0; type_int < TEXTURE_COUNT; type_int++) {
@@ -421,7 +420,7 @@ namespace Graphics {
                     const char* texture_path = str.C_Str();
                     u64 texture_path_length = String::length(texture_path);
 
-                    u64 filename_capacity = index + 1 + texture_path_length;
+                    u64 filename_capacity = index + 1 + texture_path_length + 1;
                     char* filename = (char*)Memory::alloc(filename_capacity);
                     u64 filename_length = 0;
                     String::append(filename, filename_length, filename_capacity, directory, index);
@@ -431,21 +430,25 @@ namespace Graphics {
                     const aiTexture* ai_texture = scene->GetEmbeddedTexture(str.C_Str());
                     if (ai_texture) {
                         int width, height, nrChannel = 0;
+                        stbi_set_flip_vertically_on_load(true);
                         u8* image_data = stbi_load_from_memory((u8*)ai_texture->pcData, ai_texture->mWidth, &width, &height, &nrChannel, 0);
-                        Texture texture = Texture(image_data, width, height, nrChannel);
-                
+                        Texture texture = Texture::LoadFromMemory(image_data, width, height, nrChannel);
+                        stbi_set_flip_vertically_on_load(false);
+
                         LOG_DEBUG("Material: %d | has embedded Texture of type: %s\n", i, texture_to_string[type]);
                         this->materials[i].textures[type] = texture;
                     } else {
                         LOG_DEBUG("Material: %d | has external texture of type: %s\n", i, texture_to_string[type]);
-                        this->materials[i].textures[type] = Texture(filename);
+                        this->materials[i].textures[type] = Texture::LoadFromFile(filename);
                     }
+
+                    // Memory::free(filename);
                 } else {
                     LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
                 }
             }
 
-            Memory::free(directory);
+            // Memory::free(directory);
         }
 
         processNode(this, scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));

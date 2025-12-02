@@ -187,7 +187,6 @@ namespace String {
     void insert(char* str, u64 &str_length_out, byte_t str_capacity, const char* to_insert, u64 to_insert_length, u64 index) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(to_insert);
-        RUNTIME_ASSERT(str_length_out);
 
         u64 new_length = str_length_out + to_insert_length;
         RUNTIME_ASSERT_MSG(new_length < str_capacity, "ckg_str_insert: str_capacity is %lld but new valid cstring capacity is %d + %d + 1(null_term)= %d\n", str_capacity, str_length_out, to_insert_length, new_length + 1);

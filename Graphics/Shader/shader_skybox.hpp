@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-
 #include <Shader/shader_base.hpp>
 
 struct ShaderSkybox : public ShaderBase {
@@ -11,7 +10,7 @@ struct ShaderSkybox : public ShaderBase {
     void compile() override;
     void setMaterial(const Material &material) const override;
     
-    void setSkyboxTexture(GLTextureID texture) const;
+    void setSkyboxTexture(Texture texture) const;
 private:
     unsigned int uSkyboxTexture_Location;
 };

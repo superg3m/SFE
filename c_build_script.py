@@ -77,7 +77,8 @@ procedures_config = {
         source_files = [
             "../../Core/**/*.cpp",
             "../../Graphics/**/*.cpp",
-            "../../Vendor/glad/src/glad.c"
+            "../../Vendor/glad/src/glad.c",
+            "../../Vendor/stb/stb_image.c"
         ],
         additional_libs = [],
         include_paths = [

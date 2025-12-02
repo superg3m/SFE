@@ -66,11 +66,11 @@ void ShaderModel::setMaterial(const Material &material) const {
     this->use();
 
     glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_2D, material.color_map.id);
+    glBindTexture(GL_TEXTURE_2D, material.textures[TEXTURE_TYPE_DIFFUSE].id);
     this->setInt(uMaterial_Location.color_map, 0);
 
     glActiveTexture(GL_TEXTURE0 + 1);
-    glBindTexture(GL_TEXTURE_2D, material.specular_map.id);
+    glBindTexture(GL_TEXTURE_2D, material.textures[TEXTURE_TYPE_SPECULAR].id);
     this->setInt(uMaterial_Location.specular_map, 1);
 
     this->setFloat(uMaterial_Location.shininess, material.shininess);

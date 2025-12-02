@@ -13,10 +13,10 @@ void ShaderSkybox::compile() {
 
 void ShaderSkybox::setMaterial(const Material& material) const {}
 
-void ShaderSkybox::setSkyboxTexture(GLTextureID texture) const {
+void ShaderSkybox::setSkyboxTexture(Texture texture) const {
     this->use();
 
     glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture.id);
     this->setInt(this->uSkyboxTexture_Location, 0); 
 }

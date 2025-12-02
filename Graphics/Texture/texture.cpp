@@ -5,7 +5,11 @@
 #include <Platform/platform.hpp>
 #include <Texture/texture.hpp>
 
-Texture::Texture(char* path) {
+Texture::Texture() {
+
+}
+
+Texture Texture::LoadFromFile(char* path) {
     RUNTIME_ASSERT_MSG(Platform::filePathExists(path), "Texture path: '%s' doesn't exist!\n", path);
     
     GLenum MIPMAP_TYPE = GL_LINEAR; // GET_BIT(texture_flags, 0) ? GL_NEAREST : GL_LINEAR;
@@ -52,12 +56,15 @@ Texture::Texture(char* path) {
         LOG_ERROR("TextureLoader | id is invalid!\n");
     }
 
-    this->id = texture;
-    this->width = width;
-    this->height = height;
+    Texture ret;
+    ret.id = texture;
+    ret.width = width;
+    ret.height = height;
+    
+    return ret;
 }
 
-Texture::Texture(const u8* data, int width, int height, int nrChannels) {
+Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrChannels) {
     if (!data || width <= 0 || height <= 0 || nrChannels == 0) {
         RUNTIME_ASSERT_MSG(false, "TextureLoader | Invalid input data for loadTextureFromMemory!\n");
     }
@@ -90,7 +97,10 @@ Texture::Texture(const u8* data, int width, int height, int nrChannels) {
         RUNTIME_ASSERT_MSG(false, "TextureLoader | id is invalid for memory texture!\n");
     }
 
-    this->id = texture;
-    this->width = width;
-    this->height = height;
+    Texture ret;
+    ret.id = texture;
+    ret.width = width;
+    ret.height = height;
+
+    return ret;
 }
