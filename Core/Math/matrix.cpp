@@ -232,7 +232,6 @@ namespace Math {
         const float l = -t * aspect;
 
         const float p = (2.0f * near_plane);
-
         const float A = p / (r - l);
         const float B = p / (t - b);
         const float C = -((far_plane + near_plane) / (far_plane - near_plane));
@@ -407,5 +406,20 @@ namespace Math {
 
     bool Mat4::operator!=(const Mat4 &right) {
         return !(*this == right);
+    }
+
+    void Mat4::print() const {
+        printf(
+            "---------------------\n"
+            "[%.2f %.2f %.2f %.2f]\n"
+            "[%.2f %.2f %.2f %.2f]\n"
+            "[%.2f %.2f %.2f %.2f]\n"
+            "[%.2f %.2f %.2f %.2f]\n"
+            "---------------------\n",
+            this->v[0].x, this->v[0].y, this->v[0].z, this->v[0].w,
+            this->v[1].x, this->v[1].y, this->v[1].z, this->v[1].w,
+            this->v[2].x, this->v[2].y, this->v[2].z, this->v[2].w,
+            this->v[3].x, this->v[3].y, this->v[3].z, this->v[3].w
+        );
     }
 } 

@@ -53,9 +53,10 @@ void display() {
     float fov = camera.zoom;
     float aspect = WIDTH / HEIGHT;
     float near_plane = 0.1f;
-    float far_plane = 1000.0f;
+    float far_plane = 200.0f;
     Math::Mat4 perspective = Math::Mat4::Perspective(fov, aspect, near_plane, far_plane);
     Math::Mat4 view = camera.getViewMatrix();
+    perspective.print();
 
     diffuse_shader.use();
     diffuse_shader.setProjection(perspective);

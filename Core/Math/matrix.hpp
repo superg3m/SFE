@@ -47,5 +47,7 @@ namespace Math {
 
         bool operator==(const Mat4 &right);
         bool operator!=(const Mat4 &right);
+
+        void print() const;
     };
 }

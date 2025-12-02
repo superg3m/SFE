@@ -15,7 +15,7 @@ const float DEFAULTED_YAW         = -90.0f;
 const float DEFAULTED_PITCH       =  0.0f;
 const float DEFAULTED_SPEED       =  10.0f;
 const float DEFAULTED_SENSITIVITY =  0.1f;
-const float DEFAULTED_ZOOM        =  45.0f;
+const float DEFAULTED_ZOOM        =  65.0f;
 
 struct Camera {
     Math::Vec3 position;
@@ -24,12 +24,12 @@ struct Camera {
     Math::Vec3 right;
     Math::Vec3 world_up;
 
-    float yaw;
-    float pitch;
+    float yaw = DEFAULTED_YAW;
+    float pitch = DEFAULTED_PITCH;
     
-    float mouse_sensitivity;
-    float movement_speed;
-    float zoom;
+    float movement_speed = DEFAULTED_SPEED;
+    float mouse_sensitivity = DEFAULTED_SENSITIVITY;
+    float zoom = DEFAULTED_ZOOM;
 
     Camera() = default;
     Camera(Math::Vec3 position);
