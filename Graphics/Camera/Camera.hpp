@@ -13,7 +13,7 @@ enum CameraDirection {
 
 const float DEFAULTED_YAW         = -90.0f;
 const float DEFAULTED_PITCH       =  0.0f;
-const float DEFAULTED_SPEED       =  10.0f;
+const float DEFAULTED_SPEED       =  50.0f;
 const float DEFAULTED_SENSITIVITY =  0.1f;
 const float DEFAULTED_ZOOM        =  65.0f;
 

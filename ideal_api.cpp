@@ -3,6 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include <IOD.hpp>
+#include <GLFW_IOD.hpp>
+
 ShaderDiffuse diffuse_shader;
 ShaderModel model_shader;
 Graphics::Geometry pole;
@@ -19,6 +22,8 @@ static int is_rotating = 1;
 static int is_translating = 1;
 
 Camera camera;
+bool mouse_captured = false;
+float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
 
@@ -31,13 +36,64 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
         glfwSetWindowShouldClose(window, true);
     }
 
-	if(key == GLFW_KEY_SPACE) {
+	if (key == GLFW_KEY_SPACE) {
 		is_rotating = !is_rotating;
 	}
 
-	if(key == GLFW_KEY_U) {
+	if (key == GLFW_KEY_U) {
 		is_translating = !is_translating;
     }
+
+    if (key == GLFW_KEY_W) {
+        camera.processKeyboard(FORWARD, dt);
+    }
+
+    if (key == GLFW_KEY_A) {
+        camera.processKeyboard(LEFT, dt);
+        
+    }
+
+    if (key == GLFW_KEY_S) {
+        camera.processKeyboard(BACKWARD, dt);
+        
+    }
+
+    if (key == GLFW_KEY_D) {
+        camera.processKeyboard(RIGHT, dt);
+    }
+
+    if (key == GLFW_KEY_C) {
+        mouse_captured = true;
+    }
+}
+
+void mouse(GLFWwindow *window, double mouse_x, double mouse_y) {
+    static bool previous_frame_mouse_was_captured = true;
+    if (!mouse_captured) { 
+        previous_frame_mouse_was_captured = false;
+    }
+    
+    static float last_mouse_x = mouse_x;
+    static float last_mouse_y = mouse_y;
+
+    float xoffset = mouse_x - last_mouse_x;
+    float yoffset = last_mouse_y - mouse_y;
+
+    if (!previous_frame_mouse_was_captured && mouse_captured) {
+        xoffset = 0;
+        yoffset = 0;
+        glfwSetCursorPos(window, last_mouse_x, last_mouse_y);
+    } else {
+        last_mouse_x = mouse_x;
+        last_mouse_y = mouse_y;
+    }  
+    
+    if (mouse_captured) { 
+        camera.processMouseMovement(xoffset, yoffset);
+        return;
+    }
+
+    previous_frame_mouse_was_captured = true;
 }
 
 void display() {
@@ -178,6 +234,16 @@ int main(int argc, char** argv) {
     // glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     // glfwSetScrollCallback(window, scroll_callback);
 	glfwSetKeyCallback(window, keyboard);
+	glfwSetCursorPosCallback(window, mouse);
+
+    if (!IOD_GLFW_SETUP(window)) {
+        LOG_ERROR("Failed to setup IOD_GLFW\n");
+        glfwTerminate();
+        return -1;
+    }
+    // void IOD_GLFW_BIND_KEY_CALLBACK(GLFWkeyfun cb);
+    // void IOD_GLFW_BIND_MOUSE_BUTTON_CALLBACK(GLFWmousebuttonfun cb);
+    // void IOD_GLFW_BIND_MOUSE_MOVE_CALLBACK(GLFWcursorposfun cb);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         LOG_ERROR("Failed to initialize GLAD\n");
@@ -221,7 +287,12 @@ int main(int argc, char** argv) {
     // church = Graphics::Geometry::Model("../../Models/backpack/backpack.obj");
 
     camera = Camera(0, 0, 10);
+    float previous = 0;
 	while(!glfwWindowShouldClose(window)) {
+        float current = glfwGetTime();
+        dt = current - previous;
+        previous = current;
+
 		display();
 
 		glfwPollEvents();
