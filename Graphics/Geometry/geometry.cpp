@@ -430,10 +430,8 @@ namespace Graphics {
                     const aiTexture* ai_texture = scene->GetEmbeddedTexture(str.C_Str());
                     if (ai_texture) {
                         int width, height, nrChannel = 0;
-                        stbi_set_flip_vertically_on_load(true);
                         u8* image_data = stbi_load_from_memory((u8*)ai_texture->pcData, ai_texture->mWidth, &width, &height, &nrChannel, 0);
                         Texture texture = Texture::LoadFromMemory(image_data, width, height, nrChannel);
-                        stbi_set_flip_vertically_on_load(false);
 
                         LOG_DEBUG("Material: %d | has embedded Texture of type: %s\n", i, texture_to_string[type]);
                         this->materials[i].textures[type] = texture;

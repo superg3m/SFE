@@ -1,6 +1,6 @@
 #include <String/string.hpp>
-
 #include <Shader/shader_model.hpp>
+#include <glad/glad.h>
 
 ShaderModel::ShaderModel(DS::Vector<const char*> shader_paths) {
     this->shader_paths = shader_paths;
@@ -10,6 +10,7 @@ ShaderModel::ShaderModel(DS::Vector<const char*> shader_paths) {
 void ShaderModel::compile() {
     this->program_id = this->createShaderProgram(this->shader_paths);
 
+    /*
     this->uSpotLight_Location.position = this->getUniformLocation("uSpotLight.position", GL_FLOAT_VEC3);
     this->uSpotLight_Location.direction = this->getUniformLocation("uSpotLight.direction", GL_FLOAT_VEC3);
     this->uSpotLight_Location.cutOff = this->getUniformLocation("uSpotLight.cutOff", GL_FLOAT);
@@ -54,12 +55,14 @@ void ShaderModel::compile() {
 
     this->uViewPosition_Location = this->getUniformLocation("uViewPosition", GL_FLOAT_VEC3);
     this->uUseFlashlight_Location = this->getUniformLocation("uUseFlashlight", GL_BOOL);
+    */
 
-    this->uMaterial_Location.color_map = this->getUniformLocation("uMaterial.color_map", GL_SAMPLER_2D);
+    this->uMaterial_Location.color_map = this->getUniformLocation("uMaterial.diffuse_map", GL_SAMPLER_2D);
     this->uMaterial_Location.specular_map = this->getUniformLocation("uMaterial.specular_map", GL_SAMPLER_2D);
     this->uMaterial_Location.shininess = this->getUniformLocation("uMaterial.shininess", GL_FLOAT);
+
     this->uMaterial_Location.opacity = this->getUniformLocation("uMaterial.opacity", GL_FLOAT);
-    this->uMaterial_Location.color = this->getUniformLocation("uMaterial.color", GL_FLOAT_VEC3);
+    // this->uMaterial_Location.color = this->getUniformLocation("uMaterial.color", GL_FLOAT_VEC3);
 }
 
 void ShaderModel::setMaterial(const Material &material) const {
@@ -73,11 +76,12 @@ void ShaderModel::setMaterial(const Material &material) const {
     glBindTexture(GL_TEXTURE_2D, material.textures[TEXTURE_TYPE_SPECULAR].id);
     this->setInt(uMaterial_Location.specular_map, 1);
 
-    this->setFloat(uMaterial_Location.shininess, material.shininess);
-    this->setFloat(uMaterial_Location.opacity, material.opacity);
     this->setVec3(uMaterial_Location.color, material.ambient_color);
     this->setVec3(uMaterial_Location.color, material.diffuse_color);
     this->setVec3(uMaterial_Location.color, material.specular_color);
+
+    this->setFloat(uMaterial_Location.shininess, material.shininess);
+    this->setFloat(uMaterial_Location.opacity, material.opacity);
 }
 
 void ShaderModel::setSpotLight(SpotLight &spot_light) const {

@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 
 ShaderDiffuse diffuse_shader;
+ShaderModel model_shader;
 Graphics::Geometry pole;
 Graphics::Geometry hexplane;
 Graphics::Geometry animals[4];
@@ -56,11 +57,13 @@ void display() {
     float far_plane = 200.0f;
     Math::Mat4 perspective = Math::Mat4::Perspective(fov, aspect, near_plane, far_plane);
     Math::Mat4 view = camera.getViewMatrix();
-    perspective.print();
 
-    diffuse_shader.use();
     diffuse_shader.setProjection(perspective);
     diffuse_shader.setView(view);
+
+    model_shader.setProjection(perspective);
+    model_shader.setView(view);
+
     for (int i = 0; i < 4; i++) {
         Math::Mat4 model = Math::Mat4::Identity();
         model = rot_mat * translate_mats[i] * rot_mat;
@@ -98,8 +101,8 @@ void display() {
     model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 90, 0));
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, 5, 0);
-    diffuse_shader.setModel(model);
-    church.draw(&diffuse_shader); 
+    model_shader.setModel(model);
+    church.draw(&model_shader); 
     
     glUseProgram(0);
 }
@@ -195,6 +198,7 @@ int main(int argc, char** argv) {
     Memory::bindAllocator(&allocator);
 
     diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
+    model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
 
 	init_pole_geometry();
     init_hexplane_geometry();
@@ -214,6 +218,7 @@ int main(int argc, char** argv) {
 
 
     church = Graphics::Geometry::Model("../../Models/church.glb");
+    // church = Graphics::Geometry::Model("../../Models/backpack/backpack.obj");
 
     camera = Camera(0, 0, 10);
 	while(!glfwWindowShouldClose(window)) {
