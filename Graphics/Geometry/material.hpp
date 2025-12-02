@@ -7,7 +7,8 @@
 #include <assimp/anim.h>
 #include <assimp/version.h>
 
-using GLTextureID = int;
+#include <Texture/texture.hpp>
+
 enum TextureType {
     TEXTURE_TYPE_NONE = aiTextureType_NONE,
     TEXTURE_TYPE_DIFFUSE = aiTextureType_DIFFUSE,
@@ -42,16 +43,8 @@ static const char* texture_to_string[TEXTURE_COUNT] = {
 
 STATIC_ASSERT(ArrayCount(texture_to_string) == (TEXTURE_COUNT));
 
-struct Texture {
-    char* name = nullptr;
-    GLTextureID id = -1;
-};
-
 struct Material {
-    Texture color_map;
-    Texture specular_map;
-    Texture normal_map;
-    Texture height_map;
+    Texture textures[TEXTURE_COUNT];
 
     float shininess = 32.0f;
     float opacity = 1.0f;
