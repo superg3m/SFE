@@ -89,7 +89,7 @@ namespace DS {
         Hashmap(HashFunction* hash_func, EqualFunction* equal_func, u64 capacity = 1){
             constexpr bool key_is_trivial = std::is_trivially_copyable_v<K>;
             constexpr bool key_is_pointer = std::is_pointer_v<K>;
-            STATIC_ASSERT(key_is_trivial && !key_is_pointer);
+            // STATIC_ASSERT(key_is_trivial && !key_is_pointer);
 
             this->m_count = 0;
             this->m_capacity = capacity;
@@ -282,8 +282,10 @@ namespace DS {
             } else if constexpr (key_is_string_view) {
                 return this->m_hash_func(&key, NOT_USED);
             } else {
-                RUNTIME_ASSERT("WE ARE IN HELL?\n");
+                RUNTIME_ASSERT_MSG(false, "WE ARE IN HELL?\n");
             }
+
+            return 0;
         }
 
         bool safeEquality(K k1, K k2) const {
@@ -299,8 +301,10 @@ namespace DS {
             } else if constexpr (key_is_string_view) {
                 return this->m_equal_func(&k1, NOT_USED, &k2, NOT_USED);
             } else {
-                RUNTIME_ASSERT("WE ARE IN HELL?\n");
+                RUNTIME_ASSERT_MSG(false, "WE ARE IN HELL?\n");
             }
+
+            return false;
         }
 
         #undef NOT_USED

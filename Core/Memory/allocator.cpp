@@ -5,7 +5,8 @@
 #include <Memory/allocator.hpp>
 
 namespace Memory {
-    static BaseAllocator* g_allocator = nullptr;
+    // This is pretty ugly
+    static BaseAllocator* g_allocator = new GeneralAllocator();
 
     void bindAllocator(BaseAllocator* allocator) {
         RUNTIME_ASSERT(allocator);

@@ -22,11 +22,7 @@ cc: CompilerConfig = CompilerConfig(
 
 pc: ProjectConfig = ProjectConfig(
     project_name = "SFE",
-    project_dependencies = [
-        Dependency(
-            "IOD"
-        )
-    ],
+    project_dependencies = [],
     project_debug_with_visual_studio = True,
     project_executable_names = ["sfe.exe"]
 )
@@ -56,8 +52,7 @@ build_postfix = f"build_{cc.compiler_name}/{C_BUILD_BUILD_TYPE()}"
 libs = [
     f"sfe.lib",
     f"../../Vendor/glfw/bin/macos/lib-arm64/libglfw3.a",
-    f"../../Vendor/assimp/bin/macos/libassimp.dylib",
-    f"../../IOD/build_clang/debug/{GET_LIB_NAME(cc, "IOD")}",
+    f"../../Vendor/assimp/bin/macos/libassimp.dylib"
 ]
 
 if IS_WINDOWS():
@@ -109,8 +104,6 @@ procedures_config = {
         include_paths = [
             "../../Core",
             "../../Graphics",
-
-            "../../IOD",
 
             "../../Vendor",
             "../../Vendor/stb",

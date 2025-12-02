@@ -3,9 +3,6 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-#include <IOD.hpp>
-#include <GLFW_IOD.hpp>
-
 ShaderDiffuse diffuse_shader;
 ShaderModel model_shader;
 Graphics::Geometry pole;
@@ -21,12 +18,87 @@ float saved_translation = 0.0f;
 static int is_rotating = 1;
 static int is_translating = 1;
 
+IOD_Profile* profile;
 Camera camera;
 bool mouse_captured = false;
 float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
 
+void initalizeInputBindings() {
+    GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
+
+    // Maybe pass the state like (state == PRESSED)
+    profile->bind(IOD_KEY_L, IOD_InputState::PRESSED|IOD_InputState::DOWN|IOD_InputState::RELEASED,
+        [](IOD_InputState state, bool consumed) {
+            if (state == IOD_InputState::RELEASED) {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            } else {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            }
+        }
+    );
+
+    // Date: June 17, 2025
+    // TODO(Jovanni): Investigate why glfwSetInputMode is failing in the lambda?
+    profile->bind(IOD_KEY_G, IOD_InputState::PRESSED,
+        [&](IOD_InputState state, bool consumed) {
+            // mouse_captured = !mouse_captured;
+            // glfwSetInputMode((GLFWwindow*)IOD::glfw_window_instance, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+        }
+    );
+
+    profile->bind(IOD_KEY_R, IOD_InputState::PRESSED,
+        [&](IOD_InputState state, bool consumed) {
+            diffuse_shader.compile();
+            model_shader.compile();
+        }
+    );
+
+    profile->bind(IOD_KEY_ESCAPE, IOD_InputState::PRESSED,
+        [window](IOD_InputState state, bool consumed) {
+            glfwSetWindowShouldClose(window, true);
+        }
+    );
+
+    profile->bind(IOD_KEY_SPACE, IOD_InputState::PRESSED|IOD_InputState::DOWN,
+        [](IOD_InputState state, bool consumed) {
+            camera.processKeyboard(UP, dt);
+        }
+    );
+
+    profile->bind(IOD_KEY_CTRL, IOD_InputState::PRESSED|IOD_InputState::DOWN,
+        [](IOD_InputState state, bool consumed) {
+            camera.processKeyboard(DOWN, dt);
+        }
+    );
+
+    profile->bind(IOD_KEY_W, IOD_InputState::PRESSED|IOD_InputState::DOWN,
+        [](IOD_InputState state, bool consumed) {
+            camera.processKeyboard(FORWARD, dt); 
+        }
+    );
+
+    profile->bind(IOD_KEY_A, IOD_InputState::PRESSED|IOD_InputState::DOWN,
+        [](IOD_InputState state, bool consumed) {
+            camera.processKeyboard(LEFT, dt); 
+        }
+    );
+
+    profile->bind(IOD_KEY_S, IOD_InputState::PRESSED|IOD_InputState::DOWN,
+        [](IOD_InputState state, bool consumed) {
+            camera.processKeyboard(BACKWARD, dt); 
+        }
+    );
+
+    profile->bind(IOD_KEY_D, IOD_InputState::PRESSED|IOD_InputState::DOWN,
+        [](IOD_InputState state, bool consumed) {
+            camera.processKeyboard(RIGHT, dt); 
+        }
+    );
+}
+
+/*
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if(action == GLFW_PRESS) {
 		return;
@@ -66,6 +138,7 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
         mouse_captured = true;
     }
 }
+*/
 
 void mouse(GLFWwindow *window, double mouse_x, double mouse_y) {
     static bool previous_frame_mouse_was_captured = true;
@@ -233,8 +306,8 @@ int main(int argc, char** argv) {
     glfwMakeContextCurrent(window);
     // glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     // glfwSetScrollCallback(window, scroll_callback);
-	glfwSetKeyCallback(window, keyboard);
-	glfwSetCursorPosCallback(window, mouse);
+	// glfwSetKeyCallback(window, keyboard);
+	// glfwSetCursorPosCallback(window, mouse);
 
     if (!IOD_GLFW_SETUP(window)) {
         LOG_ERROR("Failed to setup IOD_GLFW\n");
@@ -243,7 +316,7 @@ int main(int argc, char** argv) {
     }
     // void IOD_GLFW_BIND_KEY_CALLBACK(GLFWkeyfun cb);
     // void IOD_GLFW_BIND_MOUSE_BUTTON_CALLBACK(GLFWmousebuttonfun cb);
-    // void IOD_GLFW_BIND_MOUSE_MOVE_CALLBACK(GLFWcursorposfun cb);
+    IOD_GLFW_BIND_MOUSE_MOVE_CALLBACK(mouse);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         LOG_ERROR("Failed to initialize GLAD\n");
@@ -260,8 +333,11 @@ int main(int argc, char** argv) {
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     glEnable(GL_FRAMEBUFFER_SRGB);
 
-    Memory::GeneralAllocator allocator = Memory::GeneralAllocator();
-    Memory::bindAllocator(&allocator);
+    // TODO(Jovanni):
+    // You can't do this vecause you need an allocator before you enter main but you can't have one becuase
+    // if you bind one then you free from another allocator and its just trouble...
+    // Memory::GeneralAllocator allocator = Memory::GeneralAllocator();
+    // Memory::bindAllocator(&allocator);
 
     diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
     model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
@@ -286,12 +362,17 @@ int main(int argc, char** argv) {
     church = Graphics::Geometry::Model("../../Models/church.glb");
     // church = Graphics::Geometry::Model("../../Models/backpack/backpack.obj");
 
+    profile = IOD::createProfile("movement");
+    initalizeInputBindings();
+
     camera = Camera(0, 0, 10);
     float previous = 0;
 	while(!glfwWindowShouldClose(window)) {
         float current = glfwGetTime();
         dt = current - previous;
         previous = current;
+
+        IOD::poll();
 
 		display();
 

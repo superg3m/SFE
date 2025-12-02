@@ -34,6 +34,8 @@ namespace DS {
         Vector(const Vector& other) {
             // LOG_WARN("PERFORMING A VECTOR COPY!\n");
 
+            if (other.m_count == 0) return;
+
             RUNTIME_ASSERT(this->m_data == nullptr);
 
             this->m_count = other.m_count;
@@ -157,6 +159,20 @@ namespace DS {
             RUNTIME_ASSERT_MSG((i >= 0) && (this->m_count - 1 >= i), "index is outside of bounds!\n");
 
             return this->m_data[i];
+        }
+
+        bool operator==(const Vector<T> &right) const {
+            if (this->m_count != right.m_count) {
+                return false;
+            }
+
+            for (int i = 0; i < this->m_count; i++) {
+                if (this->m_data[i] != right.m_data[i]) {
+                    return false;
+                }
+            }
+
+            return true;
         }
         
         void grow() {
