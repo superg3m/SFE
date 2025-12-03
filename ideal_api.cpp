@@ -27,7 +27,7 @@ float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
 
-void master_profile() {
+void cbMasterProfile() {
     GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
     const bool SHIFT = IOD::GetKey(IOD_KEY_SHIFT, IOD_InputState::PRESSED|IOD_InputState::DOWN);
 
@@ -61,7 +61,7 @@ void master_profile() {
     }
 }
 
-void movement_profile() {
+void cbMovementProfile() {
     GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
 
     if (IOD::GetKey(IOD_KEY_SPACE, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
@@ -172,7 +172,6 @@ void display() {
     glUseProgram(0);
 }
 
-
 void init_pole_geometry() {
     DS::Vector<Vertex> vertices = {
         Vertex(Math::Vec3{-0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
@@ -185,6 +184,7 @@ void init_pole_geometry() {
     };
     DS::Vector<unsigned int> indices = DS::Vector<unsigned int>();
 
+    // TODO(Jovanni): can you derive these flags from the vertex data???
     VertexAttributeFlag flags = VertexAttributeFlag::aPosition | VertexAttributeFlag::aNormal;
     pole = Graphics::Geometry(flags, vertices, indices);
 }
@@ -293,12 +293,11 @@ int main(int argc, char** argv) {
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
-
     church = Graphics::Geometry::Model("../../Models/church.glb");
     // church = Graphics::Geometry::Model("../../Models/backpack/backpack.obj");
 
-    IOD::CreateProfile(MASTER_PROFILE, master_profile);
-    IOD::CreateProfile(MOVEMENT_PROFILE, movement_profile);
+    IOD::CreateProfile(MASTER_PROFILE, cbMasterProfile);
+    IOD::CreateProfile(MOVEMENT_PROFILE, cbMovementProfile);
 
     camera = Camera(0, 0, 10);
     float previous = 0;

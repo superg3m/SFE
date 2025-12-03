@@ -57,6 +57,7 @@ struct IOD_InputGroup {
 
 // NOTE(Jovanni): bool consumed is just has it been consumed/used this frame
 typedef void (*IOD_CALLBACK)();
+
 struct IOD_Profile {
     const char* name;
     IOD_CALLBACK callback;

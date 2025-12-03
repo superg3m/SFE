@@ -68,13 +68,17 @@ void ShaderModel::compile() {
 void ShaderModel::setMaterial(const Material &material) const {
     this->use();
 
-    glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_2D, material.textures[TEXTURE_TYPE_DIFFUSE].id);
-    this->setInt(uMaterial_Location.color_map, 0);
+    if (material.textures[TEXTURE_TYPE_DIFFUSE].id != 0) {
+        glActiveTexture(GL_TEXTURE0 + 0);
+        glBindTexture(GL_TEXTURE_2D, material.textures[TEXTURE_TYPE_DIFFUSE].id);
+        this->setInt(uMaterial_Location.color_map, 0);
+    }
 
-    glActiveTexture(GL_TEXTURE0 + 1);
-    glBindTexture(GL_TEXTURE_2D, material.textures[TEXTURE_TYPE_SPECULAR].id);
-    this->setInt(uMaterial_Location.specular_map, 1);
+    if (material.textures[TEXTURE_TYPE_SPECULAR].id != 0) {
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_2D, material.textures[TEXTURE_TYPE_SPECULAR].id);
+        this->setInt(uMaterial_Location.specular_map, 1);
+    }
 
     this->setVec3(uMaterial_Location.color, material.ambient_color);
     this->setVec3(uMaterial_Location.color, material.diffuse_color);

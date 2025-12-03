@@ -286,6 +286,10 @@ namespace Graphics {
         glBindVertexArray(this->VAO); // make this Renderer::bindVAO(this->VAO); // for caching
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
+            if (geo->vertex_count == 0) {
+                continue;
+            }
+
             shader->setMaterial(geo->material);
 
             if (geo->index_count > 0) {
