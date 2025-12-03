@@ -116,12 +116,9 @@ namespace DS {
 
         void unstableSwapbackRemove(int i) {
             RUNTIME_ASSERT_MSG(this->m_count > 0, "You may not remove if the vector is empty!\n");
-            RUNTIME_ASSERT_MSG((i >= 0) && (this->m_count - 1 >= i), "index is outside of bounds!\n");
+            RUNTIME_ASSERT_MSG((i >= 0) && (this->m_count > i), "index is outside of bounds!\n");
 
-            this->m_count -= 1;
-            if (this->m_count == 0) {
-                this->m_data[i] = this->m_data[this->m_count];
-            }
+            this->m_data[i] = this->m_data[this->m_count--];
         }
 
         T* begin() { 

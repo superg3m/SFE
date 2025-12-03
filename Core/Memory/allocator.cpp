@@ -6,7 +6,7 @@
 
 namespace Memory {
     // This is pretty ugly
-    static BaseAllocator* g_allocator = new GeneralAllocator();
+    static BaseAllocator* g_allocator = nullptr;
 
     void bindAllocator(BaseAllocator* allocator) {
         RUNTIME_ASSERT(allocator);

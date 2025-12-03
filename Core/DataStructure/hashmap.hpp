@@ -89,7 +89,7 @@ namespace DS {
         Hashmap(HashFunction* hash_func, EqualFunction* equal_func, u64 capacity = 1){
             constexpr bool key_is_trivial = std::is_trivially_copyable_v<K>;
             constexpr bool key_is_pointer = std::is_pointer_v<K>;
-            // STATIC_ASSERT(key_is_trivial && !key_is_pointer);
+            STATIC_ASSERT(key_is_trivial && !key_is_pointer);
 
             this->m_count = 0;
             this->m_capacity = capacity;

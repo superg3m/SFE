@@ -14,6 +14,7 @@ namespace String {
 
     u64 length(const char* c_string);
     bool equal(const char* s1, u64 s1_length, const char* s2, u64 s2_length);
+    bool equal(const char* s1, const char* s2);
     bool equal(DS::View<char> s1, DS::View<char> s2);
     bool contains(const char* s1, u64 s1_length, const char* contains, u64 contains_length);
 

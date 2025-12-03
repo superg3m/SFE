@@ -62,6 +62,10 @@ namespace String {
         return Memory::equal(s1, s1_length, s2, s2_length);
     }
 
+    bool equal(const char* s1, const char* s2) {
+        return Memory::equal(s1, String::length(s1), s2, String::length(s2));
+    }
+
     bool equal(DS::View<char> s1, DS::View<char> s2) {
         return Memory::equal(s1.data, s1.length, s2.data, s2.length);
     }

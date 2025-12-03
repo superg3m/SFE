@@ -42,22 +42,22 @@
             case WM_KEYDOWN:
             case WM_SYSKEYDOWN: {
                 if (found) {
-                    IOD::updateInputCode(Win32ToIODInputCode.at(wParam), true);
+                    IOD::UpdateInputCode(Win32ToIODInputCode.at(wParam), true);
                 }
             } break;
             case WM_KEYUP:
             case WM_SYSKEYUP: {
                 if (found) {
-                    IOD::updateInputCode(Win32ToIODInputCode.at(wParam), false);
+                    IOD::UpdateInputCode(Win32ToIODInputCode.at(wParam), false);
                 }
             } break;
 
             case WM_LBUTTONDOWN: {
-                IOD::updateInputCode(IOD_MOUSE_BUTTON_LEFT, true);
+                IOD::UpdateInputCode(IOD_MOUSE_BUTTON_LEFT, true);
             } break;
                 
             case WM_LBUTTONUP: {
-                IOD::updateInputCode(IOD_MOUSE_BUTTON_LEFT, false);
+                IOD::UpdateInputCode(IOD_MOUSE_BUTTON_LEFT, false);
             } break;
         }
         

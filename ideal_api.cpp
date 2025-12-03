@@ -18,155 +18,91 @@ float saved_translation = 0.0f;
 static int is_rotating = 1;
 static int is_translating = 1;
 
-IOD_Profile* profile;
+#define MASTER_PROFILE "master"
+#define MOVEMENT_PROFILE "movement"
+
 Camera camera;
-bool mouse_captured = false;
+bool mouse_captured = true;
 float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
 
-void initalizeInputBindings() {
+void master_profile() {
     GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
+    const bool SHIFT = IOD::GetKey(IOD_KEY_SHIFT, IOD_InputState::PRESSED|IOD_InputState::DOWN);
 
-    // Maybe pass the state like (state == PRESSED)
-    profile->bind(IOD_KEY_L, IOD_InputState::PRESSED|IOD_InputState::DOWN|IOD_InputState::RELEASED,
-        [](IOD_InputState state, bool consumed) {
-            if (state == IOD_InputState::RELEASED) {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            } else {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            }
-        }
-    );
-
-    // Date: June 17, 2025
-    // TODO(Jovanni): Investigate why glfwSetInputMode is failing in the lambda?
-    profile->bind(IOD_KEY_G, IOD_InputState::PRESSED,
-        [&](IOD_InputState state, bool consumed) {
-            // mouse_captured = !mouse_captured;
-            // glfwSetInputMode((GLFWwindow*)IOD::glfw_window_instance, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
-        }
-    );
-
-    profile->bind(IOD_KEY_R, IOD_InputState::PRESSED,
-        [&](IOD_InputState state, bool consumed) {
-            diffuse_shader.compile();
-            model_shader.compile();
-        }
-    );
-
-    profile->bind(IOD_KEY_ESCAPE, IOD_InputState::PRESSED,
-        [window](IOD_InputState state, bool consumed) {
-            glfwSetWindowShouldClose(window, true);
-        }
-    );
-
-    profile->bind(IOD_KEY_SPACE, IOD_InputState::PRESSED|IOD_InputState::DOWN,
-        [](IOD_InputState state, bool consumed) {
-            camera.processKeyboard(UP, dt);
-        }
-    );
-
-    profile->bind(IOD_KEY_CTRL, IOD_InputState::PRESSED|IOD_InputState::DOWN,
-        [](IOD_InputState state, bool consumed) {
-            camera.processKeyboard(DOWN, dt);
-        }
-    );
-
-    profile->bind(IOD_KEY_W, IOD_InputState::PRESSED|IOD_InputState::DOWN,
-        [](IOD_InputState state, bool consumed) {
-            camera.processKeyboard(FORWARD, dt); 
-        }
-    );
-
-    profile->bind(IOD_KEY_A, IOD_InputState::PRESSED|IOD_InputState::DOWN,
-        [](IOD_InputState state, bool consumed) {
-            camera.processKeyboard(LEFT, dt); 
-        }
-    );
-
-    profile->bind(IOD_KEY_S, IOD_InputState::PRESSED|IOD_InputState::DOWN,
-        [](IOD_InputState state, bool consumed) {
-            camera.processKeyboard(BACKWARD, dt); 
-        }
-    );
-
-    profile->bind(IOD_KEY_D, IOD_InputState::PRESSED|IOD_InputState::DOWN,
-        [](IOD_InputState state, bool consumed) {
-            camera.processKeyboard(RIGHT, dt); 
-        }
-    );
-}
-
-/*
-void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if(action == GLFW_PRESS) {
-		return;
-    }
-
-    if (key == GLFW_KEY_ESCAPE) {
+    if (IOD::GetKey(IOD_KEY_ESCAPE, IOD_InputState::PRESSED)) {
         glfwSetWindowShouldClose(window, true);
     }
 
-	if (key == GLFW_KEY_SPACE) {
-		is_rotating = !is_rotating;
-	}
+    if (IOD::GetKey(IOD_KEY_R, IOD_InputState::PRESSED)) {
+        diffuse_shader.compile();
+        model_shader.compile();
+    }
 
-	if (key == GLFW_KEY_U) {
+    if (SHIFT && IOD::GetKey(IOD_KEY_W, IOD_InputState::PRESSED)) {
+        IOD::ToggleProfile(MOVEMENT_PROFILE);
+    }
+
+    if (IOD::GetKey(IOD_KEY_L, IOD_InputState::PRESSED)) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    } else if (IOD::GetKey(IOD_KEY_L, IOD_InputState::RELEASED)) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    if (IOD::GetKey(IOD_KEY_C, IOD_InputState::PRESSED)) {
+        mouse_captured = !mouse_captured;
+        glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+    }
+
+    if (IOD::GetKey(IOD_KEY_U, IOD_InputState::PRESSED)) {
+        is_rotating = !is_rotating;
 		is_translating = !is_translating;
     }
+}
 
-    if (key == GLFW_KEY_W) {
-        camera.processKeyboard(FORWARD, dt);
+void movement_profile() {
+    GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
+
+    if (IOD::GetKey(IOD_KEY_SPACE, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+        camera.processKeyboard(UP, dt);
     }
 
-    if (key == GLFW_KEY_A) {
-        camera.processKeyboard(LEFT, dt);
-        
+    if (IOD::GetKey(IOD_KEY_CTRL, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+        camera.processKeyboard(DOWN, dt);
     }
 
-    if (key == GLFW_KEY_S) {
-        camera.processKeyboard(BACKWARD, dt);
-        
+    if (IOD::GetKey(IOD_KEY_W, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+        camera.processKeyboard(FORWARD, dt); 
     }
 
-    if (key == GLFW_KEY_D) {
-        camera.processKeyboard(RIGHT, dt);
+    if (IOD::GetKey(IOD_KEY_A, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+        camera.processKeyboard(LEFT, dt); 
     }
 
-    if (key == GLFW_KEY_C) {
-        mouse_captured = true;
+    if (IOD::GetKey(IOD_KEY_S, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+        camera.processKeyboard(BACKWARD, dt); 
+    }
+
+    if (IOD::GetKey(IOD_KEY_D, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+        camera.processKeyboard(RIGHT, dt); 
     }
 }
-*/
 
 void mouse(GLFWwindow *window, double mouse_x, double mouse_y) {
-    static bool previous_frame_mouse_was_captured = true;
-    if (!mouse_captured) { 
-        previous_frame_mouse_was_captured = false;
-    }
-    
     static float last_mouse_x = mouse_x;
     static float last_mouse_y = mouse_y;
 
     float xoffset = mouse_x - last_mouse_x;
     float yoffset = last_mouse_y - mouse_y;
 
-    if (!previous_frame_mouse_was_captured && mouse_captured) {
-        xoffset = 0;
-        yoffset = 0;
-        glfwSetCursorPos(window, last_mouse_x, last_mouse_y);
-    } else {
-        last_mouse_x = mouse_x;
-        last_mouse_y = mouse_y;
-    }  
-    
+    last_mouse_x = mouse_x;
+    last_mouse_y = mouse_y;
+
     if (mouse_captured) { 
         camera.processMouseMovement(xoffset, yoffset);
         return;
     }
-
-    previous_frame_mouse_was_captured = true;
 }
 
 void display() {
@@ -286,6 +222,9 @@ void init_hexplane_geometry() {
 }
 
 int main(int argc, char** argv) {
+    Memory::GeneralAllocator allocator = Memory::GeneralAllocator();
+    Memory::bindAllocator(&allocator);
+
 	glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -309,6 +248,7 @@ int main(int argc, char** argv) {
 	// glfwSetKeyCallback(window, keyboard);
 	// glfwSetCursorPosCallback(window, mouse);
 
+    IOD::Init();
     if (!IOD_GLFW_SETUP(window)) {
         LOG_ERROR("Failed to setup IOD_GLFW\n");
         glfwTerminate();
@@ -325,19 +265,14 @@ int main(int argc, char** argv) {
     }
 
     glfwSwapInterval(1);
-
+    glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+    
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     glEnable(GL_FRAMEBUFFER_SRGB);
-
-    // TODO(Jovanni):
-    // You can't do this vecause you need an allocator before you enter main but you can't have one becuase
-    // if you bind one then you free from another allocator and its just trouble...
-    // Memory::GeneralAllocator allocator = Memory::GeneralAllocator();
-    // Memory::bindAllocator(&allocator);
 
     diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
     model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
@@ -362,8 +297,8 @@ int main(int argc, char** argv) {
     church = Graphics::Geometry::Model("../../Models/church.glb");
     // church = Graphics::Geometry::Model("../../Models/backpack/backpack.obj");
 
-    profile = IOD::createProfile("movement");
-    initalizeInputBindings();
+    IOD::CreateProfile(MASTER_PROFILE, master_profile);
+    IOD::CreateProfile(MOVEMENT_PROFILE, movement_profile);
 
     camera = Camera(0, 0, 10);
     float previous = 0;
@@ -372,7 +307,7 @@ int main(int argc, char** argv) {
         dt = current - previous;
         previous = current;
 
-        IOD::poll();
+        IOD::Poll();
 
 		display();
 

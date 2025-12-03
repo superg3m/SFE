@@ -114,90 +114,48 @@ bool IOD_GLFW_SETUP(GLFWwindow* window) {
         }
 
         IOD_InputCode cb_code = glfwToInputCode[key];
-        IOD::updateInputCode(cb_code, action != GLFW_RELEASE);
-        for (const auto entry : IOD::profiles) {
-            if (!entry.filled || entry.dead) continue;
-
-            const char* key = entry.key;
-            IOD_Profile* profile = entry.value;
-
-            if (!profile->active) {
+        IOD::UpdateInputCode(cb_code, action != GLFW_RELEASE);
+        for (const auto profile : IOD::profiles) {
+            if (!profile.active) {
                 continue;
             }
 
-            for (const auto entry : profile->bindings) {
-                if (!entry.filled || entry.dead) continue;
-
-                IOD_InputPair pair = entry.key;
-                IOD_InputCode code = pair.code;;
-                if (code != cb_code) {
-                    continue;
-                }
-
-                IOD_CALLBACK callback = entry.value;
-                IOD_InputState desired_states = pair.state;
-                IOD_InputState actual_state = IOD::input_state.get(code);
-                bool has_desired_state_flag = IOD_INPUT_STATE_HAS_FLAG(desired_states, actual_state);
-                bool consumed = IOD_INPUT_STATE_HAS_FLAG(actual_state, IOD_InputState::CONSUMED);
-                if (!consumed && has_desired_state_flag && callback) {
-                    callback(actual_state, consumed);
-                    IOD::input_state.put(code, IOD::input_state.get(code) | IOD_InputState::CONSUMED); 
-                }
+            if (profile.callback) {
+                profile.callback();
             }
         }
     });
 
-    glfwSetMouseButtonCallback(window, [](GLFWwindow*, int button, int action, int mods) {
+    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
         if (!IOD::glfw_window_instance) {
             return;
         }
 
         if (mouseButtonCallback) {
-            mouseButtonCallback((GLFWwindow*)IOD::glfw_window_instance, button, action, mods);   
+            mouseButtonCallback(window, button, action, mods);   
         }
 
         IOD_InputCode cb_code = glfwToInputCode[button];
-        IOD::updateInputCode(cb_code, action != GLFW_RELEASE);
-        for (const auto entry : IOD::profiles) {
-            if (!entry.filled || entry.dead) continue;
-
-            const char* key = entry.key;
-            IOD_Profile* profile = entry.value;
-
-            if (!profile->active) {
+        IOD::UpdateInputCode(cb_code, action != GLFW_RELEASE);
+        for (const auto profile : IOD::profiles) {
+            if (!profile.active) {
                 continue;
             }
 
-            for (const auto entry : profile->bindings) {
-                if (!entry.filled || entry.dead) continue;
-
-                IOD_InputPair pair = entry.key;
-                IOD_InputCode code = pair.code;;
-                if (code != cb_code) {
-                    continue;
-                }
-
-                IOD_CALLBACK callback = entry.value;
-                IOD_InputState desired_states = pair.state;
-                IOD_InputState actual_state = IOD::input_state.get(code);
-                bool has_desired_state_flag = IOD_INPUT_STATE_HAS_FLAG(desired_states, actual_state);
-                bool consumed = IOD_INPUT_STATE_HAS_FLAG(actual_state, IOD_InputState::CONSUMED);
-                if (!consumed && has_desired_state_flag && callback) {
-                    callback(actual_state, consumed);
-                    IOD::input_state.put(code, IOD::input_state.get(code) | IOD_InputState::CONSUMED); 
-                }
+            if (profile.callback) {
+                profile.callback();
             }
         }
     });
 
-    glfwSetCursorPosCallback(window, [](GLFWwindow*, double xpos, double ypos) {
+    glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos) {
         if (!IOD::glfw_window_instance) {
             return;
         }
 
-        IOD::updateMousePosition(static_cast<float>(xpos), static_cast<float>(ypos));
+        IOD::UpdateMousePosition(static_cast<float>(xpos), static_cast<float>(ypos));
         if (mouseMoveCallback) {
-            mouseMoveCallback((GLFWwindow*)IOD::glfw_window_instance, xpos, ypos);
+            mouseMoveCallback(window, xpos, ypos);
         }
     });
 

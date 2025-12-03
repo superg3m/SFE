@@ -10,7 +10,6 @@ enum class IOD_InputState : uint8_t {
     PRESSED  = 0x2,
     DOWN     = 0x4,
     RELEASED = 0x8,
-    CONSUMED = 0x10 // consumed this frame
 };
 
 #define IOD_INPUT_STATE_HAS_FLAG(value, flag) ((static_cast<uint8_t>(value) & static_cast<uint8_t>(flag)) != 0)
@@ -57,36 +56,31 @@ struct IOD_InputGroup {
 };
 
 // NOTE(Jovanni): bool consumed is just has it been consumed/used this frame
-using IOD_CALLBACK = std::function<void(IOD_InputState state, bool consumed)>;
+typedef void (*IOD_CALLBACK)();
 struct IOD_Profile {
+    const char* name;
+    IOD_CALLBACK callback;
     bool active;
-    DS::Hashmap<IOD_InputGroup, IOD_CALLBACK> group_bindings;
-    DS::Hashmap<IOD_InputPair, IOD_CALLBACK> bindings;
-
-    void bind(IOD_InputCode code, IOD_InputState state, IOD_CALLBACK callback);
-    void bindGroup(DS::Vector<IOD_InputCode> codes, IOD_InputState state, IOD_CALLBACK callack);
-
-    void unbind(IOD_InputCode code, IOD_InputState state);
-    void unbindGroup(DS::Vector<IOD_InputCode> codes, IOD_InputState state);
 };
 
 struct IOD {
-    static void poll();
-    static void updateInputCode(IOD_InputCode code, bool down);
-    static void updateMousePosition(float x, float y);
+    static void Init();
+    static void Poll();
+    static void UpdateInputCode(IOD_InputCode code, bool down);
+    static void UpdateMousePosition(float x, float y);
 
-    static IOD_InputState getInputState(IOD_InputCode code);
-    static float getMouseX();
-    static float getMouseY();
+    static bool GetKey(IOD_InputCode code, IOD_InputState state);
+    static float GetMouseX();
+    static float GetMouseY();
 
-    static IOD_Profile* createProfile(const char* key);
-    static IOD_Profile* getProfile(const char* key);
-    static void deleteProfile(const char* key);
-    static void enableProfile(const char* key);
-    static void disableProfile(const char* key);
+    static void CreateProfile(const char* key, IOD_CALLBACK callback);
+    static void DeleteProfile(const char* key);
+    static void ToggleProfile(const char* key);
+    static void EnableProfile(const char* key);
+    static void DisableProfile(const char* key);
 
     static DS::Hashmap<IOD_InputCode, IOD_InputState> input_state;
-    static DS::Hashmap<const char*, IOD_Profile*> profiles;
+    static DS::Vector<IOD_Profile> profiles;
 
     static void* glfw_window_instance;
 private:
