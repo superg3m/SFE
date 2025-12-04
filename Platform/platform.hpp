@@ -10,7 +10,7 @@ namespace Platform {
 
     bool Init();
     void Shutdown();
-    void Sleep(u32 ms);
+    void SleepForMilliseconds(u32 ms);
     double GetSecondsElapsed();
     bool FilePathExists(const char* path);
     /**

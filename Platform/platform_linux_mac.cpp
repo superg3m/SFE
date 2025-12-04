@@ -15,6 +15,10 @@
         void Shutdown() {}
         double GetSecondsElapsed() { return 0.0; }
 
+        void SleepForMilliseconds(u32 ms) {
+            usleep(ms * 1000);
+        }
+
         bool FilePathExists(const char* path) {
             FILE *fptr = fopen(path, "r");
 
@@ -34,7 +38,7 @@
                 FILE* in = fopen(source_path, "rb");
                 if (!in) {
                     if (!block_until_success) return 0;
-                    Sleep(10);
+                    SleepForMilliseconds(10);
                     continue;
                 }
 
@@ -42,7 +46,7 @@
                 if (!out) {
                     fclose(in);
                     if (!block_until_success) return 0;
-                    Sleep(10);
+                    SleepForMilliseconds(10);
                     continue;
                 }
 
@@ -62,12 +66,8 @@
 
                 if (success) return 1;
                 if (!block_until_success) return 0;
-                Sleep(10);
+                SleepForMilliseconds(10);
             }
-        }
-
-        void Sleep(u32 ms) {
-            usleep(ms * 1000);
         }
 
         u8* ReadEntireFile( const char* file_name, byte_t& out_file_size, Error& error) {

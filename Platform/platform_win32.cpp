@@ -35,7 +35,7 @@
             return true;
         }
 
-        void shutdown() {
+        void Shutdown() {
             timeEndPeriod(g_device_time_caps.wPeriodMin);
             LOG_DEBUG("Platform Shutdown!\n");
         }
@@ -56,11 +56,11 @@
             return CopyFileA(source_path, dest_path, FALSE) == 0;
         }
 
-        void sleep(u32 ms) {
-            Sleep((DWORD)ms);
+        void SleepForMilliseconds(u32 ms) {
+            SleepForMilliseconds((DWORD)ms);
         }
 
-        double getSecondsElapsed() {
+        double GetSecondsElapsed() {
             LARGE_INTEGER counter = {0};
             QueryPerformanceCounter(&counter);
             double time_in_seconds = (double)(counter.QuadPart - g_start_time) / (double)g_frequency;
@@ -76,10 +76,6 @@
         void win32_free(const Memory::BaseAllocator** allocator, void* data) {
             (void)allocator;
             VirtualFree(data, 0, MEM_RELEASE);
-        }
-
-        Memory::BaseAllocator* getAllocator() {
-            return Memory::BaseAllocator*(win32_malloc, win32_free);
         }
 
         u8* ReadEntireFile( const char* file_path, byte_t& out_file_size, Error& error) {
