@@ -1,19 +1,20 @@
 #include <core.hpp>
-#include <graphics.hpp>
+#include <renderer.hpp>
 #include <input.hpp>
+#include <input_glfw.hpp>
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
 ShaderDiffuse diffuse_shader;
 ShaderModel model_shader;
-Graphics::Geometry pole;
-Graphics::Geometry hexplane;
-Graphics::Geometry animals[4];
+Renderer::Geometry pole;
+Renderer::Geometry hexplane;
+Renderer::Geometry animals[4];
 Math::Mat4 translate_mats[4];
 Math::Mat4 animals_rot[4];
 
-Graphics::Geometry church;
+Renderer::Geometry church;
 
 float saved_rot = 0.0f;
 float saved_translation = 0.0f;
@@ -30,63 +31,63 @@ float WIDTH = 900;
 float HEIGHT = 900;
 
 void cbMasterProfile() {
-    GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
-    const bool SHIFT = IOD::GetKey(IOD_KEY_SHIFT, IOD_IState::PRESSED|IOD_IState::DOWN);
+    GLFWwindow* window = (GLFWwindow*)Input::glfw_window_instance;
+    const bool SHIFT = Input::GetKey(Input::KEY_SHIFT, Input::PRESSED|Input::DOWN);
 
-    if (IOD::GetKeyPressed(IOD_KEY_ESCAPE)) {
+    if (Input::GetKeyPressed(Input::KEY_ESCAPE)) {
         glfwSetWindowShouldClose(window, true);
     }
 
-    if (IOD::GetKeyPressed(IOD_KEY_R)) {
+    if (Input::GetKeyPressed(Input::KEY_R)) {
         diffuse_shader.compile();
         model_shader.compile();
     }
 
-    if (SHIFT && IOD::GetKeyPressed(IOD_KEY_W)) {
-        IOD::ToggleProfile(MOVEMENT_PROFILE);
+    if (SHIFT && Input::GetKeyPressed(Input::KEY_W)) {
+        Input::ToggleProfile(MOVEMENT_PROFILE);
     }
 
-    if (IOD::GetKeyPressed(IOD_KEY_L)) {
+    if (Input::GetKeyPressed(Input::KEY_L)) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else if (IOD::GetKeyReleased(IOD_KEY_L)) {
+    } else if (Input::GetKeyReleased(Input::KEY_L)) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    if (IOD::GetKeyPressed(IOD_KEY_C)) {
+    if (Input::GetKeyPressed(Input::KEY_C)) {
         mouse_captured = !mouse_captured;
         glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     }
 
-    if (IOD::GetKeyPressed(IOD_KEY_U)) {
+    if (Input::GetKeyPressed(Input::KEY_U)) {
         is_rotating = !is_rotating;
 		is_translating = !is_translating;
     }
 }
 
 void cbMovementProfile() {
-    GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
+    GLFWwindow* window = (GLFWwindow*)Input::glfw_window_instance;
 
-    if (IOD::GetKey(IOD_KEY_SPACE, IOD_IState::PRESSED|IOD_IState::DOWN)) {
+    if (Input::GetKey(Input::KEY_SPACE, Input::PRESSED|Input::DOWN)) {
         camera.processKeyboard(UP, dt);
     }
 
-    if (IOD::GetKey(IOD_KEY_CTRL, IOD_IState::PRESSED|IOD_IState::DOWN)) {
+    if (Input::GetKey(Input::KEY_CTRL, Input::PRESSED|Input::DOWN)) {
         camera.processKeyboard(DOWN, dt);
     }
 
-    if (IOD::GetKey(IOD_KEY_W, IOD_IState::PRESSED|IOD_IState::DOWN)) {
+    if (Input::GetKey(Input::KEY_W, Input::PRESSED|Input::DOWN)) {
         camera.processKeyboard(FORWARD, dt); 
     }
 
-    if (IOD::GetKey(IOD_KEY_A, IOD_IState::PRESSED|IOD_IState::DOWN)) {
+    if (Input::GetKey(Input::KEY_A, Input::PRESSED|Input::DOWN)) {
         camera.processKeyboard(LEFT, dt); 
     }
 
-    if (IOD::GetKey(IOD_KEY_S, IOD_IState::PRESSED|IOD_IState::DOWN)) {
+    if (Input::GetKey(Input::KEY_S, Input::PRESSED|Input::DOWN)) {
         camera.processKeyboard(BACKWARD, dt); 
     }
 
-    if (IOD::GetKey(IOD_KEY_D, IOD_IState::PRESSED|IOD_IState::DOWN)) {
+    if (Input::GetKey(Input::KEY_D, Input::PRESSED|Input::DOWN)) {
         camera.processKeyboard(RIGHT, dt); 
     }
 }
@@ -188,7 +189,7 @@ void init_pole_geometry() {
 
     // TODO(Jovanni): can you derive these flags from the vertex data???
     VertexAttributeFlag flags = VertexAttributeFlag::aPosition | VertexAttributeFlag::aNormal;
-    pole = Graphics::Geometry(flags, vertices, indices);
+    pole = Renderer::Geometry(flags, vertices, indices);
 }
 
 void init_hexplane_geometry() {
@@ -220,7 +221,7 @@ void init_hexplane_geometry() {
     DS::Vector<unsigned int> indices = DS::Vector<unsigned int>();
 
     VertexAttributeFlag flags = VertexAttributeFlag::aPosition | VertexAttributeFlag::aNormal;
-    hexplane = Graphics::Geometry(flags, vertices, indices);
+    hexplane = Renderer::Geometry(flags, vertices, indices);
 }
 
 int main(int argc, char** argv) {
@@ -250,15 +251,15 @@ int main(int argc, char** argv) {
 	// glfwSetKeyCallback(window, keyboard);
 	// glfwSetCursorPosCallback(window, mouse);
 
-    IOD::Init();
-    if (!IOD_GLFW_SETUP(window)) {
-        LOG_ERROR("Failed to setup IOD_GLFW\n");
+    Input::Init();
+    if (!Input::GLFW_SETUP(window)) {
+        LOG_ERROR("Failed to setup GLFW\n");
         glfwTerminate();
         return -1;
     }
-    // void IOD_GLFW_BIND_KEY_CALLBACK(GLFWkeyfun cb);
-    // void IOD_GLFW_BIND_MOUSE_BUTTON_CALLBACK(GLFWmousebuttonfun cb);
-    IOD_GLFW_BIND_MOUSE_MOVE_CALLBACK(mouse);
+    // void GLFW_BIND_KEY_CALLBACK(GLFWkeyfun cb);
+    // void GLFW_BIND_MOUSE_BUTTON_CALLBACK(GLFWmousebuttonfun cb);
+    Input::GLFW_BIND_MOUSE_MOVE_CALLBACK(mouse);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         LOG_ERROR("Failed to initialize GLAD\n");
@@ -282,24 +283,24 @@ int main(int argc, char** argv) {
 	init_pole_geometry();
     init_hexplane_geometry();
 
-    animals[0] = Graphics::Geometry::Model("../../Models/cow.ply");
+    animals[0] = Renderer::Geometry::Model("../../Models/cow.ply");
     animals_rot[0] = Math::Mat4::Rotate(animals_rot[0], 270, 0, 1, 0);
     translate_mats[0] = Math::Mat4::Translate(translate_mats[0], -2, 0, 0);
 
-    animals[1] = Graphics::Geometry::Model("../../Models/hippo.ply");
+    animals[1] = Renderer::Geometry::Model("../../Models/hippo.ply");
     animals_rot[1] = Math::Mat4::Rotate(animals_rot[1], 90, 0, 1, 0);
     translate_mats[1] = Math::Mat4::Translate(translate_mats[1], 2, 0, 0);
 
-    animals[2] = Graphics::Geometry::Model("../../Models/lion.ply");
+    animals[2] = Renderer::Geometry::Model("../../Models/lion.ply");
     animals_rot[2] = Math::Mat4::Rotate(animals_rot[2], 0, 0, 1, 0);
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
-    church = Graphics::Geometry::Model("../../Models/church.glb");
-    // church = Graphics::Geometry::Model("../../Models/backpack/backpack.obj");
+    church = Renderer::Geometry::Model("../../Models/church.glb");
+    // church = Renderer::Geometry::Model("../../Models/backpack/backpack.obj");
 
-    IOD::CreateProfile(MASTER_PROFILE, cbMasterProfile);
-    IOD::CreateProfile(MOVEMENT_PROFILE, cbMovementProfile);
+    Input::CreateProfile(MASTER_PROFILE, cbMasterProfile);
+    Input::CreateProfile(MOVEMENT_PROFILE, cbMovementProfile);
 
     camera = Camera(0, 0, 10);
     float previous = 0;
@@ -308,7 +309,7 @@ int main(int argc, char** argv) {
         dt = current - previous;
         previous = current;
 
-        IOD::Poll();
+        Input::Poll();
 
 		display();
 

@@ -12,7 +12,7 @@
 #define MAX_BONES 128
 
 typedef struct ShaderBase ShaderBase;
-namespace Graphics {
+namespace Renderer  {
 	
 	struct Geometry {
 		GLuint VAO = 0; 

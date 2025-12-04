@@ -64,7 +64,7 @@ static Math::AABB CalculateAABB(const DS::Vector<Vertex>& vertices) {
     return Math::AABB::FromCenterExtents(center, extents);
 }
 
-namespace Graphics {
+namespace Renderer  {
     Geometry::Geometry() {
         this->VAO = 0;
         this->VBO = 0;

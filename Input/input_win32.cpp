@@ -1,3 +1,4 @@
+/*
 #if defined(_WIN32) || defined(WIN32)
     #include <WIN32_IOD.hpp>
 
@@ -64,3 +65,4 @@
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 #endif
+*/
