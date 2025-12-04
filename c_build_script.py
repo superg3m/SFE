@@ -76,14 +76,18 @@ procedures_config = {
         output_name = f"sfe.lib",
         source_files = [
             "../../Core/**/*.cpp",
-            "../../Graphics/**/*.cpp",
+            "../../Platform/**/*.cpp",
+            "../../Renderer/**/*.cpp",
+            "../../Input/**/*.cpp",
             "../../Vendor/glad/src/glad.c",
             "../../Vendor/stb/stb_image.c"
         ],
         additional_libs = [],
         include_paths = [
             "../../Core",
-            "../../Graphics",
+            "../../Platform",
+            "../../Renderer",
+            "../../Input",
 
             "../../Vendor",
             "../../Vendor/stb",
@@ -103,7 +107,9 @@ procedures_config = {
         additional_libs = libs,
         include_paths = [
             "../../Core",
-            "../../Graphics",
+            "../../Platform",
+            "../../Renderer",
+            "../../Input",
 
             "../../Vendor",
             "../../Vendor/stb",

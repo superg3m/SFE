@@ -1,4 +1,4 @@
-#include <Platform/platform.hpp>
+#include <platform.hpp>
 
 #if defined(PLATFORM_WINDOWS)
     #define NOMINMAX

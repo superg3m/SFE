@@ -1,5 +1,7 @@
 #include <core.hpp>
 #include <graphics.hpp>
+#include <input.hpp>
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
@@ -29,33 +31,33 @@ float HEIGHT = 900;
 
 void cbMasterProfile() {
     GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
-    const bool SHIFT = IOD::GetKey(IOD_KEY_SHIFT, IOD_InputState::PRESSED|IOD_InputState::DOWN);
+    const bool SHIFT = IOD::GetKey(IOD_KEY_SHIFT, IOD_IState::PRESSED|IOD_IState::DOWN);
 
-    if (IOD::GetKey(IOD_KEY_ESCAPE, IOD_InputState::PRESSED)) {
+    if (IOD::GetKey(IOD_KEY_ESCAPE, IOD_IState::PRESSED)) {
         glfwSetWindowShouldClose(window, true);
     }
 
-    if (IOD::GetKey(IOD_KEY_R, IOD_InputState::PRESSED)) {
+    if (IOD::GetKey(IOD_KEY_R, IOD_IState::PRESSED)) {
         diffuse_shader.compile();
         model_shader.compile();
     }
 
-    if (SHIFT && IOD::GetKey(IOD_KEY_W, IOD_InputState::PRESSED)) {
+    if (SHIFT && IOD::GetKey(IOD_KEY_W, IOD_IState::PRESSED)) {
         IOD::ToggleProfile(MOVEMENT_PROFILE);
     }
 
-    if (IOD::GetKey(IOD_KEY_L, IOD_InputState::PRESSED)) {
+    if (IOD::GetKey(IOD_KEY_L, IOD_IState::PRESSED)) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else if (IOD::GetKey(IOD_KEY_L, IOD_InputState::RELEASED)) {
+    } else if (IOD::GetKey(IOD_KEY_L, IOD_IState::RELEASED)) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    if (IOD::GetKey(IOD_KEY_C, IOD_InputState::PRESSED)) {
+    if (IOD::GetKey(IOD_KEY_C, IOD_IState::PRESSED)) {
         mouse_captured = !mouse_captured;
         glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     }
 
-    if (IOD::GetKey(IOD_KEY_U, IOD_InputState::PRESSED)) {
+    if (IOD::GetKey(IOD_KEY_U, IOD_IState::PRESSED)) {
         is_rotating = !is_rotating;
 		is_translating = !is_translating;
     }
@@ -64,27 +66,27 @@ void cbMasterProfile() {
 void cbMovementProfile() {
     GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
 
-    if (IOD::GetKey(IOD_KEY_SPACE, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+    if (IOD::GetKey(IOD_KEY_SPACE, IOD_IState::PRESSED|IOD_IState::DOWN)) {
         camera.processKeyboard(UP, dt);
     }
 
-    if (IOD::GetKey(IOD_KEY_CTRL, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+    if (IOD::GetKey(IOD_KEY_CTRL, IOD_IState::PRESSED|IOD_IState::DOWN)) {
         camera.processKeyboard(DOWN, dt);
     }
 
-    if (IOD::GetKey(IOD_KEY_W, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+    if (IOD::GetKey(IOD_KEY_W, IOD_IState::PRESSED|IOD_IState::DOWN)) {
         camera.processKeyboard(FORWARD, dt); 
     }
 
-    if (IOD::GetKey(IOD_KEY_A, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+    if (IOD::GetKey(IOD_KEY_A, IOD_IState::PRESSED|IOD_IState::DOWN)) {
         camera.processKeyboard(LEFT, dt); 
     }
 
-    if (IOD::GetKey(IOD_KEY_S, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+    if (IOD::GetKey(IOD_KEY_S, IOD_IState::PRESSED|IOD_IState::DOWN)) {
         camera.processKeyboard(BACKWARD, dt); 
     }
 
-    if (IOD::GetKey(IOD_KEY_D, IOD_InputState::PRESSED|IOD_InputState::DOWN)) {
+    if (IOD::GetKey(IOD_KEY_D, IOD_IState::PRESSED|IOD_IState::DOWN)) {
         camera.processKeyboard(RIGHT, dt); 
     }
 }

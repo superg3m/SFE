@@ -2,7 +2,7 @@
 #include <stb_image.h>
 
 #include <Common/common.hpp>
-#include <Platform/platform.hpp>
+#include <platform.hpp>
 #include <Texture/texture.hpp>
 
 Texture::Texture() {

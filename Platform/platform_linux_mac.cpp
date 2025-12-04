@@ -1,13 +1,14 @@
-#include <Platform/platform.hpp>
+#include <platform.hpp>
 
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_APPLE)
-    #include <Common/logger.hpp>
-    #include <Common/assert.hpp>
-    #include <Error/error.hpp>
-
     #include <unistd.h>
     #include <dlfcn.h>
     #include <stdio.h>
+
+    #include <Common/logger.hpp>
+    #include <Common/assert.hpp>
+    #include <Error/error.hpp>
+    #include <Memory/memory.hpp>
 
     namespace Platform {
         bool initialize() { return true; }

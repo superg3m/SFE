@@ -5,20 +5,21 @@
 #include <functional>
 #include <DataStructure/ds.hpp>
 
-enum class IOD_InputState : uint8_t {
+enum class IOD_IState : uint8_t {
     UP       = 0x1,
     PRESSED  = 0x2,
     DOWN     = 0x4,
     RELEASED = 0x8,
 };
-
-#define IOD_INPUT_STATE_HAS_FLAG(value, flag) ((static_cast<uint8_t>(value) & static_cast<uint8_t>(flag)) != 0)
-
-inline constexpr IOD_InputState operator|(IOD_InputState lhs, IOD_InputState rhs) {
-    return static_cast<IOD_InputState>(static_cast<uint8_t>(lhs) | static_cast<uint8_t>(rhs));
+inline constexpr bool operator&(IOD_IState lhs, IOD_IState rhs) {
+    return static_cast<bool>((static_cast<uint8_t>(lhs) & static_cast<uint8_t>(rhs)) != 0);
 }
 
-enum IOD_InputCode : uint8_t {
+inline constexpr IOD_IState operator|(IOD_IState lhs, IOD_IState rhs) {
+    return static_cast<IOD_IState>(static_cast<uint8_t>(lhs) | static_cast<uint8_t>(rhs));
+}
+
+enum IOD_ICode : uint8_t {
     IOD_KEY_A = 'A', IOD_KEY_B = 'B', IOD_KEY_C = 'C', IOD_KEY_D = 'D',
     IOD_KEY_E = 'E', IOD_KEY_F = 'F', IOD_KEY_G = 'G', IOD_KEY_H = 'H',
     IOD_KEY_I = 'I', IOD_KEY_J = 'J', IOD_KEY_K = 'K', IOD_KEY_L = 'L',
@@ -45,19 +46,7 @@ enum IOD_InputCode : uint8_t {
     IOD_MOUSE_BUTTON_MIDDLE
 };
 
-struct IOD_InputPair {
-    IOD_InputCode code;
-    IOD_InputState state;
-};
-
-struct IOD_InputGroup {
-    DS::Vector<IOD_InputCode> codes;
-    IOD_InputState state;
-};
-
-// NOTE(Jovanni): bool consumed is just has it been consumed/used this frame
 typedef void (*IOD_CALLBACK)();
-
 struct IOD_Profile {
     const char* name;
     IOD_CALLBACK callback;
@@ -67,10 +56,10 @@ struct IOD_Profile {
 struct IOD {
     static void Init();
     static void Poll();
-    static void UpdateInputCode(IOD_InputCode code, bool down);
+    static void UpdateInputCode(IOD_ICode code, bool down);
     static void UpdateMousePosition(float x, float y);
 
-    static bool GetKey(IOD_InputCode code, IOD_InputState state);
+    static bool GetKey(IOD_ICode code, IOD_IState state);
     static float GetMouseX();
     static float GetMouseY();
 
@@ -80,7 +69,6 @@ struct IOD {
     static void EnableProfile(const char* key);
     static void DisableProfile(const char* key);
 
-    static DS::Hashmap<IOD_InputCode, IOD_InputState> input_state;
     static DS::Vector<IOD_Profile> profiles;
 
     static void* glfw_window_instance;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Common/common.hpp>
+
 struct Texture {
     unsigned int id = 0;
     unsigned int width = 0;

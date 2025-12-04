@@ -2,7 +2,7 @@
 
 #include <DataStructure/ds.hpp>
 #include <String/string.hpp>
-#include <Platform/platform.hpp>
+#include <platform.hpp>
 
 GLenum ShaderBase::typeFromPath(const char* shader_source_path) {
     u64 shader_path_length = String::length(shader_source_path);
