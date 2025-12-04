@@ -1,13 +1,14 @@
 /*
 struct Entity {
     Math::Vec3 position;
-    GM_Quaternion orientation;
+    Math::Quat orientation;
     Math::Vec3 scale;
+    Geometry geometry;
 
     void setPosition(Math::Vec3 p);
     void setPosition(float x, float y, float z);
 
-    void setOrientation(GM_Quaternion orient);
+    void setOrientation(Math::Quat orientation);
     void setEulerAngles(Math::Vec3 euler);
     void setEulerAngles(float theta_x, float theta_y, float theta_z);
 
@@ -19,7 +20,7 @@ struct Entity {
     Math::Mat4 getAABBTransform();
     GM_AABB getAABB();
 
-    // addComponent(ComponentBase)
-    // removeComponent(ComponentBase)
+    void update(dt);
+    void draw(ShaderBase* shader);
 };
 */
