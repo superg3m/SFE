@@ -1,4 +1,4 @@
-#include <Camera/Camera.hpp>
+#include <Camera/camera.hpp>
 
 void Camera::updateCamera() {
     Math::Vec3 new_front = Math::Vec3::Euler(this->yaw, this->pitch);
