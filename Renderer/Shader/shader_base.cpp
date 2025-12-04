@@ -5,16 +5,16 @@
 #include <platform.hpp>
 
 GLenum ShaderBase::typeFromPath(const char* shader_source_path) {
-    u64 shader_path_length = String::length(shader_source_path);
-    s64 extension_index = String::lastIndexOf(shader_source_path, shader_path_length, STRING_LIT_ARG("."));
+    u64 shader_path_length = String::Length(shader_source_path);
+    s64 extension_index = String::LastIndexOf(shader_source_path, shader_path_length, STRING_LIT_ARG("."));
     RUNTIME_ASSERT_MSG(extension_index != -1, "Missing extension (.vert, .frag)\n");
     DS::View<char> extension = DS::View<char>(shader_source_path + extension_index, shader_path_length - (u64)extension_index);
 
-    if (String::contains(extension.data, extension.length, STRING_LIT_ARG(".vert"))) {
+    if (String::Contains(extension.data, extension.length, STRING_LIT_ARG(".vert"))) {
         return GL_VERTEX_SHADER;
-    } else if (String::contains(extension.data, extension.length, STRING_LIT_ARG(".frag"))) {
+    } else if (String::Contains(extension.data, extension.length, STRING_LIT_ARG(".frag"))) {
         return GL_FRAGMENT_SHADER;
-    } else if (String::contains(extension.data, extension.length, STRING_LIT_ARG(".gs"))) {
+    } else if (String::Contains(extension.data, extension.length, STRING_LIT_ARG(".gs"))) {
         return GL_GEOMETRY_SHADER;
     }
 
@@ -113,7 +113,7 @@ unsigned int ShaderBase::createShaderProgram(DS::Vector<const char*> shader_path
         GLsizei name_length;
         glGetActiveUniform(program_id, (GLuint)i, name_max_size, &name_length, &size, &type, name);
 
-        this->uniforms.put(String::allocate(name, name_length), type);
+        this->uniforms.put(String::Allocate(name, name_length), type);
     }
 
     return program_id;

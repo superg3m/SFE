@@ -277,7 +277,7 @@ namespace Graphics {
             LOG_ERROR("ASSIMP ERROR: %s\n", importer.GetErrorString());
         }
 
-        ret.loadMeshFromScene(path, String::length(path), scene);
+        ret.loadMeshFromScene(path, String::Length(path), scene);
 
         return ret;
     }
@@ -378,10 +378,10 @@ namespace Graphics {
         this->indices = DS::Vector<GLuint>(total_index_count);
         this->materials = DS::Vector<Material>(scene->mNumMaterials);
 
-        s64 index = String::lastIndexOf(path, path_length, STRING_LIT_ARG("/"));
+        s64 index = String::LastIndexOf(path, path_length, STRING_LIT_ARG("/"));
         RUNTIME_ASSERT(index > -1);
         
-        char* directory = String::allocate(path, index);
+        char* directory = String::Allocate(path, index);
         for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
             const aiMaterial* ai_material = scene->mMaterials[i];
 
@@ -422,14 +422,14 @@ namespace Graphics {
                 aiString str;
                 if (ai_material->GetTexture(type, 0, &str, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
                     const char* texture_path = str.C_Str();
-                    u64 texture_path_length = String::length(texture_path);
+                    u64 texture_path_length = String::Length(texture_path);
 
                     u64 filename_capacity = index + 1 + texture_path_length + 1;
                     char* filename = (char*)Memory::Malloc(filename_capacity);
                     u64 filename_length = 0;
-                    String::append(filename, filename_length, filename_capacity, directory, index);
-                    String::append(filename, filename_length, filename_capacity, '/');
-                    String::append(filename, filename_length, filename_capacity, texture_path, texture_path_length);
+                    String::Append(filename, filename_length, filename_capacity, directory, index);
+                    String::Append(filename, filename_length, filename_capacity, '/');
+                    String::Append(filename, filename_length, filename_capacity, texture_path, texture_path_length);
 
                     const aiTexture* ai_texture = scene->GetEmbeddedTexture(str.C_Str());
                     if (ai_texture) {

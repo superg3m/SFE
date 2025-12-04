@@ -2,14 +2,14 @@
 #include <String/string.hpp>
 
 namespace String {
-    char* allocate(const char* s1, u64 length) {
+    char* Allocate(const char* s1, u64 length) {
         char* ret = (char*)Memory::Malloc(length + 1);
         Memory::Copy(ret, length, s1, length);
 
         return ret;
     }
 
-    char* sprintf(u64* out_buffer_length, const char* fmt ...) {
+    char* Sprintf(u64* out_buffer_length, const char* fmt ...) {
         va_list args, copy_args;
         va_start(args, fmt);
             va_copy(copy_args, args);
@@ -30,7 +30,7 @@ namespace String {
         return buffer;
     }
     
-    char* sprintf(u64* out_buffer_length, const char* fmt, va_list args) {
+    char* Sprintf(u64* out_buffer_length, const char* fmt, va_list args) {
         va_list args_copy;
         va_copy(args_copy, args);
         u64 allocation_ret = (u64)vsnprintf(nullptr, 0, fmt, args_copy) + 1; // +1 for null terminator
@@ -49,7 +49,7 @@ namespace String {
         return buffer;
     }
 
-    u64 length(const char* c_string) {
+    u64 Length(const char* c_string) {
         u64 ret = 0;
         while (*c_string++ != '\0') {
             ret += 1;
@@ -58,19 +58,19 @@ namespace String {
         return ret;
     }
 
-    bool equal(const char* s1, u64 s1_length, const char* s2, u64 s2_length) {
+    bool Equal(const char* s1, u64 s1_length, const char* s2, u64 s2_length) {
         return Memory::Equal(s1, s1_length, s2, s2_length);
     }
 
-    bool equal(const char* s1, const char* s2) {
-        return Memory::Equal(s1, String::length(s1), s2, String::length(s2));
+    bool Equal(const char* s1, const char* s2) {
+        return Memory::Equal(s1, String::Length(s1), s2, String::Length(s2));
     }
 
-    bool equal(DS::View<char> s1, DS::View<char> s2) {
+    bool Equal(DS::View<char> s1, DS::View<char> s2) {
         return Memory::Equal(s1.data, s1.length, s2.data, s2.length);
     }
 
-    s64 indexOf(const char* str, u64 str_length, const char* substring, u64 substring_length) {
+    s64 IndexOf(const char* str, u64 str_length, const char* substring, u64 substring_length) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(substring);
 
@@ -97,7 +97,7 @@ namespace String {
             }
 
             DS::View<char> current_view = DS::View(str + i, substring_length);
-            if (String::equal(substring, substring_length, current_view.data, current_view.length)) {
+            if (String::Equal(substring, substring_length, current_view.data, current_view.length)) {
                 ret_index = (s64)i;
                 break;
             }
@@ -106,14 +106,14 @@ namespace String {
         return ret_index; // returns -1 if not found
     }
 
-    bool contains(const char* str, u64 str_length, const char* contains, u64 contains_length) {
+    bool Contains(const char* str, u64 str_length, const char* contains, u64 contains_length) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(contains);
 
-        return String::indexOf(str, str_length, contains, contains_length) != -1;  
+        return String::IndexOf(str, str_length, contains, contains_length) != -1;  
     }
 
-    s64 lastIndexOf(const char* str, u64 str_length, const char* substring, u64 substring_length) {
+    s64 LastIndexOf(const char* str, u64 str_length, const char* substring, u64 substring_length) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(substring);
 
@@ -136,7 +136,7 @@ namespace String {
             }
 
             DS::View<char> current_view = DS::View(str + i, substring_length);
-            if (String::equal(current_view.data, current_view.length, substring, substring_length)) {
+            if (String::Equal(current_view.data, current_view.length, substring, substring_length)) {
                 ret_index = (s64)i;
             }
         }
@@ -144,7 +144,7 @@ namespace String {
         return ret_index; // returns -1 if not found
     }
 
-    bool starts_with(const char* str, u64 str_length, const char* starts_with, u64 starts_with_length) {
+    bool StartsWith(const char* str, u64 str_length, const char* starts_with, u64 starts_with_length) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(starts_with);
 
@@ -154,14 +154,14 @@ namespace String {
             return false;
         }
         
-        if (String::equal(str, starts_with_length, starts_with, starts_with_length)) {
+        if (String::Equal(str, starts_with_length, starts_with, starts_with_length)) {
             return true;
         }
 
         return false;
     }
 
-    bool ends_with(const char* str, u64 str_length, const char* ends_with, u64 ends_with_length) {
+    bool EndsWith(const char* str, u64 str_length, const char* ends_with, u64 ends_with_length) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(ends_with);
 
@@ -176,19 +176,19 @@ namespace String {
             return false;
         }
 
-        if (String::equal(str + start_index, ends_with_length, ends_with, ends_with_length)) {
+        if (String::Equal(str + start_index, ends_with_length, ends_with, ends_with_length)) {
             return true;
         }
 
         return false;
     }
 
-    void copy(char* s1, byte_t s1_capacity, const char* s2, u64 s2_length) {
+    void Copy(char* s1, byte_t s1_capacity, const char* s2, u64 s2_length) {
         Memory::Zero(s1, s1_capacity);
         Memory::Copy(s1, s1_capacity, s2, s2_length);
     }
 
-    void insert(char* str, u64 &str_length_out, byte_t str_capacity, const char* to_insert, u64 to_insert_length, u64 index) {
+    void Insert(char* str, u64 &str_length_out, byte_t str_capacity, const char* to_insert, u64 to_insert_length, u64 index) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(to_insert);
 
@@ -205,7 +205,7 @@ namespace String {
         str_length_out += to_insert_length;
     }
 
-    void insert(char* str, u64& str_length_out, byte_t str_capacity, char to_insert, u64 index) {
+    void Insert(char* str, u64& str_length_out, byte_t str_capacity, char to_insert, u64 index) {
         RUNTIME_ASSERT(str);
         RUNTIME_ASSERT(to_insert);
 
@@ -220,11 +220,11 @@ namespace String {
         str_length_out += 1;
     }
 
-    void append(char* str, u64 &out_str_length, byte_t str_capacity, const char* to_append, u64 to_append_length) {
-        String::insert(str, out_str_length, str_capacity, to_append, to_append_length, out_str_length);
+    void Append(char* str, u64 &out_str_length, byte_t str_capacity, const char* to_append, u64 to_append_length) {
+        String::Insert(str, out_str_length, str_capacity, to_append, to_append_length, out_str_length);
     }
 
-    void append(char* str, u64 &out_str_length, byte_t str_capacity, char to_append) {
-        String::insert(str, out_str_length, str_capacity, to_append, out_str_length);
+    void Append(char* str, u64 &out_str_length, byte_t str_capacity, char to_append) {
+        String::Insert(str, out_str_length, str_capacity, to_append, out_str_length);
     }
 }

@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 namespace Math {
@@ -33,3 +34,4 @@ namespace Math {
     float ease_out_bounce(float t);
     float ease_in_out_bounce(float t);
 }
+*/

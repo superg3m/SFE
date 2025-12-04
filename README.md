@@ -22,8 +22,8 @@ man this naming situation is really annoying, come back to this with a fresh pai
 - Memory::Copy(...)
 - Memory::Malloc(...)
 - Memory::Free(...)
-- String::copy(...)
-- String::contains(...)
+- String::Copy(...)
+- String::Contains(...)
 - DS::Vector<char*>(...)
 
 // Platform

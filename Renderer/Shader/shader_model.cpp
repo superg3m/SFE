@@ -28,13 +28,13 @@ void ShaderModel::compile() {
     this->uDirectionalLight_Location.specular = this->getUniformLocation("uDirLight.specular", GL_FLOAT_VEC3);
 
     for (int i = 0; i < LIGHT_COUNT; i++) {
-        char* position = String::sprintf(nullptr ,"uPointLights[%d].position", i);
-        char* constant = String::sprintf(nullptr ,"uPointLights[%d].constant", i);
-        char* linear = String::sprintf(nullptr ,"uPointLights[%d].linear", i);
-        char* quadratic = String::sprintf(nullptr ,"uPointLights[%d].quadratic", i);
-        char* ambient = String::sprintf(nullptr ,"uPointLights[%d].ambient", i);
-        char* diffuse = String::sprintf(nullptr ,"uPointLights[%d].diffuse", i);
-        char* specular = String::sprintf(nullptr ,"uPointLights[%d].specular", i);
+        char* position = String::Sprintf(nullptr ,"uPointLights[%d].position", i);
+        char* constant = String::Sprintf(nullptr ,"uPointLights[%d].constant", i);
+        char* linear = String::Sprintf(nullptr ,"uPointLights[%d].linear", i);
+        char* quadratic = String::Sprintf(nullptr ,"uPointLights[%d].quadratic", i);
+        char* ambient = String::Sprintf(nullptr ,"uPointLights[%d].ambient", i);
+        char* diffuse = String::Sprintf(nullptr ,"uPointLights[%d].diffuse", i);
+        char* specular = String::Sprintf(nullptr ,"uPointLights[%d].specular", i);
 
         this->uPointLight_Locations[i].position = this->getUniformLocation(position, GL_FLOAT_VEC3);
         this->uPointLight_Locations[i].constant = this->getUniformLocation(constant, GL_FLOAT);

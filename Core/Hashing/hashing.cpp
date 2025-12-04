@@ -113,10 +113,10 @@ namespace Hashing {
         (void)c1_size;
         (void)c2_size;
 
-        u64 c1_length = String::length((const char*)c1);
-        u64 c2_length = String::length((const char*)c2);
+        u64 c1_length = String::Length((const char*)c1);
+        u64 c2_length = String::Length((const char*)c2);
         
-        return String::equal((const char*)c1, c1_length, (const char*)c2, c2_length);
+        return String::Equal((const char*)c1, c1_length, (const char*)c2, c2_length);
     }
 
     u64 stringViewHash(const void* view, u64 str_length) {
@@ -140,6 +140,6 @@ namespace Hashing {
         DS::View<char>* s1 = (DS::View<char>*)c1;
         DS::View<char>* s2 = (DS::View<char>*)c2;
 
-        return String::equal(*s1, *s2);
+        return String::Equal(*s1, *s2);
     }
 }

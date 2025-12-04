@@ -132,7 +132,7 @@ void IOD::CreateProfile(const char* key, IOD_CALLBACK callback) {
 void IOD::DeleteProfile(const char* key) {
     for (int i = 0; i < profiles.count(); i++) {
         IOD_Profile profile = profiles[i];
-        if (String::equal(profile.name, key)) {
+        if (String::Equal(profile.name, key)) {
             profiles.unstableSwapbackRemove(i);
             return;
         }
@@ -144,7 +144,7 @@ void IOD::DeleteProfile(const char* key) {
 void IOD::ToggleProfile(const char* key) {
     for (int i = 0; i < profiles.count(); i++) {
         IOD_Profile* profile = &profiles[i];
-        if (String::equal(profile->name, key)) {
+        if (String::Equal(profile->name, key)) {
             profile->active = !profile->active;
             return;
         }
@@ -156,7 +156,7 @@ void IOD::ToggleProfile(const char* key) {
 void IOD::EnableProfile(const char* key) {
     for (int i = 0; i < profiles.count(); i++) {
         IOD_Profile* profile = &profiles[i];
-        if (String::equal(profile->name, key)) {
+        if (String::Equal(profile->name, key)) {
             profile->active = true;
             return;
         }
@@ -168,7 +168,7 @@ void IOD::EnableProfile(const char* key) {
 void IOD::DisableProfile(const char* key) {
     for (int i = 0; i < profiles.count(); i++) {
         IOD_Profile* profile = &profiles[i];
-        if (String::equal(profile->name, key)) {
+        if (String::Equal(profile->name, key)) {
             profile->active = false;
             return;
         }
