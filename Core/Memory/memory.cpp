@@ -3,7 +3,7 @@
 #include <Memory/memory.hpp>
 
 namespace Memory {
-    void zero(void* data, byte_t data_size_in_bytes) {
+    void Zero(void* data, byte_t data_size_in_bytes) {
         RUNTIME_ASSERT(data);
         
         for (byte_t i = 0; i < data_size_in_bytes; i++) {
@@ -11,7 +11,7 @@ namespace Memory {
         }
     }
 
-    void copy(void* destination, byte_t destination_size, const void* source, byte_t source_size) {
+    void Copy(void* destination, byte_t destination_size, const void* source, byte_t source_size) {
         RUNTIME_ASSERT(source);
         RUNTIME_ASSERT(destination);
         RUNTIME_ASSERT(source_size <= destination_size);
@@ -34,7 +34,7 @@ namespace Memory {
         }
     }
 
-    bool equal(const void* buffer_one, byte_t b1_size, const void* buffer_two, byte_t b2_size) {
+    bool Equal(const void* buffer_one, byte_t b1_size, const void* buffer_two, byte_t b2_size) {
         RUNTIME_ASSERT(buffer_one);
         RUNTIME_ASSERT(buffer_two);
 

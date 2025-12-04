@@ -44,13 +44,13 @@ void ShaderModel::compile() {
         this->uPointLight_Locations[i].diffuse = this->getUniformLocation(diffuse, GL_FLOAT_VEC3);
         this->uPointLight_Locations[i].specular = this->getUniformLocation(specular, GL_FLOAT_VEC3);
 
-        Memory::free(position);
-        Memory::free(constant);
-        Memory::free(linear);
-        Memory::free(quadratic);
-        Memory::free(ambient);
-        Memory::free(diffuse);
-        Memory::free(specular);
+        Memory::Free(position);
+        Memory::Free(constant);
+        Memory::Free(linear);
+        Memory::Free(quadratic);
+        Memory::Free(ambient);
+        Memory::Free(diffuse);
+        Memory::Free(specular);
     }
 
     this->uViewPosition_Location = this->getUniformLocation("uViewPosition", GL_FLOAT_VEC3);

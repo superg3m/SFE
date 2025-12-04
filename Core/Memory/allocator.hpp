@@ -8,9 +8,9 @@ namespace DS {
 }
 
 namespace Memory {
-    void* alloc(byte_t allocation_size);
-    void free(void* data);
-    void* realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size);
+    void* Malloc(byte_t allocation_size);
+    void Free(void* data);
+    void* Realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size);
 
     struct BaseAllocator {
         virtual ~BaseAllocator() = default;

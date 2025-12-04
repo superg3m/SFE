@@ -19,15 +19,15 @@ namespace DS {
             this->m_count = list.size();
             this->m_capacity = this->m_count * 2;
 
-            this->m_data = (T*)Memory::alloc(this->m_capacity * sizeof(T));
-            Memory::copy(this->m_data, this->m_capacity * sizeof(T), list.begin(), list.size() * sizeof(T));
+            this->m_data = (T*)Memory::Malloc(this->m_capacity * sizeof(T));
+            Memory::Copy(this->m_data, this->m_capacity * sizeof(T), list.begin(), list.size() * sizeof(T));
         }
 
         Vector(u64 capacity) {
             this->m_count = 0;
             this->m_capacity = capacity;
 
-            this->m_data = (T*)Memory::alloc(this->m_capacity * sizeof(T));
+            this->m_data = (T*)Memory::Malloc(this->m_capacity * sizeof(T));
         }
 
         // Prevent copy
@@ -41,8 +41,8 @@ namespace DS {
             this->m_count = other.m_count;
             this->m_capacity = other.m_capacity;
 
-            this->m_data = (T*)Memory::alloc(this->m_capacity * sizeof(T));
-            Memory::copy(this->m_data, this->m_capacity * sizeof(T), other.m_data,  this->m_capacity * sizeof(T));
+            this->m_data = (T*)Memory::Malloc(this->m_capacity * sizeof(T));
+            Memory::Copy(this->m_data, this->m_capacity * sizeof(T), other.m_data,  this->m_capacity * sizeof(T));
         }
 
         Vector& operator=(const Vector& other) {
@@ -53,8 +53,8 @@ namespace DS {
 
             this->m_count = other.m_count;
             this->m_capacity = other.m_capacity;
-            this->m_data = (T*)Memory::alloc(this->m_capacity * sizeof(T));
-            Memory::copy(this->m_data, this->m_capacity * sizeof(T), other.m_data,  this->m_capacity * sizeof(T));
+            this->m_data = (T*)Memory::Malloc(this->m_capacity * sizeof(T));
+            Memory::Copy(this->m_data, this->m_capacity * sizeof(T), other.m_data,  this->m_capacity * sizeof(T));
 
             return *this;
         }
@@ -87,7 +87,7 @@ namespace DS {
             const byte_t new_allocation_size = sizeof(T) * count;
 
             if (new_allocation_size > total_allocation_size) {
-                this->m_data = Memory::realloc(this->m_data, old_allocation_size, new_allocation_size);
+                this->m_data = Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
                 this->m_capacity = count;
             }
         }
@@ -98,7 +98,7 @@ namespace DS {
             const byte_t old_allocation_size = sizeof(T) * this->m_count;
             const byte_t new_allocation_size = sizeof(T) * count;
             if (new_allocation_size > total_allocation_size) {
-                this->m_data = Memory::realloc(this->m_data, old_allocation_size, new_allocation_size);
+                this->m_data = Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
             }
 
             this->m_count = count;
@@ -176,7 +176,7 @@ namespace DS {
             byte_t old_allocation_size = (this->m_capacity * sizeof(T));
             this->m_capacity *= 2;
             byte_t new_allocation_size = (this->m_capacity * sizeof(T));
-            this->m_data = (T*)Memory::realloc(this->m_data, old_allocation_size, new_allocation_size);
+            this->m_data = (T*)Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
         }
 
         void clear() {
@@ -187,7 +187,7 @@ namespace DS {
             this->m_capacity = this->m_count;
             byte_t shrunken_allocation_size = (this->m_capacity * sizeof(T));
 
-            this->m_data = (T*)Memory::realloc(this->m_data, shrunken_allocation_size, shrunken_allocation_size);
+            this->m_data = (T*)Memory::Realloc(this->m_data, shrunken_allocation_size, shrunken_allocation_size);
         }
     private:
         T* m_data = nullptr;
@@ -196,7 +196,7 @@ namespace DS {
 
         void destory() {
             if (this->m_data) {
-                Memory::free(this->m_data);
+                Memory::Free(this->m_data);
             }
 
             this->m_count = 0;
@@ -211,7 +211,7 @@ namespace DS {
             this->m_count = 0;
             this->m_capacity = capacity;
 
-            this->m_data = (T*)Memory::alloc(this->m_capacity * sizeof(T));
+            this->m_data = (T*)Memory::Malloc(this->m_capacity * sizeof(T));
         }
 
         ~Stack() {
@@ -225,7 +225,7 @@ namespace DS {
                 }
             }
 
-            Memory::free(this->m_data);
+            Memory::Free(this->m_data);
 
             this->m_data = nullptr;
             this->m_count = 0;
@@ -271,14 +271,14 @@ namespace DS {
                 // this->m_count = 0;
                 // this->m_capacity = capacity;
 
-                // this->m_data = (T*)Memory::alloc(this->m_capacity * sizeof(T));
+                // this->m_data = (T*)Memory::Malloc(this->m_capacity * sizeof(T));
                 // return;
             }
 
             byte_t old_allocation_size = (this->m_capacity * sizeof(T));
             this->m_capacity *= 2;
             byte_t new_allocation_size = (this->m_capacity * sizeof(T));
-            this->m_data = (T*)Memory::realloc(this->m_data, old_allocation_size, new_allocation_size);
+            this->m_data = (T*)Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
         }
     private:
         T* m_data = nullptr;
@@ -293,11 +293,11 @@ namespace DS {
             
             this->m_count = 0;
             this->m_capacity = capacity;
-            this->m_data = Memory::alloc(this->m_capacity * sizeof(T));
+            this->m_data = Memory::Malloc(this->m_capacity * sizeof(T));
         }
 
         ~RingQueue() {
-            Memory::free(this->m_data);
+            Memory::Free(this->m_data);
 
             this->m_data = nullptr;
             this->m_count = 0;

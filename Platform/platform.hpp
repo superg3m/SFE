@@ -8,11 +8,11 @@
 namespace Platform {
     typedef void* DLL;
 
-    bool initialize();
-    void shutdown();
-    void sleep(u32 ms);
-    double getSecondsElapsed();
-    bool filePathExists(const char* path);
+    bool Init();
+    void Shutdown();
+    void Sleep(u32 ms);
+    double GetSecondsElapsed();
+    bool FilePathExists(const char* path);
     /**
      * @brief returns true if copy succeeded
      * 
@@ -20,9 +20,9 @@ namespace Platform {
      * @param dest_path 
      * @param block_until_success
      */
-    bool copyFile(const char* source_path, const char* dest_path, bool block_until_success = true);
-    u8* readEntireFile( const char* file_path, byte_t& out_file_size, Error& error);
-    DLL loadDLL(const char* dll_path, Error& error);
+    bool CopyFile(const char* source_path, const char* dest_path, bool block_until_success = true);
+    u8* ReadEntireFile( const char* file_path, byte_t& out_file_size, Error& error);
+    DLL LoadDLL(const char* dll_path, Error& error);
     DLL freeDLL(DLL dll, Error& error);
-    void* getProcAddress(DLL dll, const char* proc_name, Error& error);
+    void* GetProcAddress(DLL dll, const char* proc_name, Error& error);
 }

@@ -44,11 +44,11 @@ namespace DS {
 
             this->m_count = 0;
             this->m_capacity = capacity;
-            this->m_entries = (HashmapEntry*)Memory::alloc(this->m_capacity * sizeof(HashmapEntry));
+            this->m_entries = (HashmapEntry*)Memory::Malloc(this->m_capacity * sizeof(HashmapEntry));
 
             if constexpr (key_is_trivial && !key_is_pointer) {
                 this->m_hash_func = Hashing::siphash24;
-                this->m_equal_func = Memory::equal;
+                this->m_equal_func = Memory::Equal;
             } else if constexpr (key_is_cstring) {
                 this->m_hash_func = Hashing::cstringHash;
                 this->m_equal_func = Hashing::cstringEquality;
@@ -68,11 +68,11 @@ namespace DS {
 
             this->m_count = list.size();
             this->m_capacity = this->m_count * 2;
-            this->m_entries = (HashmapEntry*)Memory::alloc(this->m_capacity * sizeof(HashmapEntry));
+            this->m_entries = (HashmapEntry*)Memory::Malloc(this->m_capacity * sizeof(HashmapEntry));
 
             if constexpr (key_is_trivial && !key_is_pointer) {
                 this->m_hash_func = Hashing::siphash24;
-                this->m_equal_func = Memory::equal;
+                this->m_equal_func = Memory::Equal;
             } else if constexpr (key_is_cstring) {
                 this->m_hash_func = Hashing::cstringHash;
                 this->m_equal_func = Hashing::cstringEquality;
@@ -94,7 +94,7 @@ namespace DS {
             this->m_count = 0;
             this->m_capacity = capacity;
 
-            this->m_entries = (HashmapEntry*)Memory::alloc(this->m_capacity * sizeof(HashmapEntry));
+            this->m_entries = (HashmapEntry*)Memory::Malloc(this->m_capacity * sizeof(HashmapEntry));
 
             this->m_hash_func = hash_func;
             this->m_equal_func = equal_func;
@@ -103,7 +103,7 @@ namespace DS {
         Hashmap& operator=(const Hashmap& other) {
             if (this != &other) {
                 if (this->m_entries) {
-                    Memory::free(m_entries);
+                    Memory::Free(m_entries);
                 }
 
                 this->m_count = other.m_count;
@@ -112,8 +112,8 @@ namespace DS {
                 this->m_hash_func = other.m_hash_func;
                 this->m_equal_func = other.m_equal_func;
 
-                this->m_entries = (HashmapEntry*)Memory::alloc(m_capacity * sizeof(HashmapEntry));
-                Memory::copy(this->m_entries, this->m_capacity * sizeof(HashmapEntry), other.m_entries,  this->m_capacity * sizeof(HashmapEntry));
+                this->m_entries = (HashmapEntry*)Memory::Malloc(m_capacity * sizeof(HashmapEntry));
+                Memory::Copy(this->m_entries, this->m_capacity * sizeof(HashmapEntry), other.m_entries,  this->m_capacity * sizeof(HashmapEntry));
             }
 
             return *this;
@@ -182,7 +182,7 @@ namespace DS {
         void clear() {
             this->m_count = 0;
             this->m_dead_count = 0;
-            Memory::zero(this->m_entries, sizeof(HashmapEntry) * this->m_capacity);
+            Memory::Zero(this->m_entries, sizeof(HashmapEntry) * this->m_capacity);
         }
 
         u64 count() {
@@ -216,8 +216,8 @@ namespace DS {
 
             this->m_capacity *= 2;
             byte_t new_allocation_size = (this->m_capacity * sizeof(HashmapEntry));
-            this->m_entries = (HashmapEntry*)Memory::alloc(new_allocation_size);
-            Memory::zero(this->m_entries, new_allocation_size);
+            this->m_entries = (HashmapEntry*)Memory::Malloc(new_allocation_size);
+            Memory::Zero(this->m_entries, new_allocation_size);
 
             // rehash
             for (u64 i = 0; i < old_capacity; i++) {
@@ -233,7 +233,7 @@ namespace DS {
                 this->m_entries[index] = old_entry;
             }
 
-            Memory::free(old_entries);
+            Memory::Free(old_entries);
         }
 
         s64 resolveCollision(K key, u64 inital_hash_index) const {

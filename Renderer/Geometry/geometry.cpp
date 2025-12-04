@@ -369,7 +369,7 @@ namespace Graphics {
             total_index_count  += scene->mMeshes[i]->mNumFaces * 3;
 
             if (i > 0) {
-                current->next = (Geometry*)Memory::alloc(sizeof(Geometry));
+                current->next = (Geometry*)Memory::Malloc(sizeof(Geometry));
                 current->next->root = this;
                 current = current->next;
             }
@@ -425,7 +425,7 @@ namespace Graphics {
                     u64 texture_path_length = String::length(texture_path);
 
                     u64 filename_capacity = index + 1 + texture_path_length + 1;
-                    char* filename = (char*)Memory::alloc(filename_capacity);
+                    char* filename = (char*)Memory::Malloc(filename_capacity);
                     u64 filename_length = 0;
                     String::append(filename, filename_length, filename_capacity, directory, index);
                     String::append(filename, filename_length, filename_capacity, '/');
@@ -444,13 +444,13 @@ namespace Graphics {
                         this->materials[i].textures[type] = Texture::LoadFromFile(filename);
                     }
 
-                    // Memory::free(filename);
+                    // Memory::Free(filename);
                 } else {
                     LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
                 }
             }
 
-            // Memory::free(directory);
+            // Memory::Free(directory);
         }
 
         processNode(this, scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));

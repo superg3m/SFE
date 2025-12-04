@@ -3,8 +3,8 @@
 
 namespace String {
     char* allocate(const char* s1, u64 length) {
-        char* ret = (char*)Memory::alloc(length + 1);
-        Memory::copy(ret, length, s1, length);
+        char* ret = (char*)Memory::Malloc(length + 1);
+        Memory::Copy(ret, length, s1, length);
 
         return ret;
     }
@@ -16,7 +16,7 @@ namespace String {
             u64 allocation_ret = (u64)vsnprintf(nullptr, 0, fmt, copy_args) + 1; // +1 for null terminator
             va_end(copy_args);
 
-            char* buffer = (char*)Memory::alloc(allocation_ret);
+            char* buffer = (char*)Memory::Malloc(allocation_ret);
 
             va_copy(copy_args, args);
             vsnprintf(buffer, allocation_ret, fmt, copy_args);
@@ -36,7 +36,7 @@ namespace String {
         u64 allocation_ret = (u64)vsnprintf(nullptr, 0, fmt, args_copy) + 1; // +1 for null terminator
         va_end(args_copy);
 
-        char* buffer = (char*)Memory::alloc(allocation_ret);
+        char* buffer = (char*)Memory::Malloc(allocation_ret);
 
         va_copy(args_copy, args);
         vsnprintf(buffer, allocation_ret, fmt, args_copy);
@@ -59,15 +59,15 @@ namespace String {
     }
 
     bool equal(const char* s1, u64 s1_length, const char* s2, u64 s2_length) {
-        return Memory::equal(s1, s1_length, s2, s2_length);
+        return Memory::Equal(s1, s1_length, s2, s2_length);
     }
 
     bool equal(const char* s1, const char* s2) {
-        return Memory::equal(s1, String::length(s1), s2, String::length(s2));
+        return Memory::Equal(s1, String::length(s1), s2, String::length(s2));
     }
 
     bool equal(DS::View<char> s1, DS::View<char> s2) {
-        return Memory::equal(s1.data, s1.length, s2.data, s2.length);
+        return Memory::Equal(s1.data, s1.length, s2.data, s2.length);
     }
 
     s64 indexOf(const char* str, u64 str_length, const char* substring, u64 substring_length) {
@@ -184,8 +184,8 @@ namespace String {
     }
 
     void copy(char* s1, byte_t s1_capacity, const char* s2, u64 s2_length) {
-        Memory::zero(s1, s1_capacity);
-        Memory::copy(s1, s1_capacity, s2, s2_length);
+        Memory::Zero(s1, s1_capacity);
+        Memory::Copy(s1, s1_capacity, s2, s2_length);
     }
 
     void insert(char* str, u64 &str_length_out, byte_t str_capacity, const char* to_insert, u64 to_insert_length, u64 index) {
@@ -198,9 +198,9 @@ namespace String {
         u8* move_source_ptr = (u8*)(str + index);
         u8* move_dest_ptr = (u8*)(move_source_ptr + to_insert_length);
 
-        Memory::copy(move_dest_ptr, str_capacity - (index + to_insert_length), move_source_ptr, str_length_out - index);
+        Memory::Copy(move_dest_ptr, str_capacity - (index + to_insert_length), move_source_ptr, str_length_out - index);
         u8* copy_dest_ptr = (u8*)(str + index);
-        Memory::copy(copy_dest_ptr, str_capacity, to_insert, to_insert_length);
+        Memory::Copy(copy_dest_ptr, str_capacity, to_insert, to_insert_length);
 
         str_length_out += to_insert_length;
     }
@@ -214,7 +214,7 @@ namespace String {
         RUNTIME_ASSERT_MSG(expression, "ckg_str_insert_char: str overflow new_capacity_required: %d >= current_capacity: %lld\n", str_length_out + to_insert_length, str_capacity);
 
         char* source_ptr = str + index;
-        Memory::copy(source_ptr + 1, str_capacity - (index + 1), source_ptr, str_length_out - index);
+        Memory::Copy(source_ptr + 1, str_capacity - (index + 1), source_ptr, str_length_out - index);
         str[index] = to_insert;
 
         str_length_out += 1;

@@ -16,7 +16,7 @@
         global double g_start_time = {0};
         global TIMECAPS g_device_time_caps;
 
-        bool initialize() {
+        bool Init() {
             LARGE_INTEGER frequency;
             QueryPerformanceFrequency(&frequency);
             g_frequency = (double)frequency.QuadPart;
@@ -40,11 +40,11 @@
             LOG_DEBUG("Platform Shutdown!\n");
         }
 
-        bool filePathExists(const char* path) {
+        bool FilePathExists(const char* path) {
             return (GetFileAttributesA(path) != INVALID_FILE_ATTRIBUTES);
         }
 
-        bool copyFile(const char* source_path, const char* dest_path, bool block_until_success) {
+        bool CopyFile(const char* source_path, const char* dest_path, bool block_until_success) {
             if (block_until_success) {
                 while (!CopyFileA(source_path, dest_path, FALSE)) {
                     sleep(10);
@@ -82,20 +82,20 @@
             return Memory::BaseAllocator*(win32_malloc, win32_free);
         }
 
-        u8* readEntireFile( const char* file_path, byte_t& out_file_size, Error& error) {
+        u8* ReadEntireFile( const char* file_path, byte_t& out_file_size, Error& error) {
             HANDLE file_handle = CreateFileA(file_path, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
             if (file_handle == INVALID_HANDLE_VALUE) {
-                LOG_ERROR("CreateFileA() returned an INVALID_HANDLE_VALUE, the file_path/path is likely wrong: readEntireFile(%s)\n", file_path);
+                LOG_ERROR("CreateFileA() returned an INVALID_HANDLE_VALUE, the file_path/path is likely wrong: ReadEntireFile(%s)\n", file_path);
                 error = ERROR_RESOURCE_NOT_FOUND;
                 
                 return nullptr;
             }
 
             LARGE_INTEGER large_int;
-            Memory::zero(&large_int, sizeof(LARGE_INTEGER));
+            Memory::Zero(&large_int, sizeof(LARGE_INTEGER));
             BOOL success = GetFileSizeEx(file_handle, &large_int);
             if (!success) {
-                LOG_ERROR("GetFileSizeEx() Failed to get size from file_handle: readEntireFile(%s)\n", file_path);
+                LOG_ERROR("GetFileSizeEx() Failed to get size from file_handle: ReadEntireFile(%s)\n", file_path);
                 error = ERROR_RESOURCE_NOT_FOUND;
                 CloseHandle(file_handle);
                 return nullptr;
@@ -103,22 +103,22 @@
 
             byte_t file_size = (byte_t)large_int.QuadPart;
             if (file_size > SIZE_MAX) {
-                LOG_ERROR("File size is bigger than max size: readEntireFile(%s)\n", file_path);
+                LOG_ERROR("File size is bigger than max size: ReadEntireFile(%s)\n", file_path);
                 error = ERROR_RESOURCE_TOO_BIG;
                 CloseHandle(file_handle);
 
                 return nullptr;
             }
 
-            u8* file_data = (u8*)Memory::alloc(file_size + 1); // +1 for null-terminator
+            u8* file_data = (u8*)Memory::Malloc(file_size + 1); // +1 for null-terminator
 
             DWORD bytes_read = 0;
             success = ReadFile(file_handle, file_data, (DWORD)file_size, &bytes_read, nullptr);
             CloseHandle(file_handle);
             if (!success && bytes_read == file_size) {
-                LOG_ERROR("ReadFile() Failed to get the file data or bytes read doesn't match file_size: readEntireFile(%s)\n", file_path);
+                LOG_ERROR("ReadFile() Failed to get the file data or bytes read doesn't match file_size: ReadEntireFile(%s)\n", file_path);
                 error = ERROR_RESOURCE_NOT_FOUND;
-                Memory::free(file_data);
+                Memory::Free(file_data);
                 return nullptr;
             }
 
@@ -127,10 +127,10 @@
             return file_data;
         }
 
-        DLL loadDLL(const char* dll_path, Error& error)  {
+        DLL LoadDLL(const char* dll_path, Error& error)  {
             HMODULE library = LoadLibraryA(dll_path);
             if (!library) {
-                LOG_ERROR("LoadLibraryA() failed: loadDLL(%s)\n", dll_path);
+                LOG_ERROR("LoadLibraryA() failed: LoadDLL(%s)\n", dll_path);
                 error = ERROR_RESOURCE_NOT_FOUND;
 
                 return nullptr;
@@ -146,12 +146,12 @@
             return nullptr;
         }
 
-        void* getProcAddress(DLL dll, const char* proc_name, Error& error) {
+        void* GetProcAddress(DLL dll, const char* proc_name, Error& error) {
             RUNTIME_ASSERT(dll);
 
             void* proc = (void*)GetProcAddress((HMODULE)dll, proc_name);
             if (!proc) {
-                LOG_ERROR("GetProcAddress() failed: getProcAddress(%s)\n", proc_name);
+                LOG_ERROR("GetProcAddress() failed: GetProcAddress(%s)\n", proc_name);
                 error = ERROR_RESOURCE_NOT_FOUND;
                 return nullptr;
             }

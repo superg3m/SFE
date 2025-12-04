@@ -36,7 +36,7 @@ void ShaderBase::checkCompileError(unsigned int source_id, const char* path) {
 unsigned int ShaderBase::shaderSourceCompile(const char* path) {
     byte_t file_size = 0;
     Error error = ERROR_SUCCESS;
-    GLchar* shader_source = (GLchar*)Platform::readEntireFile(path, file_size, error);
+    GLchar* shader_source = (GLchar*)Platform::ReadEntireFile(path, file_size, error);
     RUNTIME_ASSERT_MSG(error == ERROR_SUCCESS, "Shader Error: %s\n", path, getErrorString(error));
 
     GLenum type = this->typeFromPath(path);
@@ -46,7 +46,7 @@ unsigned int ShaderBase::shaderSourceCompile(const char* path) {
 
     this->checkCompileError(source_id, path);
 
-    Memory::free(shader_source);
+    Memory::Free(shader_source);
     return source_id;
 }
 
@@ -99,7 +99,7 @@ unsigned int ShaderBase::createShaderProgram(DS::Vector<const char*> shader_path
     for (auto entries : this->uniforms) {
         if (!entries.filled || entries.dead) continue;
 
-        Memory::free((char*)entries.key);
+        Memory::Free((char*)entries.key);
     }
 
     GLint uniform_count = 0;

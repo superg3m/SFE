@@ -15,15 +15,15 @@ namespace Memory {
         g_allocator = allocator;
     }
 
-    void* alloc(byte_t allocation_size) {
+    void* Malloc(byte_t allocation_size) {
         return g_allocator->malloc(allocation_size);
     }
 
-    void free(void* data) {
+    void Free(void* data) {
         g_allocator->free(data);
     }
 
-    void* realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size) {
+    void* Realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size) {
         return g_allocator->realloc(data, old_allocation_size, new_allocation_size);
     }
 
@@ -37,7 +37,7 @@ namespace Memory {
 
     void* GeneralAllocator::malloc(byte_t allocation_size) {
         void* ret = std::malloc(allocation_size);
-        Memory::zero(ret, allocation_size);
+        Memory::Zero(ret, allocation_size);
 
         return ret;
     }
@@ -53,7 +53,7 @@ namespace Memory {
         RUNTIME_ASSERT(new_allocation_size != 0);
 
         void* ret = this->malloc(new_allocation_size);
-        Memory::copy(ret, new_allocation_size, data, old_allocation_size);
+        Memory::Copy(ret, new_allocation_size, data, old_allocation_size);
         this->free(data);
 
         return ret;
@@ -151,7 +151,7 @@ namespace Memory {
         }
 
         void* ret = this->malloc(new_allocation_size);
-        Memory::copy(ret, new_allocation_size, data, old_allocation_size);
+        Memory::Copy(ret, new_allocation_size, data, old_allocation_size);
         this->free(data);
 
         return ret;
