@@ -10,7 +10,9 @@
 #include <Shader/shader_uniform_color.hpp>
 #include <Shader/shader_diffuse.hpp>
 
-/*
+#include <Math/math.hpp>
+
+
 // ACTIVE_VAO
 // WIRE_FRAME_MODE
 // projection_mode (3d or 2d)
@@ -19,13 +21,13 @@
 
 // lower the overhead of the driver calls by checking first
 namespace Renderer {
-    void BindVAO();
-    void SetWireFrame(bool toggle);s
-};
+    enum ProjectionMode {
+        PROJECTION_2D,
+        PROJECTION_3D
+    };
 
-// inside renderer.cpp file
-    static unsigned int VAO;
-
-// drawSquare(x, y, width, height, color);
-// drawCircle(center, radius, color);
-*/
+    void BindVAO(unsigned int vao);
+    void SetWireFrame(bool wireframe);
+    Math::Mat4 GetProjectionMatrix2D(unsigned int width, unsigned int height);
+    Math::Mat4 GetProjectionMatrix3D(unsigned int width, unsigned int height, float fov);
+}

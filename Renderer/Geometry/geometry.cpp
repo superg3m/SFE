@@ -6,6 +6,8 @@
 #include <Geometry/geometry.hpp>
 #include <Shader/shader_base.hpp>
 
+#include <renderer.hpp>
+
 static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
     Math::Mat4 ret;
 
@@ -283,7 +285,7 @@ namespace Renderer  {
     }
 
     void Geometry::draw(const ShaderBase* shader) {
-        glBindVertexArray(this->VAO); // make this Renderer::bindVAO(this->VAO); // for caching
+        Renderer::BindVAO(this->VAO); // make this Renderer::bindVAO(this->VAO); // for caching
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {
@@ -307,8 +309,6 @@ namespace Renderer  {
                 );
             }
         }
-
-        glBindVertexArray(0);
     }
 
     void Geometry::setup(VertexAttributeFlag flags, bool should_destory_data) {
@@ -370,10 +370,10 @@ namespace Renderer  {
 
             if (i > 0) {
                 current->next = (Geometry*)Memory::Malloc(sizeof(Geometry));
-                current->next->root = this;
                 current = current->next;
             }
         }
+
         this->vertices = DS::Vector<Vertex>(total_vertex_count);
         this->indices = DS::Vector<GLuint>(total_index_count);
         this->materials = DS::Vector<Material>(scene->mNumMaterials);

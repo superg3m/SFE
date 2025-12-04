@@ -1,3 +1,5 @@
+#pragma once
+
 #include <glad/glad.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -13,7 +15,6 @@
 
 typedef struct ShaderBase ShaderBase;
 namespace Renderer  {
-	
 	struct Geometry {
 		GLuint VAO = 0; 
 		GLuint VBO = 0; 
@@ -28,7 +29,7 @@ namespace Renderer  {
 		Material material;
 		Math::AABB aabb;
 		Geometry* next = nullptr;
-		Geometry* root = nullptr;
+		bool wireframe = false;
 
 		Geometry();
 		Geometry(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type = GL_TRIANGLES);

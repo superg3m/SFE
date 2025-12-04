@@ -48,9 +48,9 @@ void cbMasterProfile() {
     }
 
     if (Input::GetKeyPressed(Input::KEY_L)) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        Renderer::SetWireFrame(true);
     } else if (Input::GetKeyReleased(Input::KEY_L)) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        Renderer::SetWireFrame(false);
     }
 
     if (Input::GetKeyPressed(Input::KEY_C)) {
