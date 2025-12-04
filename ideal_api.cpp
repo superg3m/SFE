@@ -119,11 +119,7 @@ void display() {
     Math::Mat4 rot_mat = Math::Mat4::Identity(); 
     rot_mat = Math::Mat4::Rotate(rot_mat, saved_rot, 0, 1, 0);
 
-    float fov = camera.zoom;
-    float aspect = WIDTH / HEIGHT;
-    float near_plane = 0.1f;
-    float far_plane = 200.0f;
-    Math::Mat4 perspective = Math::Mat4::Perspective(fov, aspect, near_plane, far_plane);
+    Math::Mat4 perspective = Renderer::GetProjectionMatrix3D(WIDTH, HEIGHT, camera.zoom);
     Math::Mat4 view = camera.getViewMatrix();
 
     diffuse_shader.setProjection(perspective);
