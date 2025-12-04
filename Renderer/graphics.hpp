@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Camera/Camera.hpp>
+#include <Camera/camera.hpp>
 #include <Entity/entity.hpp>
 #include <Geometry/geometry.hpp>
 #include <Geometry/material.hpp>
