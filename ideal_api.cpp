@@ -171,8 +171,6 @@ void display() {
     model = Math::Mat4::Translate(model, 0, 5, 0);
     model_shader.setModel(model);
     church.draw(&model_shader); 
-    
-    glUseProgram(0);
 }
 
 void init_pole_geometry() {

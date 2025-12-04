@@ -3,7 +3,7 @@
 namespace Renderer {
     static bool WIREFRAME = false;
     static unsigned int VAO;
-
+    static unsigned int PROGRAM;
 
     void BindVAO(unsigned int vao) {
         if (VAO == vao) {
@@ -12,6 +12,15 @@ namespace Renderer {
 
         VAO = vao;
         glBindVertexArray(VAO);
+    }
+
+    void BindProgram(unsigned int program) {
+        if (PROGRAM == program) {
+            return;
+        }
+
+        PROGRAM = program;
+        glUseProgram(PROGRAM);
     }
 
     void SetWireFrame(bool wireframe) {

@@ -3,6 +3,7 @@
 #include <DataStructure/ds.hpp>
 #include <String/string.hpp>
 #include <platform.hpp>
+#include <renderer.hpp>
 
 GLenum ShaderBase::typeFromPath(const char* shader_source_path) {
     u64 shader_path_length = String::Length(shader_source_path);
@@ -120,7 +121,7 @@ unsigned int ShaderBase::createShaderProgram(DS::Vector<const char*> shader_path
 }
 
 void ShaderBase::use() const {
-    glUseProgram(this->program_id);
+    Renderer::BindProgram(this->program_id);
 }
 
 void ShaderBase::setModel(Math::Mat4 &model) const {
