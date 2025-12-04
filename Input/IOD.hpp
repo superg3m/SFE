@@ -60,6 +60,11 @@ struct IOD {
     static void UpdateMousePosition(float x, float y);
 
     static bool GetKey(IOD_ICode code, IOD_IState state);
+    static bool GetKeyUp(IOD_ICode code);
+    static bool GetKeyPressed(IOD_ICode code);
+    static bool GetKeyDown(IOD_ICode code);
+    static bool GetKeyReleased(IOD_ICode code);
+
     static float GetMouseX();
     static float GetMouseY();
 

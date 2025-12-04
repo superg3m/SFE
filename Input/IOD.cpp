@@ -101,6 +101,26 @@ bool IOD::GetKey(IOD_ICode code, IOD_IState state) {
     return state & actual_state;
 }
 
+bool IOD::GetKeyUp(IOD_ICode code) {
+    IOD_IState actual_state = input_state.get(code);
+    return actual_state & IOD_IState::UP;
+}
+
+bool IOD::GetKeyPressed(IOD_ICode code) {
+    IOD_IState actual_state = input_state.get(code);
+    return actual_state & IOD_IState::PRESSED;
+}
+
+bool IOD::GetKeyDown(IOD_ICode code) {
+    IOD_IState actual_state = input_state.get(code);
+    return actual_state & IOD_IState::DOWN;
+}
+
+bool IOD::GetKeyReleased(IOD_ICode code) {
+    IOD_IState actual_state = input_state.get(code);
+    return actual_state & IOD_IState::RELEASED;
+}
+
 void IOD::CreateProfile(const char* key, IOD_CALLBACK callback) {
     IOD_Profile ret;
     ret.name = key;

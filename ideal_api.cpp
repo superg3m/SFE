@@ -33,31 +33,31 @@ void cbMasterProfile() {
     GLFWwindow* window = (GLFWwindow*)IOD::glfw_window_instance;
     const bool SHIFT = IOD::GetKey(IOD_KEY_SHIFT, IOD_IState::PRESSED|IOD_IState::DOWN);
 
-    if (IOD::GetKey(IOD_KEY_ESCAPE, IOD_IState::PRESSED)) {
+    if (IOD::GetKeyPressed(IOD_KEY_ESCAPE)) {
         glfwSetWindowShouldClose(window, true);
     }
 
-    if (IOD::GetKey(IOD_KEY_R, IOD_IState::PRESSED)) {
+    if (IOD::GetKeyPressed(IOD_KEY_R)) {
         diffuse_shader.compile();
         model_shader.compile();
     }
 
-    if (SHIFT && IOD::GetKey(IOD_KEY_W, IOD_IState::PRESSED)) {
+    if (SHIFT && IOD::GetKeyPressed(IOD_KEY_W)) {
         IOD::ToggleProfile(MOVEMENT_PROFILE);
     }
 
-    if (IOD::GetKey(IOD_KEY_L, IOD_IState::PRESSED)) {
+    if (IOD::GetKeyPressed(IOD_KEY_L)) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else if (IOD::GetKey(IOD_KEY_L, IOD_IState::RELEASED)) {
+    } else if (IOD::GetKeyReleased(IOD_KEY_L)) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    if (IOD::GetKey(IOD_KEY_C, IOD_IState::PRESSED)) {
+    if (IOD::GetKeyPressed(IOD_KEY_C)) {
         mouse_captured = !mouse_captured;
         glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     }
 
-    if (IOD::GetKey(IOD_KEY_U, IOD_IState::PRESSED)) {
+    if (IOD::GetKeyPressed(IOD_KEY_U)) {
         is_rotating = !is_rotating;
 		is_translating = !is_translating;
     }
