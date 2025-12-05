@@ -92,13 +92,13 @@ namespace Renderer {
         this->index_count = this->indices.count();
 
         VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
-        flags = (vertices[0].aPosition != Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aPosition : flags;
-        flags = (vertices[0].aNormal != Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aNormal : flags;
-        flags = (vertices[0].aTexCoord != Math::Vec2(-1234.0f)) ? flags | VertexAttributeFlag::aTexCoord : flags;
-        flags = (vertices[0].aBitangent != Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aBitangent : flags;
-        flags = (vertices[0].aColor != Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aColor : flags;
-        flags = (vertices[0].aBoneIDs != Math::IVec4(-1234.0f)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
-        flags = (vertices[0].aBoneWeights != Math::Vec4(-1234.0f)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
+        flags = (vertices[0].aPosition != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aPosition : flags;
+        flags = (vertices[0].aNormal != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aNormal : flags;
+        flags = (vertices[0].aTexCoord != Math::Vec2(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aTexCoord : flags;
+        flags = (vertices[0].aBitangent != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBitangent : flags;
+        flags = (vertices[0].aColor != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aColor : flags;
+        flags = (vertices[0].aBoneIDs != Math::IVec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
+        flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
         this->setup(flags);
@@ -114,13 +114,13 @@ namespace Renderer {
         this->index_count = this->indices.count();
 
         VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
-        flags = (vertices[0].aPosition == Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aPosition : flags;
-        flags = (vertices[0].aNormal == Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aNormal : flags;
-        flags = (vertices[0].aTexCoord == Math::Vec2(-1234.0f)) ? flags | VertexAttributeFlag::aTexCoord : flags;
-        flags = (vertices[0].aBitangent == Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aBitangent : flags;
-        flags = (vertices[0].aColor == Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aColor : flags;
-        flags = (vertices[0].aBoneIDs == Math::IVec4(-1234.0f)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
-        flags = (vertices[0].aBoneWeights == Math::Vec4(-1234.0f)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
+        flags = (vertices[0].aPosition != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aPosition : flags;
+        flags = (vertices[0].aNormal != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aNormal : flags;
+        flags = (vertices[0].aTexCoord != Math::Vec2(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aTexCoord : flags;
+        flags = (vertices[0].aBitangent != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBitangent : flags;
+        flags = (vertices[0].aColor != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aColor : flags;
+        flags = (vertices[0].aBoneIDs != Math::IVec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
+        flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
         this->setup(flags);
