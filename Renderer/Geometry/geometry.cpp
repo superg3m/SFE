@@ -81,6 +81,11 @@ namespace Renderer {
         this->base_index = 0;
 
         this->next = nullptr;
+
+        this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
+        for (int i = 0; i < RESERVED_VERTEX_ATTRIBUTE_LOCATIONS; i++) {
+            this->vertex_attribute_locations.put(i, true);
+        }
     }
 
     Geometry::Geometry(const DS::Vector<Vertex>& vertices, GLenum draw_type) {
@@ -345,6 +350,33 @@ namespace Renderer {
         }
     }
 
+    void Geometry::drawInstanced(const ShaderBase* shader, int instance_count) {
+        Renderer::BindVAO(this->VAO);
+
+        for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
+            if (geo->vertex_count == 0) {
+                continue;
+            }
+
+            shader->setMaterial(geo->material);
+
+            if (geo->index_count > 0) {
+                glDrawElementsInstancedBaseVertex(
+                    this->draw_type, geo->index_count,
+                    GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * geo->base_index),
+                    instance_count, geo->base_vertex
+                );
+            } else {
+                glDrawArraysInstanced(
+                    this->draw_type,
+                    geo->base_vertex,
+                    geo->vertex_count,
+                    instance_count
+                );
+            }
+        }
+    }
+
     void Geometry::setup(VertexAttributeFlag flags, bool should_destory_data) {
         this->aabb = CalculateAABB(vertices);
 
@@ -358,17 +390,8 @@ namespace Renderer {
         glGenBuffers(1, &EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.count() * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW);
-
-        // bool hasPosition   = hasVertexAttributeFlag(flags, VertexAttributeFlag::aPosition);
-        // bool hasNormal     = hasVertexAttributeFlag(flags, VertexAttributeFlag::aNormal);
-        // bool hasTexCoord   = hasVertexAttributeFlag(flags, VertexAttributeFlag::aTexCoord);
-        // bool hasTanget     = hasVertexAttributeFlag(flags, VertexAttributeFlag::aTangent);
-        // bool hasBitanget   = hasVertexAttributeFlag(flags, VertexAttributeFlag::aBitangent);
-        // bool hasColor      = hasVertexAttributeFlag(flags, VertexAttributeFlag::aColor);
-        // bool hasBoneID     = hasVertexAttributeFlag(flags, VertexAttributeFlag::aBoneIDs);
-        // bool hasBoneWeight = hasVertexAttributeFlag(flags, VertexAttributeFlag::aBoneWeights);
+        
         size_t offset = 0;
-
         for (const auto& desc : ALL_ATTRIBUTE_DESCRIPTORS) {
             if (flags & desc.flag) {
                 glEnableVertexAttribArray(desc.location);
@@ -679,6 +702,140 @@ namespace Renderer {
         this->indices = indices;
 
         this->setup(flags, false);
+    }
+
+    template<SupportedVertexAttributeType T>
+    void Geometry::addVertexAttribute(int location, T value) {
+        RUNTIME_ASSERT_MSG(
+            this->vertex_attribute_locations.has(location),
+            "You are trying to use a location that has already been assigned"
+        );
+
+        int attribute_count;
+        glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribute_count);
+        RUNTIME_ASSERT_MSG(attribute_count >= location,
+            "You are trying to use a location that is outside of the max vertex attributes: %d",
+            attribute_count
+        );
+
+        constexpr bool is_matrix = std::is_same_v<T, Math::Mat4>;
+        constexpr bool is_int     = std::is_same_v<T, int> || std::is_same_v<T, Math::IVec4>;
+        constexpr GLenum gl_type  = is_int ? GL_INT : GL_FLOAT;
+        constexpr int component_count = (
+            std::is_same_v<T, bool>        ? 1  :
+            std::is_same_v<T, int>         ? 1  :
+            std::is_same_v<T, float>       ? 1  :
+            std::is_same_v<T, Math::Vec2>  ? 2  :
+            std::is_same_v<T, Math::Vec3>  ? 3  :
+            std::is_same_v<T, Math::Vec4>  ? 4  :
+            std::is_same_v<T, Math::IVec4> ? 4  :
+            std::is_same_v<T, Math::Mat4>  ? 16 : 0
+        );
+
+        Renderer::BindVAO(this->VAO);
+
+        unsigned int vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(T), (const void*)&value, GL_STATIC_DRAW);
+
+        constexpr GLsizei stride = sizeof(T);
+        if constexpr (is_matrix) {
+            for (int i = 0; i < 4; i++) {
+                RUNTIME_ASSERT_MSG(attribute_count > location + i,
+                    "You are trying to use a location that is outside of the max vertex attributes: %d",
+                    attribute_count
+                );
+
+                glEnableVertexAttribArray(location + i);
+
+                if constexpr (is_int) {
+                    glVertexAttribIPointer(location + i, 4, gl_type, stride, (void*)(sizeof(Math::IVec4) * i));
+                } else {
+                    glVertexAttribPointer(location + i, 4, gl_type, GL_FALSE, stride, (void*)(sizeof(Math::Vec4) * i));
+                }
+
+                this->vertex_attribute_locations.put(location + i, true);
+            }
+        } else {
+            glEnableVertexAttribArray(location);
+
+            if constexpr (is_int) {
+                glVertexAttribIPointer(location, component_count, gl_type, stride, nullptr);
+            } else {
+                glVertexAttribPointer(location, component_count, gl_type, GL_FALSE, stride, nullptr);
+            }
+
+            this->vertex_attribute_locations.put(location, true);
+        }
+    }
+
+    template<SupportedVertexAttributeType T>
+    void Geometry::addInstanceVertexAttribute(int location, DS::Vector<T> values) {
+        RUNTIME_ASSERT_MSG(
+            this->vertex_attribute_locations.has(location),
+            "You are trying to use a location that has already been assigned"
+        );
+
+        int attribute_count;
+        glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribute_count);
+        RUNTIME_ASSERT_MSG(attribute_count >= location,
+            "You are trying to use a location that is outside of the max vertex attributes: %d",
+            attribute_count
+        );
+
+        constexpr bool is_matrix = std::is_same_v<T, Math::Mat4>;
+        constexpr bool is_int     = std::is_same_v<T, int> || std::is_same_v<T, Math::IVec4>;
+        constexpr GLenum gl_type  = is_int ? GL_INT : GL_FLOAT;
+        constexpr int component_count = (
+            std::is_same_v<T, bool>        ? 1  :
+            std::is_same_v<T, int>         ? 1  :
+            std::is_same_v<T, float>       ? 1  :
+            std::is_same_v<T, Math::Vec2>  ? 2  :
+            std::is_same_v<T, Math::Vec3>  ? 3  :
+            std::is_same_v<T, Math::Vec4>  ? 4  :
+            std::is_same_v<T, Math::IVec4> ? 4  :
+            std::is_same_v<T, Math::Mat4>  ? 16 : 0
+        );
+
+        Renderer::BindVAO(this->VAO);
+        
+        unsigned int instance_vbo;
+        glGenBuffers(1, &instance_vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, instance_vbo);
+        glBufferData(GL_ARRAY_BUFFER, values.count() * sizeof(T), values.data(), GL_STATIC_DRAW);
+
+        constexpr GLsizei stride = sizeof(T);
+        if constexpr (is_matrix) {
+            for (int i = 0; i < 4; i++) {
+                RUNTIME_ASSERT_MSG(attribute_count > location + i,
+                    "You are trying to use a location that is outside of the max vertex attributes: %d",
+                    attribute_count
+                );
+
+                glEnableVertexAttribArray(location + i);
+
+                if constexpr (is_int) {
+                    glVertexAttribIPointer(location + i, 4, gl_type, stride, (void*)(sizeof(Math::IVec4) * i));
+                } else {
+                    glVertexAttribPointer(location + i, 4, gl_type, GL_FALSE, stride, (void*)(sizeof(Math::Vec4) * i));
+                }
+
+                glVertexAttribDivisor(location + i, 1);
+                this->vertex_attribute_locations.put(location + i, true);
+            }
+        } else {
+            glEnableVertexAttribArray(location);
+
+            if constexpr (is_int) {
+                glVertexAttribIPointer(location, component_count, gl_type, stride, nullptr);
+            } else {
+                glVertexAttribPointer(location, component_count, gl_type, GL_FALSE, stride, nullptr);
+            }
+
+            glVertexAttribDivisor(location, 1);
+            this->vertex_attribute_locations.put(location, true);
+        }
     }
 }
 

@@ -5,6 +5,7 @@
 
 namespace Renderer {
     const float MAGIC_NUMBER = -123450510.0f;
+    const int RESERVED_VERTEX_ATTRIBUTE_LOCATIONS = 7;
 
     struct Vertex {
         Math::Vec3 aPosition    = Math::Vec3(MAGIC_NUMBER);   // location 0
@@ -13,7 +14,7 @@ namespace Renderer {
         Math::Vec3 aTangent     = Math::Vec3(MAGIC_NUMBER);   // location 3
         Math::Vec3 aBitangent   = Math::Vec3(MAGIC_NUMBER);   // location 4
         Math::Vec3 aColor       = Math::Vec3(MAGIC_NUMBER);   // location 5
-        Math::IVec4 aBoneIDs    = Math::IVec4(MAGIC_NUMBER);     // location 6
+        Math::IVec4 aBoneIDs    = Math::IVec4(MAGIC_NUMBER);  // location 6
         Math::Vec4 aBoneWeights = Math::Vec4(MAGIC_NUMBER);   // location 7
 
         Vertex() = default;

@@ -15,6 +15,18 @@
 
 typedef struct ShaderBase ShaderBase;
 namespace Renderer  {
+    template<typename T>
+    concept SupportedVertexAttributeType = (
+        std::is_same_v<T, bool> ||
+        std::is_same_v<T, int> ||
+        std::is_same_v<T, float> || 
+        std::is_same_v<T, Math::Vec2> ||
+        std::is_same_v<T, Math::Vec3> ||
+        std::is_same_v<T, Math::Vec4> ||
+        std::is_same_v<T, Math::IVec4> ||
+        std::is_same_v<T, Math::Mat4>
+    );
+
 	struct Geometry {
 		GLuint VAO = 0; 
 		GLuint VBO = 0; 
@@ -41,12 +53,20 @@ namespace Renderer  {
 		static Geometry Sphere(int segments);
 		static Geometry Model(const char* path);
 
+		template<SupportedVertexAttributeType T>
+		void addVertexAttribute(int location, T value);
+		
+		template<SupportedVertexAttributeType T>
+		void addInstanceVertexAttribute(int location, DS::Vector<T> values);
+
 		void draw(const ShaderBase* shader);
+		void drawInstanced(const ShaderBase* shader, int instance_count);
 
 		private:
 			DS::Vector<Vertex> vertices; // only the root will have vertices
 			DS::Vector<GLuint> indices;  // only the root will have indices
 			DS::Vector<Material> materials;
+			DS::Hashmap<int, bool> vertex_attribute_locations;
 
 			void setup(VertexAttributeFlag flags, bool should_destory_data = true);
 
