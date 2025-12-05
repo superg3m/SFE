@@ -20,6 +20,7 @@ float saved_rot = 0.0f;
 float saved_translation = 0.0f;
 static int is_rotating = 1;
 static int is_translating = 1;
+bool emit = false;
 
 #define MASTER_PROFILE "master"
 #define MOVEMENT_PROFILE "movement"
@@ -41,6 +42,11 @@ void cbMasterProfile() {
     if (Input::GetKeyPressed(Input::KEY_R)) {
         diffuse_shader.compile();
         model_shader.compile();
+    }
+
+    if (Input::GetKeyPressed(Input::KEY_0)) {
+        emit = !emit;
+        model_shader.setEmissiveMaterial(emit);
     }
 
     if (SHIFT && Input::GetKeyPressed(Input::KEY_W)) {

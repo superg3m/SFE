@@ -55,10 +55,7 @@ struct Material {
 };
 
 struct MaterialLocation {
-    unsigned int color_map;
-    unsigned int specular_map;
-    unsigned int normal_map;
-    unsigned int height_map;
+    unsigned int textures[TEXTURE_COUNT];
 
     unsigned int color;
     unsigned int shininess;

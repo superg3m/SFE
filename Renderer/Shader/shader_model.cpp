@@ -57,10 +57,12 @@ void ShaderModel::compile() {
     this->uUseFlashlight_Location = this->getUniformLocation("uUseFlashlight", GL_BOOL);
     */
 
-    this->uMaterial_Location.color_map = this->getUniformLocation("uMaterial.diffuse_map", GL_SAMPLER_2D);
-    this->uMaterial_Location.specular_map = this->getUniformLocation("uMaterial.specular_map", GL_SAMPLER_2D);
-    this->uMaterial_Location.shininess = this->getUniformLocation("uMaterial.shininess", GL_FLOAT);
+    this->uApplyEmissiveMaterial_Location = this->getUniformLocation("uApplyEmissiveMaterial", GL_BOOL);
 
+    this->uMaterial_Location.textures[TEXTURE_TYPE_DIFFUSE] = this->getUniformLocation("uMaterial.diffuse_map", GL_SAMPLER_2D);
+    this->uMaterial_Location.textures[TEXTURE_TYPE_SPECULAR] = this->getUniformLocation("uMaterial.specular_map", GL_SAMPLER_2D);
+    this->uMaterial_Location.textures[TEXTURE_TYPE_EMISSIVE] = this->getUniformLocation("uMaterial.emissive_map", GL_SAMPLER_2D);
+    this->uMaterial_Location.shininess = this->getUniformLocation("uMaterial.shininess", GL_FLOAT);
     this->uMaterial_Location.opacity = this->getUniformLocation("uMaterial.opacity", GL_FLOAT);
     // this->uMaterial_Location.color = this->getUniformLocation("uMaterial.color", GL_FLOAT_VEC3);
 }
@@ -68,16 +70,19 @@ void ShaderModel::compile() {
 void ShaderModel::setMaterial(const Material &material) const {
     this->use();
 
-    if (material.textures[TEXTURE_TYPE_DIFFUSE].id != 0) {
-        glActiveTexture(GL_TEXTURE0 + 0);
-        glBindTexture(GL_TEXTURE_2D, material.textures[TEXTURE_TYPE_DIFFUSE].id);
-        this->setInt(uMaterial_Location.color_map, 0);
-    }
+    for (int i = 0; i < TEXTURE_COUNT - 1; i++) {
+        if (material.textures[i + 1].id <= 0) {
+            continue;
+        }
+        
+        if (this->uMaterial_Location.textures[i + 1] <= 0) {
+            LOG_WARN("Not handling texture type: %s\n", texture_to_string[i + 1]);
+            continue;
+        }
 
-    if (material.textures[TEXTURE_TYPE_SPECULAR].id != 0) {
-        glActiveTexture(GL_TEXTURE0 + 1);
-        glBindTexture(GL_TEXTURE_2D, material.textures[TEXTURE_TYPE_SPECULAR].id);
-        this->setInt(uMaterial_Location.specular_map, 1);
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, material.textures[i + 1].id);
+        this->setInt(this->uMaterial_Location.textures[i + 1], i);
     }
 
     this->setVec3(uMaterial_Location.color, material.ambient_color);
@@ -86,6 +91,12 @@ void ShaderModel::setMaterial(const Material &material) const {
 
     this->setFloat(uMaterial_Location.shininess, material.shininess);
     this->setFloat(uMaterial_Location.opacity, material.opacity);
+}
+
+void ShaderModel::setEmissiveMaterial(bool should_emit) const {
+    this->use();
+
+    this->setBool(this->uApplyEmissiveMaterial_Location, should_emit);
 }
 
 void ShaderModel::setSpotLight(SpotLight &spot_light) const {

@@ -11,6 +11,7 @@ struct ShaderModel : public ShaderBase {
     void setMaterial(const Material &material) const override;
     
     // Fragment Uniforms
+    void setEmissiveMaterial(bool should_emit) const;
     void setSpotLight(SpotLight &spot_light) const;
     void setDirectionalLight(DirectionalLight &directional_light) const;
     void setPointLight(PointLight &point_light, int index) const;
@@ -23,6 +24,7 @@ private:
     PointLightLocation uPointLight_Locations[LIGHT_COUNT];
     unsigned int uViewPosition_Location;
     unsigned int uUseFlashlight_Location;
+    unsigned int uApplyEmissiveMaterial_Location;
 
     MaterialLocation uMaterial_Location;
 };
