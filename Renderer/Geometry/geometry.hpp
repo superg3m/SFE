@@ -58,7 +58,51 @@ namespace Renderer  {
 		static Geometry Model(const char* path);
 
 		template<SupportedVertexAttributeType T>
-		void addVertexAttribute(int location, T value) {
+		void addVertexAttribute(int location, const T& value) {
+			RUNTIME_ASSERT_MSG(
+				!this->vertex_attribute_locations.has(location),
+				"Location already assigned"
+			);
+
+			int max_attribs;
+			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_attribs);
+			RUNTIME_ASSERT_MSG(max_attribs > location, "Location outside range");
+
+			Renderer::BindVAO(this->VAO);
+
+			glDisableVertexAttribArray(location);
+			if constexpr (std::is_same_v<T, float>){
+				glVertexAttrib1f(location, value);
+				this->vertex_attribute_locations.put(location, true);
+			} else if constexpr (std::is_same_v<T, Math::Vec2>){
+				glVertexAttrib2f(location, value.x, value.y);
+				this->vertex_attribute_locations.put(location, true);
+			} else if constexpr (std::is_same_v<T, Math::Vec3>){
+				glVertexAttrib3f(location, value.x, value.y, value.z);
+				this->vertex_attribute_locations.put(location, true);
+			} else if constexpr (std::is_same_v<T, Math::Vec4>){
+				glVertexAttrib4f(location, value.x, value.y, value.z, value.w);
+				this->vertex_attribute_locations.put(location, true);
+			} else if constexpr (std::is_same_v<T, int>){
+				glVertexAttribI1i(location, value);
+			} else if constexpr (std::is_same_v<T, Math::IVec4>){
+				glVertexAttribI4i(location, value.x, value.y, value.z, value.w);
+				this->vertex_attribute_locations.put(location, true);
+			} else if constexpr (std::is_same_v<T, Math::Mat4>) {
+				for (int i = 0; i < 4; i++) {
+					RUNTIME_ASSERT_MSG(max_attribs > location + i,
+						"Matrix would overflow available attributes"
+					);
+
+					glDisableVertexAttribArray(location + i);
+					glVertexAttrib4fv(location + i, &value[i][0]);
+					this->vertex_attribute_locations.put(location + i, true);
+				}
+			}
+		}
+
+		template<SupportedVertexAttributeType T>
+		void addVertexAttribute(int location, const DS::Vector<T>& values) {
 			RUNTIME_ASSERT_MSG(
 				!this->vertex_attribute_locations.has(location),
 				"You are trying to use a location that has already been assigned"
@@ -85,12 +129,12 @@ namespace Renderer  {
 				std::is_same_v<T, Math::Mat4>  ? 16 : 0
 			);
 
-			BindVAO((unsigned int)this->VAO);
+			Renderer::BindVAO(this->VAO);
 
 			unsigned int vbo;
 			glGenBuffers(1, &vbo);
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(T), (const void*)&value, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, values.count() * sizeof(T), (const void*)values.data(), GL_STATIC_DRAW);
 
 			constexpr GLsizei stride = sizeof(T);
 			if constexpr (is_matrix) {
@@ -122,7 +166,7 @@ namespace Renderer  {
 		}
 
 		template<SupportedVertexAttributeType T>
-		void addInstanceVertexAttribute(int location, DS::Vector<T> values) {
+		void addInstanceVertexAttribute(int location, const DS::Vector<T>& values) {
 			RUNTIME_ASSERT_MSG(
 				!this->vertex_attribute_locations.has(location),
 				"You are trying to use a location that has already been assigned"
@@ -149,7 +193,7 @@ namespace Renderer  {
 				std::is_same_v<T, Math::Mat4>  ? 16 : 0
 			);
 
-			BindVAO(this->VAO);
+			Renderer::BindVAO(this->VAO);
 
 			unsigned int instance_vbo;
 			glGenBuffers(1, &instance_vbo);
