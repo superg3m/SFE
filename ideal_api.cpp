@@ -170,14 +170,14 @@ void display() {
 }
 
 void init_pole_geometry() {
-    DS::Vector<Vertex> vertices = {
-        Vertex(Math::Vec3{-0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{-0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{+0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+    DS::Vector<Renderer::Vertex> vertices = {
+        Renderer::Vertex(Math::Vec3{-0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{-0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vec3{+0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{-0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{+0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{-0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
     };
 
     // TODO(Jovanni): can you derive these flags from the vertex data???
@@ -185,30 +185,30 @@ void init_pole_geometry() {
 }
 
 void init_hexplane_geometry() {
-    DS::Vector<Vertex> vertices = {
-        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{-0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{+0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
+    DS::Vector<Renderer::Vertex> vertices = {
+        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{-0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{+0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{+1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{+1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{+0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{+0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{-0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{-0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{-0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{-1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{-0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{-1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
 
-        Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{-1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Vertex(Math::Vec3{-0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{-1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
+        Renderer::Vertex(Math::Vec3{-0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
     };
 
     hexplane = Renderer::Geometry(vertices);

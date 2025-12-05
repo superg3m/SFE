@@ -9,65 +9,65 @@
 
 #include <renderer.hpp>
 
-static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
-    Math::Mat4 ret;
+namespace Renderer {
+    static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
+        Math::Mat4 ret;
 
-    ret.v[0].x = ai_matrix.a1; ret.v[1].x = ai_matrix.b1; ret.v[2].x = ai_matrix.c1; ret.v[3].x = ai_matrix.d1; 
-    ret.v[0].y = ai_matrix.a2; ret.v[1].y = ai_matrix.b2; ret.v[2].y = ai_matrix.c2; ret.v[3].y = ai_matrix.d2;
-    ret.v[0].z = ai_matrix.a3; ret.v[1].z = ai_matrix.b3; ret.v[2].z = ai_matrix.c3; ret.v[3].z = ai_matrix.d3;
-    ret.v[0].w = ai_matrix.a4; ret.v[1].w = ai_matrix.b4; ret.v[2].w = ai_matrix.c4; ret.v[3].w = ai_matrix.d4;
+        ret.v[0].x = ai_matrix.a1; ret.v[1].x = ai_matrix.b1; ret.v[2].x = ai_matrix.c1; ret.v[3].x = ai_matrix.d1; 
+        ret.v[0].y = ai_matrix.a2; ret.v[1].y = ai_matrix.b2; ret.v[2].y = ai_matrix.c2; ret.v[3].y = ai_matrix.d2;
+        ret.v[0].z = ai_matrix.a3; ret.v[1].z = ai_matrix.b3; ret.v[2].z = ai_matrix.c3; ret.v[3].z = ai_matrix.d3;
+        ret.v[0].w = ai_matrix.a4; ret.v[1].w = ai_matrix.b4; ret.v[2].w = ai_matrix.c4; ret.v[3].w = ai_matrix.d4;
 
-    return ret;
-}
-
-static Math::AABB CalculateAABB(const DS::Vector<Vertex>& vertices) {
-    float x_min = FLT_MAX;
-    float y_min = FLT_MAX;
-    float z_min = FLT_MAX;
-
-    float x_max = FLT_MIN;
-    float y_max = FLT_MIN;
-    float z_max = FLT_MIN;
-    for (const Vertex v : vertices) {
-        float x = v.aPosition.x;
-        float y = v.aPosition.y;
-        float z = v.aPosition.z;
-
-        if (x_min > x) {
-            x_min = x;
-        } else if (x_max < x) {
-            x_max = x;
-        }
-
-        if (y_min > y) {
-            y_min = y;
-        } else if (y_max < y) {
-            y_max = y;
-        }
-
-        if (z_min > z) {
-            z_min = z;
-        } else if (z_max < z) {
-            z_max = z;
-        }
+        return ret;
     }
 
-    Math::Vec3 center  = Math::Vec3(
-        (x_max + x_min) / 2.0f,
-        (y_max + y_min) / 2.0f,
-        (z_max + z_min) / 2.0f
-    );
+    static Math::AABB CalculateAABB(const DS::Vector<Vertex>& vertices) {
+        float x_min = FLT_MAX;
+        float y_min = FLT_MAX;
+        float z_min = FLT_MAX;
 
-    Math::Vec3 extents = Math::Vec3(
-        (x_max - x_min) / 2.0f,
-        (y_max - y_min) / 2.0f,
-        (z_max - z_min) / 2.0f
-    );
+        float x_max = FLT_MIN;
+        float y_max = FLT_MIN;
+        float z_max = FLT_MIN;
+        for (const Vertex v : vertices) {
+            float x = v.aPosition.x;
+            float y = v.aPosition.y;
+            float z = v.aPosition.z;
 
-    return Math::AABB::FromCenterExtents(center, extents);
-}
+            if (x_min > x) {
+                x_min = x;
+            } else if (x_max < x) {
+                x_max = x;
+            }
 
-namespace Renderer  {
+            if (y_min > y) {
+                y_min = y;
+            } else if (y_max < y) {
+                y_max = y;
+            }
+
+            if (z_min > z) {
+                z_min = z;
+            } else if (z_max < z) {
+                z_max = z;
+            }
+        }
+
+        Math::Vec3 center  = Math::Vec3(
+            (x_max + x_min) / 2.0f,
+            (y_max + y_min) / 2.0f,
+            (z_max + z_min) / 2.0f
+        );
+
+        Math::Vec3 extents = Math::Vec3(
+            (x_max - x_min) / 2.0f,
+            (y_max - y_min) / 2.0f,
+            (z_max - z_min) / 2.0f
+        );
+
+        return Math::AABB::FromCenterExtents(center, extents);
+    }
+
     Geometry::Geometry() {
         this->VAO = 0;
         this->VBO = 0;
