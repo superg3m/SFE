@@ -179,11 +179,9 @@ void init_pole_geometry() {
         Vertex(Math::Vec3{-0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
         Vertex(Math::Vec3{+0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
     };
-    DS::Vector<unsigned int> indices = DS::Vector<unsigned int>();
 
     // TODO(Jovanni): can you derive these flags from the vertex data???
-    VertexAttributeFlag flags = VertexAttributeFlag::aPosition | VertexAttributeFlag::aNormal;
-    pole = Renderer::Geometry(flags, vertices, indices);
+    pole = Renderer::Geometry(vertices);
 }
 
 void init_hexplane_geometry() {
@@ -212,10 +210,8 @@ void init_hexplane_geometry() {
         Vertex(Math::Vec3{-1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
         Vertex(Math::Vec3{-0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
     };
-    DS::Vector<unsigned int> indices = DS::Vector<unsigned int>();
 
-    VertexAttributeFlag flags = VertexAttributeFlag::aPosition | VertexAttributeFlag::aNormal;
-    hexplane = Renderer::Geometry(flags, vertices, indices);
+    hexplane = Renderer::Geometry(vertices);
 }
 
 int main(int argc, char** argv) {
@@ -264,12 +260,12 @@ int main(int argc, char** argv) {
     glfwSwapInterval(1);
     glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
-    glEnable(GL_STENCIL_TEST);
+    Renderer::SetDepthTest(true);
+    Renderer::SetStencilTest(true);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-    glEnable(GL_FRAMEBUFFER_SRGB);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // glEnable(GL_FRAMEBUFFER_SRGB);
 
     diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
     model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});

@@ -1,9 +1,13 @@
 #include <renderer.hpp>
 
 namespace Renderer {
+    static unsigned int VAO = -1;
+    static unsigned int PROGRAM = -1;
+    static bool DEPTH = false;
+    static bool STENCIL = false;
+    static bool BLENDING = false;
     static bool WIREFRAME = false;
-    static unsigned int VAO;
-    static unsigned int PROGRAM;
+
 
     void BindVAO(unsigned int vao) {
         if (VAO == vao) {
@@ -21,6 +25,45 @@ namespace Renderer {
 
         PROGRAM = program;
         glUseProgram(PROGRAM);
+    }
+
+    void SetDepthTest(bool depth) {
+        if (DEPTH == depth) {
+            return;
+        }
+
+        DEPTH = depth;
+        if (DEPTH) {
+            glEnable(GL_DEPTH_TEST);
+        } else {
+            glDisable(GL_DEPTH_TEST);
+        }
+    }
+
+    void SetStencilTest(bool stencil) {
+        if (STENCIL == stencil) {
+            return;
+        }
+
+        STENCIL = stencil;
+        if (STENCIL) {
+            glEnable(GL_STENCIL_TEST);
+        } else {
+            glDisable(GL_STENCIL_TEST);
+        }
+    }
+
+    void SetBlending(bool blending) {
+        if (BLENDING == blending) {
+            return;
+        }
+
+        BLENDING = blending;
+        if (BLENDING) {
+            glEnable(GL_BLEND);
+        } else {
+            glDisable(GL_BLEND);
+        }
     }
 
     void SetWireFrame(bool wireframe) {

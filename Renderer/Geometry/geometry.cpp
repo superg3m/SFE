@@ -4,6 +4,7 @@
 
 #include <DataStructure/contiguous.hpp>
 #include <Geometry/geometry.hpp>
+#include <Geometry/vertex.hpp>
 #include <Shader/shader_base.hpp>
 
 #include <renderer.hpp>
@@ -82,19 +83,52 @@ namespace Renderer  {
         this->next = nullptr;
     }
 
-    Geometry::Geometry(VertexAttributeFlag flags, const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type) {
+    Geometry::Geometry(const DS::Vector<Vertex>& vertices, GLenum draw_type) {
+        RUNTIME_ASSERT(vertices.count() > 0);
+
+        this->draw_type = draw_type;
+        this->vertices = vertices;
+        this->vertex_count = this->vertices.count();
+        this->index_count = this->indices.count();
+
+        VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
+        flags = (vertices[0].aPosition != Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aPosition : flags;
+        flags = (vertices[0].aNormal != Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aNormal : flags;
+        flags = (vertices[0].aTexCoord != Math::Vec2(-1234.0f)) ? flags | VertexAttributeFlag::aTexCoord : flags;
+        flags = (vertices[0].aBitangent != Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aBitangent : flags;
+        flags = (vertices[0].aColor != Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aColor : flags;
+        flags = (vertices[0].aBoneIDs != Math::IVec4(-1234.0f)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
+        flags = (vertices[0].aBoneWeights != Math::Vec4(-1234.0f)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
+        RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
+
+        this->setup(flags);
+    }
+
+    Geometry::Geometry(const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type) {
+        RUNTIME_ASSERT(vertices.count() > 0);
+
         this->draw_type = draw_type;
         this->vertices = vertices;
         this->indices = indices;
         this->vertex_count = this->vertices.count();
         this->index_count = this->indices.count();
 
+        VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
+        flags = (vertices[0].aPosition == Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aPosition : flags;
+        flags = (vertices[0].aNormal == Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aNormal : flags;
+        flags = (vertices[0].aTexCoord == Math::Vec2(-1234.0f)) ? flags | VertexAttributeFlag::aTexCoord : flags;
+        flags = (vertices[0].aBitangent == Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aBitangent : flags;
+        flags = (vertices[0].aColor == Math::Vec3(-1234.0f)) ? flags | VertexAttributeFlag::aColor : flags;
+        flags = (vertices[0].aBoneIDs == Math::IVec4(-1234.0f)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
+        flags = (vertices[0].aBoneWeights == Math::Vec4(-1234.0f)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
+        RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
+
         this->setup(flags);
     }
 
     Geometry Geometry::Quad() {
         DS::Vector<Vertex> quad_vertices = {
-            //         Position                        Normal                    UV
+            //         Position                              Normal                        UV
             Vertex{Math::Vec3( 1.0f,  1.0f, 0.0f),  Math::Vec3(1.0f, 0.0f, 0.0f),  Math::Vec2(1, 1)}, // top right
             Vertex{Math::Vec3( 1.0f, -1.0f, 0.0f),  Math::Vec3(0.0f, 1.0f, 0.0f),  Math::Vec2(1, 0)}, // bottom right
             Vertex{Math::Vec3(-1.0f, -1.0f, 0.0f),  Math::Vec3(0.0f, 0.0f, 1.0f),  Math::Vec2(0, 0)}, // bottom left
@@ -336,7 +370,7 @@ namespace Renderer  {
         size_t offset = 0;
 
         for (const auto& desc : ALL_ATTRIBUTE_DESCRIPTORS) {
-            if (hasVertexAttributeFlag(flags, desc.flag)) {
+            if (flags & desc.flag) {
                 glEnableVertexAttribArray(desc.location);
                 if (desc.isInteger) {
                     glVertexAttribIPointer(desc.location, desc.componentCount, desc.glType, sizeof(Vertex), (void*)offset);

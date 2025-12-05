@@ -1,19 +1,20 @@
+#pragma once
+
 #include <Math/math.hpp>
 #include <glad/glad.h>
 
 struct Vertex {
-    Math::Vec3 aPosition = Math::Vec3(0.0f);    // location 0
-    Math::Vec3 aNormal = Math::Vec3(0.0f);      // location 1
-    Math::Vec2 aTexCoord = Math::Vec2(0.0f);    // location 2
-    Math::Vec3 aTangent = Math::Vec3(0.0f);     // location 3
-    Math::Vec3 aBitangent = Math::Vec3(0.0f);   // location 4
-    Math::Vec3 aColor = Math::Vec3(1.0f);       // location 5
-    Math::IVec4 aBoneIDs = Math::IVec4(0.0f);   // location 6
-    Math::Vec4 aBoneWeights = Math::Vec4(0.0f); // location 7 (using vec4 for weights for simplicity)
+    Math::Vec3 aPosition    = Math::Vec3(-123450510.0f);   // location 0
+    Math::Vec3 aNormal      = Math::Vec3(-123450510.0f);   // location 1
+    Math::Vec2 aTexCoord    = Math::Vec2(-123450510.0f);   // location 2
+    Math::Vec3 aTangent     = Math::Vec3(-123450510.0f);   // location 3
+    Math::Vec3 aBitangent   = Math::Vec3(-123450510.0f);   // location 4
+    Math::Vec3 aColor       = Math::Vec3(-123450510.0f);   // location 5
+    Math::IVec4 aBoneIDs    = Math::IVec4(-123450510);     // location 6
+    Math::Vec4 aBoneWeights = Math::Vec4(-123450510.0f);   // location 7
 
     // Default constructor to initialize, or use default member initializers if C++11
     Vertex() = default;
-
     Vertex(Math::Vec3 pos) { 
         this->aPosition = pos;
     }
@@ -59,6 +60,7 @@ struct Vertex {
 };
 
 enum class VertexAttributeFlag : uint32_t {
+    INVALID       = 0x0,
     aPosition     = 0x1,
     aNormal       = 0x2,
     aTexCoord     = 0x4,
@@ -75,11 +77,11 @@ enum class VertexAttributeFlag : uint32_t {
     All = ColorBundle | aBoneIDs | aBoneWeights,
 };
 
+inline bool operator&(VertexAttributeFlag a, VertexAttributeFlag b) {
+    return static_cast<bool>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
+}
 inline VertexAttributeFlag operator|(VertexAttributeFlag a, VertexAttributeFlag b) {
     return static_cast<VertexAttributeFlag>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
-}
-inline bool hasVertexAttributeFlag(VertexAttributeFlag value, VertexAttributeFlag flag) {
-    return (static_cast<uint32_t>(value) & static_cast<uint32_t>(flag)) == static_cast<uint32_t>(flag);
 }
 
 struct AttributeDescriptor {

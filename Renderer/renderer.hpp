@@ -28,6 +28,9 @@ namespace Renderer {
 
     void BindVAO(unsigned int vao);
     void BindProgram(unsigned int program);
+    void SetDepthTest(bool depth);
+    void SetStencilTest(bool stencil);
+    void SetBlending(bool blending);
     void SetWireFrame(bool wireframe);
     Math::Mat4 GetProjectionMatrix2D(unsigned int width, unsigned int height);
     Math::Mat4 GetProjectionMatrix3D(unsigned int width, unsigned int height, float fov);
