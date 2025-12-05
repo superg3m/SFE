@@ -354,6 +354,7 @@ namespace Renderer {
 
     void Geometry::setup(bool should_destory_data) {
         this->aabb = CalculateAABB(vertices);
+        this->total_vertex_count = this->vertices.count();
 
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);

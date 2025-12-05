@@ -37,6 +37,8 @@ namespace Renderer  {
 		GLuint index_count = 0;
 		GLenum draw_type = GL_TRIANGLES; // GL_TRIANGLES, GL_LINES, ...
 
+		GLuint total_vertex_count = 0;
+
 		u32 base_vertex  = 0; // offset to next vertex in the vertex buffer
 		u32 base_index   = 0; // offset to next index in the index buffer
 
@@ -99,22 +101,20 @@ namespace Renderer  {
 					);
 
 					glEnableVertexAttribArray(location + i);
-
 					if constexpr (is_int) {
 						glVertexAttribIPointer(location + i, 4, gl_type, stride, (void*)(sizeof(Math::IVec4) * i));
 					} else {
-						glVertexAttribPointer(location + i, 4, gl_type, GL_FALSE, stride, (void*)(sizeof(Math::Vec4) * i));
+						glVertexAttribPointer(location + i, 4, gl_type, false, stride, (void*)(sizeof(Math::Vec4) * i));
 					}
 
 					this->vertex_attribute_locations.put(location + i, true);
 				}
 			} else {
 				glEnableVertexAttribArray(location);
-
 				if constexpr (is_int) {
 					glVertexAttribIPointer(location, component_count, gl_type, stride, nullptr);
 				} else {
-					glVertexAttribPointer(location, component_count, gl_type, GL_FALSE, stride, nullptr);
+					glVertexAttribPointer(location, component_count, gl_type, false, stride, nullptr);
 				}
 
 				this->vertex_attribute_locations.put(location, true);
