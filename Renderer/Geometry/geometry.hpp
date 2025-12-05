@@ -101,6 +101,7 @@ namespace Renderer  {
 			}
 		}
 
+		// TODO(Jovanni): I would like to clean this up
 		template<SupportedVertexAttributeType T>
 		void addVertexAttribute(int location, const DS::Vector<T>& values) {
 			RUNTIME_ASSERT_MSG(
