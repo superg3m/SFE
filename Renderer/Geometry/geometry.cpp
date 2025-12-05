@@ -81,11 +81,6 @@ namespace Renderer {
         this->base_index = 0;
 
         this->next = nullptr;
-
-        this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
-        for (int i = 0; i < RESERVED_VERTEX_ATTRIBUTE_LOCATIONS; i++) {
-            this->vertex_attribute_locations.put(i, true);
-        }
     }
 
     Geometry::Geometry(const DS::Vector<Vertex>& vertices, GLenum draw_type) {
@@ -414,6 +409,11 @@ namespace Renderer {
             this->vertices.~Vector();
             this->indices.~Vector();
             this->materials.~Vector();
+        }
+
+        this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
+        for (int i = 0; i < RESERVED_VERTEX_ATTRIBUTE_LOCATIONS; i++) {
+            this->vertex_attribute_locations.put(i, true);
         }
     }
 
@@ -799,7 +799,7 @@ namespace Renderer {
         );
 
         Renderer::BindVAO(this->VAO);
-        
+
         unsigned int instance_vbo;
         glGenBuffers(1, &instance_vbo);
         glBindBuffer(GL_ARRAY_BUFFER, instance_vbo);
