@@ -1,4 +1,5 @@
 #include <renderer.hpp>
+#include <glad/glad.h>
 
 namespace Renderer {
     static unsigned int VAO = -1;
@@ -7,7 +8,6 @@ namespace Renderer {
     static bool STENCIL = false;
     static bool BLENDING = false;
     static bool WIREFRAME = false;
-
 
     void BindVAO(unsigned int vao) {
         if (VAO == vao) {

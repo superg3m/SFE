@@ -91,17 +91,7 @@ namespace Renderer {
         this->vertex_count = this->vertices.count();
         this->index_count = this->indices.count();
 
-        VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
-        flags = (vertices[0].aPosition != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aPosition : flags;
-        flags = (vertices[0].aNormal != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aNormal : flags;
-        flags = (vertices[0].aTexCoord != Math::Vec2(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aTexCoord : flags;
-        flags = (vertices[0].aBitangent != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBitangent : flags;
-        flags = (vertices[0].aColor != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aColor : flags;
-        flags = (vertices[0].aBoneIDs != Math::IVec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
-        flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
-        RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
-
-        this->setup(flags);
+        this->setup();
     }
 
     Geometry::Geometry(const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type) {
@@ -113,17 +103,7 @@ namespace Renderer {
         this->vertex_count = this->vertices.count();
         this->index_count = this->indices.count();
 
-        VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
-        flags = (vertices[0].aPosition != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aPosition : flags;
-        flags = (vertices[0].aNormal != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aNormal : flags;
-        flags = (vertices[0].aTexCoord != Math::Vec2(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aTexCoord : flags;
-        flags = (vertices[0].aBitangent != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBitangent : flags;
-        flags = (vertices[0].aColor != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aColor : flags;
-        flags = (vertices[0].aBoneIDs != Math::IVec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
-        flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
-        RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
-
-        this->setup(flags);
+        this->setup();
     }
 
     Geometry Geometry::Quad() {
@@ -147,7 +127,7 @@ namespace Renderer {
         ret.vertex_count = ret.vertices.count();
         ret.index_count = ret.indices.count();
 
-        ret.setup(VertexAttributeFlag::PNTBundle);
+        ret.setup();
 
         return ret;
     }
@@ -178,7 +158,7 @@ namespace Renderer {
         ret.vertices = aabb_vertices;
         ret.vertex_count = ret.vertices.count();
         ret.index_count = ret.indices.count();
-        ret.setup(VertexAttributeFlag::PNTBundle);
+        ret.setup();
 
         return ret;
     }
@@ -238,7 +218,7 @@ namespace Renderer {
         ret.indices = cube_indices;
         ret.vertex_count = ret.vertices.count();
         ret.index_count = ret.indices.count();
-        ret.setup(VertexAttributeFlag::PNTBundle);
+        ret.setup();
 
         return ret;
     }
@@ -297,7 +277,7 @@ namespace Renderer {
         ret.indices = sphere_indices;
         ret.vertex_count = ret.vertices.count();
         ret.index_count = ret.indices.count();
-        ret.setup(VertexAttributeFlag::PNTBundle);
+        ret.setup();
 
         return ret;
     }
@@ -372,7 +352,7 @@ namespace Renderer {
         }
     }
 
-    void Geometry::setup(VertexAttributeFlag flags, bool should_destory_data) {
+    void Geometry::setup(bool should_destory_data) {
         this->aabb = CalculateAABB(vertices);
 
         glGenVertexArrays(1, &VAO);
@@ -387,6 +367,17 @@ namespace Renderer {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.count() * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW);
         
         size_t offset = 0;
+
+        VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
+        flags = (vertices[0].aPosition != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aPosition : flags;
+        flags = (vertices[0].aNormal != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aNormal : flags;
+        flags = (vertices[0].aTexCoord != Math::Vec2(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aTexCoord : flags;
+        flags = (vertices[0].aBitangent != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBitangent : flags;
+        flags = (vertices[0].aColor != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aColor : flags;
+        flags = (vertices[0].aBoneIDs != Math::IVec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
+        flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
+        RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
+
         for (const auto& desc : ALL_ATTRIBUTE_DESCRIPTORS) {
             if (flags & desc.flag) {
                 glEnableVertexAttribArray(desc.location);
@@ -510,8 +501,8 @@ namespace Renderer {
             // Memory::Free(directory);
         }
 
-        processNode(this, scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));
-        setup(VertexAttributeFlag::PNTBundle);
+        this->processNode(this, scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));
+        this->setup();
     }
 
     Geometry* Geometry::processNode(Geometry* root, aiNode* node, const aiScene* scene, Math::Mat4 parent_transform) {
@@ -692,7 +683,7 @@ namespace Renderer {
         }
     }
 
-    void Geometry::loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags) {
+    void Geometry::loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices) {
         this->vertex_count = (unsigned int)vertices.count();
         this->index_count  = (unsigned int)indices.count();
         this->base_vertex  = 0;
@@ -701,141 +692,7 @@ namespace Renderer {
         this->vertices = vertices;
         this->indices = indices;
 
-        this->setup(flags, false);
-    }
-
-    template<SupportedVertexAttributeType T>
-    void Geometry::addVertexAttribute(int location, T value) {
-        RUNTIME_ASSERT_MSG(
-            this->vertex_attribute_locations.has(location),
-            "You are trying to use a location that has already been assigned"
-        );
-
-        int attribute_count;
-        glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribute_count);
-        RUNTIME_ASSERT_MSG(attribute_count >= location,
-            "You are trying to use a location that is outside of the max vertex attributes: %d",
-            attribute_count
-        );
-
-        constexpr bool is_matrix = std::is_same_v<T, Math::Mat4>;
-        constexpr bool is_int     = std::is_same_v<T, int> || std::is_same_v<T, Math::IVec4>;
-        constexpr GLenum gl_type  = is_int ? GL_INT : GL_FLOAT;
-        constexpr int component_count = (
-            std::is_same_v<T, bool>        ? 1  :
-            std::is_same_v<T, int>         ? 1  :
-            std::is_same_v<T, float>       ? 1  :
-            std::is_same_v<T, Math::Vec2>  ? 2  :
-            std::is_same_v<T, Math::Vec3>  ? 3  :
-            std::is_same_v<T, Math::Vec4>  ? 4  :
-            std::is_same_v<T, Math::IVec4> ? 4  :
-            std::is_same_v<T, Math::Mat4>  ? 16 : 0
-        );
-
-        Renderer::BindVAO(this->VAO);
-
-        unsigned int vbo;
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(T), (const void*)&value, GL_STATIC_DRAW);
-
-        constexpr GLsizei stride = sizeof(T);
-        if constexpr (is_matrix) {
-            for (int i = 0; i < 4; i++) {
-                RUNTIME_ASSERT_MSG(attribute_count > location + i,
-                    "You are trying to use a location that is outside of the max vertex attributes: %d",
-                    attribute_count
-                );
-
-                glEnableVertexAttribArray(location + i);
-
-                if constexpr (is_int) {
-                    glVertexAttribIPointer(location + i, 4, gl_type, stride, (void*)(sizeof(Math::IVec4) * i));
-                } else {
-                    glVertexAttribPointer(location + i, 4, gl_type, GL_FALSE, stride, (void*)(sizeof(Math::Vec4) * i));
-                }
-
-                this->vertex_attribute_locations.put(location + i, true);
-            }
-        } else {
-            glEnableVertexAttribArray(location);
-
-            if constexpr (is_int) {
-                glVertexAttribIPointer(location, component_count, gl_type, stride, nullptr);
-            } else {
-                glVertexAttribPointer(location, component_count, gl_type, GL_FALSE, stride, nullptr);
-            }
-
-            this->vertex_attribute_locations.put(location, true);
-        }
-    }
-
-    template<SupportedVertexAttributeType T>
-    void Geometry::addInstanceVertexAttribute(int location, DS::Vector<T> values) {
-        RUNTIME_ASSERT_MSG(
-            this->vertex_attribute_locations.has(location),
-            "You are trying to use a location that has already been assigned"
-        );
-
-        int attribute_count;
-        glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribute_count);
-        RUNTIME_ASSERT_MSG(attribute_count >= location,
-            "You are trying to use a location that is outside of the max vertex attributes: %d",
-            attribute_count
-        );
-
-        constexpr bool is_matrix = std::is_same_v<T, Math::Mat4>;
-        constexpr bool is_int     = std::is_same_v<T, int> || std::is_same_v<T, Math::IVec4>;
-        constexpr GLenum gl_type  = is_int ? GL_INT : GL_FLOAT;
-        constexpr int component_count = (
-            std::is_same_v<T, bool>        ? 1  :
-            std::is_same_v<T, int>         ? 1  :
-            std::is_same_v<T, float>       ? 1  :
-            std::is_same_v<T, Math::Vec2>  ? 2  :
-            std::is_same_v<T, Math::Vec3>  ? 3  :
-            std::is_same_v<T, Math::Vec4>  ? 4  :
-            std::is_same_v<T, Math::IVec4> ? 4  :
-            std::is_same_v<T, Math::Mat4>  ? 16 : 0
-        );
-
-        Renderer::BindVAO(this->VAO);
-
-        unsigned int instance_vbo;
-        glGenBuffers(1, &instance_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, instance_vbo);
-        glBufferData(GL_ARRAY_BUFFER, values.count() * sizeof(T), values.data(), GL_STATIC_DRAW);
-
-        constexpr GLsizei stride = sizeof(T);
-        if constexpr (is_matrix) {
-            for (int i = 0; i < 4; i++) {
-                RUNTIME_ASSERT_MSG(attribute_count > location + i,
-                    "You are trying to use a location that is outside of the max vertex attributes: %d",
-                    attribute_count
-                );
-
-                glEnableVertexAttribArray(location + i);
-
-                if constexpr (is_int) {
-                    glVertexAttribIPointer(location + i, 4, gl_type, stride, (void*)(sizeof(Math::IVec4) * i));
-                } else {
-                    glVertexAttribPointer(location + i, 4, gl_type, GL_FALSE, stride, (void*)(sizeof(Math::Vec4) * i));
-                }
-
-                glVertexAttribDivisor(location + i, 1);
-                this->vertex_attribute_locations.put(location + i, true);
-            }
-        } else {
-            glEnableVertexAttribArray(location);
-
-            if constexpr (is_int) {
-                glVertexAttribIPointer(location, component_count, gl_type, stride, nullptr);
-            } else {
-                glVertexAttribPointer(location, component_count, gl_type, GL_FALSE, stride, nullptr);
-            }
-
-            glVertexAttribDivisor(location, 1);
-            this->vertex_attribute_locations.put(location, true);
-        }
+        this->setup(false);
     }
 }
 

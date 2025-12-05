@@ -17,6 +17,7 @@ struct Material {
 in vec3 v_FragPosition;
 in vec3 v_Normal;
 in vec2 v_TexCoord;
+// in vec3 v_RedColor;
 out vec4 FragColor;
 
 uniform Material uMaterial;
@@ -39,4 +40,5 @@ void main() {
     }
 
     FragColor = vec4(ambient_light + diffuse_light + emissive, 1);
+    // FragColor = vec4(v_RedColor, 1);
 }

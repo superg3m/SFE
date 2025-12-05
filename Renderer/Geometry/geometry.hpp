@@ -11,6 +11,8 @@
 #include <Geometry/material.hpp>
 #include <Geometry/vertex.hpp>
 
+#include <renderer.hpp>
+
 #define MAX_BONES 128
 
 typedef struct ShaderBase ShaderBase;
@@ -54,10 +56,138 @@ namespace Renderer  {
 		static Geometry Model(const char* path);
 
 		template<SupportedVertexAttributeType T>
-		void addVertexAttribute(int location, T value);
-		
+		void addVertexAttribute(int location, T value) {
+			RUNTIME_ASSERT_MSG(
+				!this->vertex_attribute_locations.has(location),
+				"You are trying to use a location that has already been assigned"
+			);
+
+			int attribute_count;
+			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribute_count);
+			RUNTIME_ASSERT_MSG(attribute_count > location,
+				"You are trying to use a location that is outside of the max vertex attributes: %d",
+				attribute_count
+			);
+
+			constexpr bool is_matrix = std::is_same_v<T, Math::Mat4>;
+			constexpr bool is_int     = std::is_same_v<T, int> || std::is_same_v<T, Math::IVec4>;
+			constexpr GLenum gl_type  = is_int ? GL_INT : GL_FLOAT;
+			constexpr int component_count = (
+				std::is_same_v<T, bool>        ? 1  :
+				std::is_same_v<T, int>         ? 1  :
+				std::is_same_v<T, float>       ? 1  :
+				std::is_same_v<T, Math::Vec2>  ? 2  :
+				std::is_same_v<T, Math::Vec3>  ? 3  :
+				std::is_same_v<T, Math::Vec4>  ? 4  :
+				std::is_same_v<T, Math::IVec4> ? 4  :
+				std::is_same_v<T, Math::Mat4>  ? 16 : 0
+			);
+
+			BindVAO((unsigned int)this->VAO);
+
+			unsigned int vbo;
+			glGenBuffers(1, &vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(T), (const void*)&value, GL_STATIC_DRAW);
+
+			constexpr GLsizei stride = sizeof(T);
+			if constexpr (is_matrix) {
+				for (int i = 0; i < 4; i++) {
+					RUNTIME_ASSERT_MSG(attribute_count > location + i,
+						"You are trying to use a location that is outside of the max vertex attributes: %d",
+						attribute_count
+					);
+
+					glEnableVertexAttribArray(location + i);
+
+					if constexpr (is_int) {
+						glVertexAttribIPointer(location + i, 4, gl_type, stride, (void*)(sizeof(Math::IVec4) * i));
+					} else {
+						glVertexAttribPointer(location + i, 4, gl_type, GL_FALSE, stride, (void*)(sizeof(Math::Vec4) * i));
+					}
+
+					this->vertex_attribute_locations.put(location + i, true);
+				}
+			} else {
+				glEnableVertexAttribArray(location);
+
+				if constexpr (is_int) {
+					glVertexAttribIPointer(location, component_count, gl_type, stride, nullptr);
+				} else {
+					glVertexAttribPointer(location, component_count, gl_type, GL_FALSE, stride, nullptr);
+				}
+
+				this->vertex_attribute_locations.put(location, true);
+			}
+		}
+
 		template<SupportedVertexAttributeType T>
-		void addInstanceVertexAttribute(int location, DS::Vector<T> values);
+		void addInstanceVertexAttribute(int location, DS::Vector<T> values) {
+			RUNTIME_ASSERT_MSG(
+				!this->vertex_attribute_locations.has(location),
+				"You are trying to use a location that has already been assigned"
+			);
+
+			int attribute_count;
+			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribute_count);
+			RUNTIME_ASSERT_MSG(attribute_count >= location,
+				"You are trying to use a location that is outside of the max vertex attributes: %d",
+				attribute_count
+			);
+
+			constexpr bool is_matrix = std::is_same_v<T, Math::Mat4>;
+			constexpr bool is_int     = std::is_same_v<T, int> || std::is_same_v<T, Math::IVec4>;
+			constexpr GLenum gl_type  = is_int ? GL_INT : GL_FLOAT;
+			constexpr int component_count = (
+				std::is_same_v<T, bool>        ? 1  :
+				std::is_same_v<T, int>         ? 1  :
+				std::is_same_v<T, float>       ? 1  :
+				std::is_same_v<T, Math::Vec2>  ? 2  :
+				std::is_same_v<T, Math::Vec3>  ? 3  :
+				std::is_same_v<T, Math::Vec4>  ? 4  :
+				std::is_same_v<T, Math::IVec4> ? 4  :
+				std::is_same_v<T, Math::Mat4>  ? 16 : 0
+			);
+
+			BindVAO(this->VAO);
+
+			unsigned int instance_vbo;
+			glGenBuffers(1, &instance_vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, instance_vbo);
+			glBufferData(GL_ARRAY_BUFFER, values.count() * sizeof(T), values.data(), GL_STATIC_DRAW);
+
+			constexpr GLsizei stride = sizeof(T);
+			if constexpr (is_matrix) {
+				for (int i = 0; i < 4; i++) {
+					RUNTIME_ASSERT_MSG(attribute_count > location + i,
+						"You are trying to use a location that is outside of the max vertex attributes: %d",
+						attribute_count
+					);
+
+					glEnableVertexAttribArray(location + i);
+
+					if constexpr (is_int) {
+						glVertexAttribIPointer(location + i, 4, gl_type, stride, (void*)(sizeof(Math::IVec4) * i));
+					} else {
+						glVertexAttribPointer(location + i, 4, gl_type, GL_FALSE, stride, (void*)(sizeof(Math::Vec4) * i));
+					}
+
+					glVertexAttribDivisor(location + i, 1);
+					this->vertex_attribute_locations.put(location + i, true);
+				}
+			} else {
+				glEnableVertexAttribArray(location);
+
+				if constexpr (is_int) {
+					glVertexAttribIPointer(location, component_count, gl_type, stride, nullptr);
+				} else {
+					glVertexAttribPointer(location, component_count, gl_type, GL_FALSE, stride, nullptr);
+				}
+
+				glVertexAttribDivisor(location, 1);
+				this->vertex_attribute_locations.put(location, true);
+			}
+		}
 
 		void draw(const ShaderBase* shader);
 		void drawInstanced(const ShaderBase* shader, int instance_count);
@@ -68,9 +198,9 @@ namespace Renderer  {
 			DS::Vector<Material> materials;
 			DS::Hashmap<int, bool> vertex_attribute_locations;
 
-			void setup(VertexAttributeFlag flags, bool should_destory_data = true);
+			void setup(bool should_destory_data = true);
 
-			void loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices, VertexAttributeFlag flags);
+			void loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices);
 			void loadMeshFromScene(const char *path, u64 path_length, const aiScene* scene);
 			Geometry* processNode(Geometry* root, aiNode* node, const aiScene* scene, Math::Mat4 parent_transform);
 			void processAssimpMesh(Geometry* root, aiMesh* ai_mesh,  const aiScene* scene, Math::Mat4 parent_transform);

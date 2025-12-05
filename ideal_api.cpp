@@ -1,5 +1,5 @@
 #include <core.hpp>
-#include <renderer.hpp>
+#include <rendering.hpp>
 #include <input.hpp>
 #include <input_glfw.hpp>
 
@@ -172,7 +172,7 @@ void display() {
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, 5, 0);
     model_shader.setModel(model);
-    church.draw(&model_shader); 
+    church.draw(&model_shader);
 }
 
 void init_pole_geometry() {
@@ -293,6 +293,7 @@ int main(int argc, char** argv) {
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
     church = Renderer::Geometry::Model("../../Models/church.glb");
+    church.addVertexAttribute(8, Math::Vec3(1, 0, 0));
     // church = Renderer::Geometry::Model("../../Models/backpack/backpack.obj");
 
     Input::CreateProfile(MASTER_PROFILE, cbMasterProfile);
