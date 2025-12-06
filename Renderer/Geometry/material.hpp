@@ -57,7 +57,9 @@ struct Material {
 struct MaterialLocation {
     unsigned int textures[TEXTURE_COUNT];
 
-    unsigned int color;
+    unsigned int ambient_color;
+    unsigned int diffuse_color;
+    unsigned int specular_color;
     unsigned int shininess;
     unsigned int opacity;
 };

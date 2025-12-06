@@ -310,18 +310,18 @@ namespace Renderer {
             shader->setMaterial(geo->material);
 
             if (geo->index_count > 0) {
-                glDrawElementsBaseVertex(
+                glCheckError(glDrawElementsBaseVertex(
                     this->draw_type, geo->index_count, 
                     GL_UNSIGNED_INT, 
                     (void*)(sizeof(unsigned int) * geo->base_index), 
                     geo->base_vertex
-                );
+                ));
             } else {
-                glDrawArrays(
+                glCheckError(glDrawArrays(
                     this->draw_type,
                     geo->base_vertex,
                     geo->vertex_count
-                );
+                ));
             }
         }
     }
@@ -338,18 +338,18 @@ namespace Renderer {
             shader->setMaterial(geo->material);
 
             if (geo->index_count > 0) {
-                glDrawElementsInstancedBaseVertex(
+                glCheckError(glDrawElementsInstancedBaseVertex(
                     this->draw_type, geo->index_count,
                     GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * geo->base_index),
                     instance_count, geo->base_vertex
-                );
+                ));
             } else {
-                glDrawArraysInstanced(
+                glCheckError(glDrawArraysInstanced(
                     this->draw_type,
                     geo->base_vertex,
                     geo->vertex_count,
                     instance_count
-                );
+                ));
             }
         }
     }

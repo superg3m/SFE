@@ -1,6 +1,7 @@
 #include <String/string.hpp>
 #include <Shader/shader_model.hpp>
 #include <glad/glad.h>
+#include <renderer.hpp>
 
 ShaderModel::ShaderModel(DS::Vector<const char*> shader_paths) {
     this->shader_paths = shader_paths;
@@ -62,9 +63,13 @@ void ShaderModel::compile() {
     this->uMaterial_Location.textures[TEXTURE_TYPE_DIFFUSE] = this->getUniformLocation("uMaterial.diffuse_map", GL_SAMPLER_2D);
     this->uMaterial_Location.textures[TEXTURE_TYPE_SPECULAR] = this->getUniformLocation("uMaterial.specular_map", GL_SAMPLER_2D);
     this->uMaterial_Location.textures[TEXTURE_TYPE_EMISSIVE] = this->getUniformLocation("uMaterial.emissive_map", GL_SAMPLER_2D);
+
+    this->uMaterial_Location.ambient_color = this->getUniformLocation("uMaterial.ambient_color", GL_FLOAT_VEC3);
+    this->uMaterial_Location.diffuse_color = this->getUniformLocation("uMaterial.diffuse_color", GL_FLOAT_VEC3);
+    this->uMaterial_Location.specular_color = this->getUniformLocation("uMaterial.specular_color", GL_FLOAT_VEC3);
+
     this->uMaterial_Location.shininess = this->getUniformLocation("uMaterial.shininess", GL_FLOAT);
     this->uMaterial_Location.opacity = this->getUniformLocation("uMaterial.opacity", GL_FLOAT);
-    // this->uMaterial_Location.color = this->getUniformLocation("uMaterial.color", GL_FLOAT_VEC3);
 }
 
 void ShaderModel::setMaterial(const Material &material) const {
@@ -80,14 +85,14 @@ void ShaderModel::setMaterial(const Material &material) const {
             continue;
         }
 
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, material.textures[i + 1].id);
+        glCheckError(glActiveTexture(GL_TEXTURE0 + i));
+        glCheckError(glBindTexture(GL_TEXTURE_2D, material.textures[i + 1].id));
         this->setInt(this->uMaterial_Location.textures[i + 1], i);
     }
 
-    this->setVec3(uMaterial_Location.color, material.ambient_color);
-    this->setVec3(uMaterial_Location.color, material.diffuse_color);
-    this->setVec3(uMaterial_Location.color, material.specular_color);
+    this->setVec3(uMaterial_Location.ambient_color, material.ambient_color);
+    this->setVec3(uMaterial_Location.diffuse_color, material.diffuse_color);
+    this->setVec3(uMaterial_Location.specular_color, material.specular_color);
 
     this->setFloat(uMaterial_Location.shininess, material.shininess);
     this->setFloat(uMaterial_Location.opacity, material.opacity);

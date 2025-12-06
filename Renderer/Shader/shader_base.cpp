@@ -186,7 +186,7 @@ void ShaderBase::setBool(unsigned int location, bool value) const {
 }
 void ShaderBase::setInt(unsigned int location, int value) const {
     this->use();
-    glUniform1i(location, value);
+    glCheckError(glUniform1i(location, value));
 }
 void ShaderBase::setFloat(unsigned int location, float value) const {
     this->use();

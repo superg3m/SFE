@@ -36,27 +36,6 @@ float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
 
-GLenum glCheckError_(const char *file, int line) {
-    GLenum errorCode;
-    while ((errorCode = glGetError()) != GL_NO_ERROR)
-    {
-        const char* error = nullptr;
-        switch (errorCode)
-        {
-            case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
-            case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
-            case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
-            case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
-            case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
-        }
-        
-        LOG_ERROR("%s | %s:%d\n", error, file, line);
-    }
-    return errorCode;
-}
-#define glCheckError() glCheckError_(__FILE__, __LINE__) 
-
-
 void cbMasterProfile() {
     GLFWwindow* window = (GLFWwindow*)Input::glfw_window_instance;
     const bool SHIFT = Input::GetKey(Input::KEY_SHIFT, Input::PRESSED|Input::DOWN);
