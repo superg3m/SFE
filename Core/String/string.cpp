@@ -9,7 +9,7 @@ namespace String {
         return ret;
     }
 
-    char* Sprintf(u64* out_buffer_length, const char* fmt ...) {
+    char* Sprintf(u64 &out_buffer_length, const char* fmt ...) {
         va_list args, copy_args;
         va_start(args, fmt);
             va_copy(copy_args, args);
@@ -23,14 +23,12 @@ namespace String {
             va_end(copy_args);
         va_end(args);
 
-        if (out_buffer_length) {
-            *out_buffer_length = allocation_ret - 1;
-        }
+        out_buffer_length = allocation_ret - 1;
 
         return buffer;
     }
     
-    char* Sprintf(u64* out_buffer_length, const char* fmt, va_list args) {
+    char* Sprintf(u64 &out_buffer_length, const char* fmt, va_list args) {
         va_list args_copy;
         va_copy(args_copy, args);
         u64 allocation_ret = (u64)vsnprintf(nullptr, 0, fmt, args_copy) + 1; // +1 for null terminator
@@ -42,11 +40,39 @@ namespace String {
         vsnprintf(buffer, allocation_ret, fmt, args_copy);
         va_end(args_copy);
 
-        if (out_buffer_length) {
-            *out_buffer_length = allocation_ret - 1;
-        }
+        out_buffer_length = allocation_ret - 1;
 
         return buffer;
+    }
+
+    void Sprintf(char* buffer, byte_t buffer_capacity, u64 &out_buffer_length, const char* fmt, ...) {
+        va_list args, copy_args;
+        va_start(args, fmt);
+            va_copy(copy_args, args);
+                u64 allocation_ret = (u64)vsnprintf(nullptr, 0, fmt, copy_args) + 1; // +1 for null terminator
+                RUNTIME_ASSERT(allocation_ret < buffer_capacity);
+            va_end(copy_args);
+
+            va_copy(copy_args, args);
+                vsnprintf(buffer, allocation_ret, fmt, copy_args);
+            va_end(copy_args);
+        va_end(args);
+
+        out_buffer_length = allocation_ret - 1;
+    }
+
+    void Sprintf(char* buffer, byte_t buffer_capacity, u64 &out_buffer_length, const char* fmt, va_list args) {
+        va_list args_copy;
+        va_copy(args_copy, args);
+        u64 allocation_ret = (u64)vsnprintf(nullptr, 0, fmt, args_copy) + 1; // +1 for null terminator
+        RUNTIME_ASSERT(allocation_ret < buffer_capacity);
+        va_end(args_copy);
+
+        va_copy(args_copy, args);
+        vsnprintf((char*)buffer, allocation_ret, fmt, args_copy);
+        va_end(args_copy);
+
+        out_buffer_length = allocation_ret - 1;
     }
 
     u64 Length(const char* c_string) {

@@ -299,6 +299,7 @@ namespace Renderer {
     }
 
     void Geometry::draw(const ShaderBase* shader) {
+        shader->use();
         Renderer::BindVAO(this->VAO); // make this Renderer::bindVAO(this->VAO); // for caching
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
@@ -326,6 +327,7 @@ namespace Renderer {
     }
 
     void Geometry::drawInstanced(const ShaderBase* shader, int instance_count) {
+        shader->use();
         Renderer::BindVAO(this->VAO);
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {

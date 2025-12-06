@@ -71,6 +71,7 @@ elif IS_DARWIN():
     ]
 
 procedures_config = {
+    
     "sfe": ProcedureConfig(
         build_directory = f"./{build_postfix}",
         output_name = f"sfe.lib",

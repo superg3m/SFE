@@ -7,7 +7,7 @@ ShaderUniformColor::ShaderUniformColor(DS::Vector<const char*> shader_paths) {
 
 void ShaderUniformColor::compile() {
     this->program_id = this->createShaderProgram(this->shader_paths);
-    this->uColor_Location = getUniformLocation("uColor", GL_FLOAT_VEC3);
+    // this->uColor_Location = getUniformLocation("uColor", GL_FLOAT_VEC3);
 }
 
 void ShaderUniformColor::setMaterial(const Material& material) const {}

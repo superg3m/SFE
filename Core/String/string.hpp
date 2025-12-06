@@ -9,8 +9,10 @@
 
 namespace String {
     char* Allocate(const char* s1, u64 length);
-    char* Sprintf(u64* out_buffer_length, const char* fmt ...);
-    char* Sprintf(u64* out_buffer_length, const char* fmt, va_list args);
+    char* Sprintf(u64 &out_buffer_length, const char* fmt ...);
+    char* Sprintf(u64 &out_buffer_length, const char* fmt, va_list args);
+    void Sprintf(char* buffer, byte_t buffer_capacity, u64 &out_buffer_length, const char* fmt, ...);
+    void Sprintf(char* buffer, byte_t buffer_capacity, u64 &out_buffer_length, const char* fmt, va_list args);
 
     u64 Length(const char* c_string);
     bool Equal(const char* s1, u64 s1_length, const char* s2, u64 s2_length);

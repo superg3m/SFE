@@ -8,13 +8,18 @@
 
 ShaderDiffuse diffuse_shader;
 ShaderModel model_shader;
-Renderer::Geometry pole;
-Renderer::Geometry hexplane;
-Renderer::Geometry animals[4];
+ShaderUniformColor uniform_shader;
+
 Math::Mat4 translate_mats[4];
 Math::Mat4 animals_rot[4];
 
+Renderer::Geometry pole;
+Renderer::Geometry hexplane;
+Renderer::Geometry animals[4];
 Renderer::Geometry church;
+
+Renderer::Geometry quad;
+DS::Vector<Math::Vec2> translations;
 
 float saved_rot = 0.0f;
 float saved_translation = 0.0f;
@@ -31,6 +36,27 @@ float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
 
+GLenum glCheckError_(const char *file, int line) {
+    GLenum errorCode;
+    while ((errorCode = glGetError()) != GL_NO_ERROR)
+    {
+        const char* error = nullptr;
+        switch (errorCode)
+        {
+            case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
+            case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
+            case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
+            case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
+        }
+        
+        LOG_ERROR("%s | %s:%d\n", error, file, line);
+    }
+    return errorCode;
+}
+#define glCheckError() glCheckError_(__FILE__, __LINE__) 
+
+
 void cbMasterProfile() {
     GLFWwindow* window = (GLFWwindow*)Input::glfw_window_instance;
     const bool SHIFT = Input::GetKey(Input::KEY_SHIFT, Input::PRESSED|Input::DOWN);
@@ -42,6 +68,7 @@ void cbMasterProfile() {
     if (Input::GetKeyPressed(Input::KEY_R)) {
         diffuse_shader.compile();
         model_shader.compile();
+        uniform_shader.compile();
     }
 
     if (Input::GetKeyPressed(Input::KEY_0)) {
@@ -172,7 +199,9 @@ void display() {
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, 5, 0);
     model_shader.setModel(model);
-    church.draw(&model_shader);
+    // church.draw(&model_shader);
+
+    quad.drawInstanced(&uniform_shader, 100);
 }
 
 void init_pole_geometry() {
@@ -275,6 +304,7 @@ int main(int argc, char** argv) {
 
     diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
     model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
+    uniform_shader = ShaderUniformColor({"../../ShaderSource/QuadInstance/quad.vert", "../../ShaderSource/QuadInstance/quad.frag"});
 
 	init_pole_geometry();
     init_hexplane_geometry();
@@ -292,8 +322,34 @@ int main(int argc, char** argv) {
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
-    church = Renderer::Geometry::Model("../../Models/church.glb");
-    // church.addVertexAttribute(8, Math::Vec3(1, 0, 0));
+    // church = Renderer::Geometry::Model("../../Models/church.glb");
+
+    DS::Vector<Renderer::Vertex> quad_vertices = {
+        Math::Vec3(-0.05f, +0.05f, 0),
+        Math::Vec3(+0.05f, -0.05f, 0),
+        Math::Vec3(-0.05f, -0.05f, 0),
+
+        Math::Vec3(-0.05f, +0.05f, 0),
+        Math::Vec3(+0.05f, -0.05f, 0),
+        Math::Vec3(+0.05f, +0.05f, 0),
+    };
+
+    quad = Renderer::Geometry(quad_vertices);
+
+    int index = 0;
+    float offset = 0.1f;
+    translations = DS::Vector<Math::Vec2>(100);
+    translations.resize(100);
+    for(int y = -10; y < 10; y += 2) {
+        for(int x = -10; x < 10; x += 2) {
+            Math::Vec2 translation;
+            translation.x = (float)x / 10.0f + offset;
+            translation.y = (float)y / 10.0f + offset;
+            translations[index++] = translation;
+        }
+    }
+
+    quad.addInstanceVertexAttribute(8, translations);
 
     Input::CreateProfile(MASTER_PROFILE, cbMasterProfile);
     Input::CreateProfile(MOVEMENT_PROFILE, cbMovementProfile);
