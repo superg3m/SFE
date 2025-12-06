@@ -199,7 +199,7 @@ void display() {
     model = rot_mat * model;
     model = Math::Mat4::Translate(model, 0, 5, 0);
     model_shader.setModel(model);
-    // church.draw(&model_shader);
+    church.draw(&model_shader);
 
     quad.drawInstanced(&uniform_shader, 100);
 }
@@ -322,7 +322,7 @@ int main(int argc, char** argv) {
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
-    // church = Renderer::Geometry::Model("../../Models/church.glb");
+    church = Renderer::Geometry::Model("../../Models/church.glb");
 
     DS::Vector<Renderer::Vertex> quad_vertices = {
         Math::Vec3(-0.05f, +0.05f, 0),
