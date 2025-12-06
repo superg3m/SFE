@@ -57,6 +57,7 @@ namespace Renderer  {
 		static Geometry Sphere(int segments);
 		static Geometry Model(const char* path);
 
+		// TODO(Jovanni): I really would like to simplify this
 		template<SupportedVertexAttributeType T>
 		void addVertexAttribute(int location, const T& value) {
 			RUNTIME_ASSERT_MSG(

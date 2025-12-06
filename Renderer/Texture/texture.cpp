@@ -60,6 +60,8 @@ Texture Texture::LoadFromFile(char* path) {
     ret.id = texture;
     ret.width = width;
     ret.height = height;
+
+    LOG_WARN("Texture: %s\n", path);
     
     return ret;
 }
