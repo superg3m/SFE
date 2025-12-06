@@ -116,7 +116,6 @@ void mouse(GLFWwindow *window, double mouse_x, double mouse_y) {
 
     if (mouse_captured) { 
         camera.processMouseMovement(xoffset, yoffset);
-        return;
     }
 }
 
