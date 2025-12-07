@@ -26,6 +26,7 @@ namespace Renderer {
     static bool STENCIL = false;
     static bool BLENDING = false;
     static bool WIREFRAME = false;
+    static int DRAW_CALL_COUNT = 0;
 
     void BindVAO(unsigned int vao) {
         if (VAO == vao) {
@@ -111,6 +112,18 @@ namespace Renderer {
         float far_plane = 200.0f;
 
         return Math::Mat4::Perspective(fov, aspect, near_plane, far_plane);
+    }
+
+    int GetDrawCallCount() {
+        return DRAW_CALL_COUNT;
+    }
+
+    void IncrementDrawCallCount() {
+        DRAW_CALL_COUNT += 1;
+    }
+
+    void ClearTelemetry() {
+        DRAW_CALL_COUNT = 0;
     }
 }
 

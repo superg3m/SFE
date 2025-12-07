@@ -300,7 +300,25 @@ namespace Renderer {
 
     void Geometry::draw(const ShaderBase* shader) {
         shader->use();
-        Renderer::BindVAO(this->VAO); // make this Renderer::bindVAO(this->VAO); // for caching
+        Renderer::BindVAO(this->VAO);
+
+        /*
+        struct Batch {
+            DS::Vector<GLsizei> firsts;
+            DS::Vector<GLsizei> counts;
+            Material material; // If it has the same material index then you can multi-draw
+        }
+        */
+
+        // Vector<Batch> batches // Calculate the number of batches
+
+        /*
+        // Define the draw calls
+        GLsizei firsts[] = { 0, 36 }; // Start of Cube 1 (0), Start of Cube 2 (36 vertices)
+        GLsizei counts[] = { 36, 36 }; // 36 vertices per cube
+        GLsizei numDraws = 2;
+        // glMultiDrawArrays(mode, firsts, counts, numDraws);
+        */
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {
@@ -310,6 +328,7 @@ namespace Renderer {
             shader->setMaterial(geo->material);
 
             if (geo->index_count > 0) {
+                Renderer::IncrementDrawCallCount();
                 glCheckError(glDrawElementsBaseVertex(
                     this->draw_type, geo->index_count, 
                     GL_UNSIGNED_INT, 
@@ -317,6 +336,7 @@ namespace Renderer {
                     geo->base_vertex
                 ));
             } else {
+                Renderer::IncrementDrawCallCount();
                 glCheckError(glDrawArrays(
                     this->draw_type,
                     geo->base_vertex,
@@ -338,12 +358,14 @@ namespace Renderer {
             shader->setMaterial(geo->material);
 
             if (geo->index_count > 0) {
+                Renderer::IncrementDrawCallCount();
                 glCheckError(glDrawElementsInstancedBaseVertex(
                     this->draw_type, geo->index_count,
                     GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * geo->base_index),
                     instance_count, geo->base_vertex
                 ));
             } else {
+                Renderer::IncrementDrawCallCount();
                 glCheckError(glDrawArraysInstanced(
                     this->draw_type,
                     geo->base_vertex,
@@ -437,6 +459,7 @@ namespace Renderer {
         String::Copy(directory, STRING_CAPACITY, path, index);
         for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
             const aiMaterial* ai_material = scene->mMaterials[i];
+            this->materials[i].index = i;
 
             aiColor4D ambient_color(0.0f, 0.0f, 0.0f, 0.0f);
             if (ai_material->Get(AI_MATKEY_COLOR_AMBIENT, ambient_color) == AI_SUCCESS) {

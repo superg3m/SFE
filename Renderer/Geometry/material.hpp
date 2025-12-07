@@ -44,6 +44,8 @@ static const char* texture_to_string[TEXTURE_COUNT] = {
 STATIC_ASSERT(ArrayCount(texture_to_string) == (TEXTURE_COUNT));
 
 struct Material {
+    int index; // the material index
+    
     Texture textures[TEXTURE_COUNT];
 
     float shininess = 32.0f;

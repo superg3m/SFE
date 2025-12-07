@@ -33,4 +33,8 @@ namespace Renderer {
     void SetWireFrame(bool wireframe);
     Math::Mat4 GetProjectionMatrix2D(unsigned int width, unsigned int height);
     Math::Mat4 GetProjectionMatrix3D(unsigned int width, unsigned int height, float fov);
+
+    int GetDrawCallCount();
+    void IncrementDrawCallCount();
+    void ClearTelemetry();
 }

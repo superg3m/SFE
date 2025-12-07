@@ -180,6 +180,10 @@ void display() {
     church.draw(&model_shader);
 
     quad.drawInstanced(&uniform_shader, 100);
+
+    // LOG_WARN("Draw Call Count: %d\n", Renderer::GetDrawCallCount());
+
+    Renderer::ClearTelemetry();
 }
 
 void init_pole_geometry() {
