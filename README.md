@@ -46,3 +46,6 @@ https://www.youtube.com/watch?v=kWQM1iQ1W0E
 // terrain
 
 // Telemetry should be a seperate module thats robust
+
+// restructure renderer module
+// Platform should have window stuff, including glfw
