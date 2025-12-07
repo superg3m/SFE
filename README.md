@@ -44,3 +44,5 @@ https://www.youtube.com/watch?v=kWQM1iQ1W0E
 // adjust models to have bone info
 
 // terrain
+
+// Telemetry should be a seperate module thats robust
