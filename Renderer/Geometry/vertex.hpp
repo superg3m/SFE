@@ -5,7 +5,7 @@
 
 namespace Renderer {
     const float MAGIC_NUMBER = -123450510.0f;
-    const int RESERVED_VERTEX_ATTRIBUTE_LOCATIONS = 7;
+    const int RESERVED_VERTEX_ATTRIBUTE_LOCATIONS = 8;
 
     struct Vertex {
         Math::Vec3 aPosition    = Math::Vec3(MAGIC_NUMBER);   // location 0

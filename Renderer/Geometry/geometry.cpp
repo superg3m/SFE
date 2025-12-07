@@ -431,8 +431,10 @@ namespace Renderer {
 
         s64 index = String::LastIndexOf(path, path_length, STRING_LIT_ARG("/"));
         RUNTIME_ASSERT(index > -1);
-        
-        char* directory = String::Allocate(path, index);
+
+        const int STRING_CAPACITY = 512;
+        char directory[STRING_CAPACITY] = {0};
+        String::Copy(directory, STRING_CAPACITY, path, index);
         for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
             const aiMaterial* ai_material = scene->mMaterials[i];
 
@@ -475,12 +477,13 @@ namespace Renderer {
                     const char* texture_path = str.C_Str();
                     u64 texture_path_length = String::Length(texture_path);
 
-                    u64 filename_capacity = index + 1 + texture_path_length + 1;
-                    char* filename = (char*)Memory::Malloc(filename_capacity);
                     u64 filename_length = 0;
-                    String::Append(filename, filename_length, filename_capacity, directory, index);
-                    String::Append(filename, filename_length, filename_capacity, '/');
-                    String::Append(filename, filename_length, filename_capacity, texture_path, texture_path_length);
+                    u64 filename_capacity = index + 1 + texture_path_length + 1;
+                    RUNTIME_ASSERT(filename_capacity < STRING_CAPACITY);
+                    char filename[STRING_CAPACITY] = {0};
+                    String::Append(filename, filename_length, STRING_CAPACITY, directory, index);
+                    String::Append(filename, filename_length, STRING_CAPACITY, '/');
+                    String::Append(filename, filename_length, STRING_CAPACITY, texture_path, texture_path_length);
 
                     const aiTexture* ai_texture = scene->GetEmbeddedTexture(str.C_Str());
                     if (ai_texture) {
@@ -494,14 +497,10 @@ namespace Renderer {
                         LOG_DEBUG("Material: %d | has external texture of type: %s\n", i, texture_to_string[type]);
                         this->materials[i].textures[type] = Texture::LoadFromFile(filename);
                     }
-
-                    // Memory::Free(filename);
                 } else {
                     LOG_ERROR("Failed to get texture path for material: %d | type: %s\n", i, texture_to_string[type]);
                 }
             }
-
-            // Memory::Free(directory);
         }
 
         this->processNode(this, scene->mRootNode, scene, convertAssimpMatrixToGM(scene->mRootNode->mTransformation));

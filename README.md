@@ -33,7 +33,7 @@ man this naming situation is really annoying, come back to this with a fresh pai
 // Input
 - Input::GetKeyDown(Input::KEY_A)
 
-particles and instance renderering
+particles
 
 my goal should be to make this as painless as possible:
 
@@ -42,3 +42,5 @@ https://www.youtube.com/watch?v=kWQM1iQ1W0E
 
 // texture cache
 // adjust models to have bone info
+
+// terrain
