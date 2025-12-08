@@ -394,7 +394,7 @@ bool aiMatrix4x4t<TReal>::Equal(const aiMatrix4x4t<TReal>& m, TReal epsilon) con
 	if (pScaling.y) vCols[1] /= pScaling.y; \
 	if (pScaling.z) vCols[2] /= pScaling.z; \
 	\
-	do {} while(false)
+	do {} while (false)
 
 template <typename TReal>
 AI_FORCE_INLINE

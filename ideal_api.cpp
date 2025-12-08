@@ -343,7 +343,7 @@ int main(int argc, char** argv) {
     Random::Seed seed = Random::GenerateSeed(451);
 
     float previous = 0;
-	while(!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window)) {
         float current = glfwGetTime();
         dt = current - previous;
         previous = current;

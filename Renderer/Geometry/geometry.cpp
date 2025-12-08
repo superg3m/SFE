@@ -1152,7 +1152,7 @@ namespace Renderer {
                     kuhl_private_node_matrix(transform, scene, node, animationNum, time);
                     mat4f_mult_mat4f_new(g->matrix, transform, g->matrix);
                     node = node->mParent;
-                } while(node != NULL);
+                } while (node != NULL);
 
                 // We may have overwritten a "fit" part of the matrix
                 // intended to place the model on/near the origin in a
@@ -1191,7 +1191,7 @@ namespace Renderer {
                     kuhl_private_node_matrix(transform, scene, node, animationNum, time);
                     mat4f_mult_mat4f_new(g->bones->matrices[b], transform, g->bones->matrices[b]);
                     node = node->mParent; // move to next node up
-                } while(node != NULL);
+                } while (node != NULL);
 
                 /* Also apply the bone offset */
                 float offset[16];

@@ -226,7 +226,7 @@ static int has_ext(const char *ext) {
             return 0;
         }
 
-        while(1) {
+        while (1) {
             loc = strstr(extensions, ext);
             if (loc == NULL) {
                 return 0;
