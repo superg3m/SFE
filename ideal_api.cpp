@@ -30,11 +30,13 @@ bool emit = false;
 #define MASTER_PROFILE "master"
 #define MOVEMENT_PROFILE "movement"
 
+// This should be a grouping of state
 Camera camera;
 bool mouse_captured = true;
 float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
+Random::Seed seed;
 
 void cbMasterProfile() {
     GLFWwindow* window = (GLFWwindow*)Input::glfw_window_instance;
@@ -337,6 +339,9 @@ int main(int argc, char** argv) {
     Input::CreateProfile(MOVEMENT_PROFILE, cbMovementProfile);
 
     camera = Camera(0, 0, 10);
+
+    Random::Seed seed = Random::GenerateSeed(451);
+
     float previous = 0;
 	while(!glfwWindowShouldClose(window)) {
         float current = glfwGetTime();
@@ -346,6 +351,8 @@ int main(int argc, char** argv) {
         Input::Poll();
 
 		display();
+
+        LOG_DEBUG("Entropy: %f\n", Random::GenerateRange(&seed, 34.2f, 64.1f));
 
 		glfwPollEvents();
         glfwSwapBuffers(window);

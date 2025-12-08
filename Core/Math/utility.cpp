@@ -6,7 +6,7 @@ namespace Math {
         return a + ((b - a) * t);
     }
 
-    float inverseLerp(float a, float b, float value) {
+    float InverseLerp(float a, float b, float value) {
         if (NEAR_ZERO(a - b)) {
             return 0.0f; // Avoid division by zero
         }
@@ -14,14 +14,14 @@ namespace Math {
         return (value - a) / (b - a);
     }
 
-    float remap(float x, float s_min, float s_max, float e_min, float e_max) {
+    float Remap(float x, float s_min, float s_max, float e_min, float e_max) {
         x = CLAMP(x, s_min, s_max);
         float s_ratio = (x - s_min) / (s_max - s_min);
         
         return e_min + (s_ratio * (e_max - e_min));
     }
 
-    float moveToward(float current, float target, float delta) {
+    float MoveToward(float current, float target, float delta) {
         float diff = target - current;
 
         if (fabsf(diff) <= delta) {
@@ -31,7 +31,7 @@ namespace Math {
         return current + (diff > 0 ? delta : -delta);
     }
 
-    int mod(int a, int b) {
+    int Mod(int a, int b) {
         int rem = a % b;
         return (rem < 0) ? (rem + b) : rem;
     }
