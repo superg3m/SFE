@@ -293,7 +293,7 @@ namespace DS {
             
             this->m_count = 0;
             this->m_capacity = capacity;
-            this->m_data = Memory::Malloc(this->m_capacity * sizeof(T));
+            this->m_data = (T*)Memory::Malloc(this->m_capacity * sizeof(T));
         }
 
         ~RingQueue() {

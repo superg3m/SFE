@@ -37,6 +37,8 @@ float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
 Random::Seed seed;
+Particle particles[100];
+u32 next_available_particle_index;
 
 void cbMasterProfile() {
     GLFWwindow* window = (GLFWwindow*)Input::glfw_window_instance;
@@ -184,6 +186,28 @@ void display() {
     quad.drawInstanced(&uniform_shader, 100);
 
     // LOG_WARN("Draw Call Count: %d\n", Renderer::GetDrawCallCount());
+
+    // spawn particles
+    const float PARTICLE_SPAWN_COUNT_PER_FRAME = 5;
+    for (int i = 0; i < PARTICLE_SPAWN_COUNT_PER_FRAME; i++) {
+        Particle p;
+        // make this have some randomness Random::GenerateF32(&seed);
+        p.position = Math::Vec3(0, 0, 0);
+        p.velocity = Math::Vec3(0, 1, 0);
+
+        particles[next_available_particle_index] = p;
+        next_available_particle_index = (next_available_particle_index + 1) % ArrayCount(particles);
+    }
+
+    // update and render particles
+    for (int i = 0; i < ArrayCount(particles); i++) {
+        Particle* p = &particles[i];
+        p->position += p->velocity.scale(dt);
+
+        // create model
+
+        // instance render particles
+    }
 
     Renderer::ClearTelemetry();
 }
