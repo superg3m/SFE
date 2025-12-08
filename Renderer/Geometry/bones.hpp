@@ -92,7 +92,7 @@ void CreateSkinMeshVertices(void) {
     float Thickness = 0.31f;
     const float ThickStepDown = 0.003f;
  
-    for(int i = 0; i < NUMBER_OF_VERTICES_IN_SKIN_MESH; i += 6) {
+    for (int i = 0; i < NUMBER_OF_VERTICES_IN_SKIN_MESH; i += 6) {
         v1.x = (-Thickness);
         v1.y = (Y);
         v1.z = (0.0f);

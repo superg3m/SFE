@@ -18,12 +18,12 @@ out vec2 v_TexCoord;
 
 void main() {
     vec4 bone_space_position = vec4(0.0f);
-    for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
-        if(aBoneIDs[i] == -1) {
+    for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+        if (aBoneIDs[i] == -1) {
             continue;
         }
 
-        if(aBoneIDs[i] >=MAX_BONES) {
+        if (aBoneIDs[i] >=MAX_BONES) {
             bone_space_position = vec4(aPos, 1);
             break;
         }

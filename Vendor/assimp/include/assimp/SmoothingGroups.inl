@@ -61,7 +61,7 @@ void ComputeNormalsWithSmoothingsGroups(MeshWithSmoothingGroups<T>& sMesh)
 {
     // First generate face normals
     sMesh.mNormals.resize(sMesh.mPositions.size(),aiVector3D());
-    for( unsigned int a = 0; a < sMesh.mFaces.size(); a++)
+    for ( unsigned int a = 0; a < sMesh.mFaces.size(); a++)
     {
         T& face = sMesh.mFaces[a];
 
@@ -79,7 +79,7 @@ void ComputeNormalsWithSmoothingsGroups(MeshWithSmoothingGroups<T>& sMesh)
 
     // calculate the position bounds so we have a reliable epsilon to check position differences against
     aiVector3D minVec( 1e10f, 1e10f, 1e10f), maxVec( -1e10f, -1e10f, -1e10f);
-    for( unsigned int a = 0; a < sMesh.mPositions.size(); a++)
+    for ( unsigned int a = 0; a < sMesh.mPositions.size(); a++)
     {
         minVec.x = std::min( minVec.x, sMesh.mPositions[a].x);
         minVec.y = std::min( minVec.y, sMesh.mPositions[a].y);
@@ -94,7 +94,7 @@ void ComputeNormalsWithSmoothingsGroups(MeshWithSmoothingGroups<T>& sMesh)
 
     // now generate the spatial sort tree
     SGSpatialSort sSort;
-    for( typename std::vector<T>::iterator i =  sMesh.mFaces.begin();
+    for ( typename std::vector<T>::iterator i =  sMesh.mFaces.begin();
         i != sMesh.mFaces.end();++i)
     {
         for (unsigned int c = 0; c < 3;++c)
@@ -103,7 +103,7 @@ void ComputeNormalsWithSmoothingsGroups(MeshWithSmoothingGroups<T>& sMesh)
     sSort.Prepare();
 
     std::vector<bool> vertexDone(sMesh.mPositions.size(),false);
-    for( typename std::vector<T>::iterator i =  sMesh.mFaces.begin();
+    for ( typename std::vector<T>::iterator i =  sMesh.mFaces.begin();
         i != sMesh.mFaces.end();++i)
     {
         std::vector<unsigned int> poResult;

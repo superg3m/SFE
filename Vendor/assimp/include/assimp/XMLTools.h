@@ -57,7 +57,7 @@ namespace Assimp {
 
         const size_t size = data.size();
         buffer.reserve(size + size / 8);
-        for(size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < size; ++i) {
             const char c = data[i];
             switch(c) {
                 case '&' :

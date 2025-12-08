@@ -3,12 +3,12 @@
 #include <Common/common.hpp>
 
 namespace Random {
-    const int STATE_VECTOR_LENGTH = 624;
-    const int STATE_VECTOR_M      = 397;
+    const u32 STATE_VECTOR_LENGTH = 624;
+    const u32 STATE_VECTOR_M      = 397;
 
     struct Seed {
         u32 mt[STATE_VECTOR_LENGTH];
-        u32 index;
+        u32 index = 0;
     };
 
     Seed GenerateSeed(u32 seed); // non-zero seeds work

@@ -109,7 +109,7 @@ inline aiQuaterniont<TReal>::aiQuaterniont( const aiMatrix3x3t<TReal> &pRotMatri
     TReal t = pRotMatrix.a1 + pRotMatrix.b2 + pRotMatrix.c3;
 
     // large enough
-    if( t > static_cast<TReal>(0))
+    if ( t > static_cast<TReal>(0))
     {
         TReal s = std::sqrt(1 + t) * static_cast<TReal>(2.0);
         x = (pRotMatrix.c2 - pRotMatrix.b3) / s;
@@ -117,7 +117,7 @@ inline aiQuaterniont<TReal>::aiQuaterniont( const aiMatrix3x3t<TReal> &pRotMatri
         z = (pRotMatrix.b1 - pRotMatrix.a2) / s;
         w = static_cast<TReal>(0.25) * s;
     } // else we have to check several cases
-    else if( pRotMatrix.a1 > pRotMatrix.b2 && pRotMatrix.a1 > pRotMatrix.c3 )
+    else if ( pRotMatrix.a1 > pRotMatrix.b2 && pRotMatrix.a1 > pRotMatrix.c3 )
     {
         // Column 0:
         TReal s = std::sqrt( static_cast<TReal>(1.0) + pRotMatrix.a1 - pRotMatrix.b2 - pRotMatrix.c3) * static_cast<TReal>(2.0);
@@ -126,7 +126,7 @@ inline aiQuaterniont<TReal>::aiQuaterniont( const aiMatrix3x3t<TReal> &pRotMatri
         z = (pRotMatrix.a3 + pRotMatrix.c1) / s;
         w = (pRotMatrix.c2 - pRotMatrix.b3) / s;
     }
-    else if( pRotMatrix.b2 > pRotMatrix.c3)
+    else if ( pRotMatrix.b2 > pRotMatrix.c3)
     {
         // Column 1:
         TReal s = std::sqrt( static_cast<TReal>(1.0) + pRotMatrix.b2 - pRotMatrix.a1 - pRotMatrix.c3) * static_cast<TReal>(2.0);
@@ -226,7 +226,7 @@ inline void aiQuaterniont<TReal>::Interpolate( aiQuaterniont& pOut, const aiQuat
 
     // adjust signs (if necessary)
     aiQuaterniont end = pEnd;
-    if( cosom < static_cast<TReal>(0.0))
+    if ( cosom < static_cast<TReal>(0.0))
     {
         cosom = -cosom;
         end.x = -end.x;   // Reverse all signs

@@ -74,7 +74,7 @@ public:
     }
 
     ~MemoryIOStream() override  {
-        if(own) {
+        if (own) {
             delete[] buffer;
         }
     }

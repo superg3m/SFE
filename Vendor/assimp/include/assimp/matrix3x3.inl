@@ -192,7 +192,7 @@ AI_FORCE_INLINE
 aiMatrix3x3t<TReal>& aiMatrix3x3t<TReal>::Inverse() {
     // Compute the reciprocal determinant
     TReal det = Determinant();
-    if(det == static_cast<TReal>(0.0))
+    if (det == static_cast<TReal>(0.0))
     {
         // Matrix not invertible. Setting all elements to nan is not really
         // correct in a mathematical sense; but at least qnans are easy to

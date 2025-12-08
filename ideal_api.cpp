@@ -125,7 +125,7 @@ void display() {
     glClearColor(0.2f, 0.2f, 0.2f, 0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-    if(is_rotating == 1) {
+    if (is_rotating == 1) {
         saved_rot = fmod(glfwGetTime() * 45.0f, 360);
     }
 
@@ -324,8 +324,8 @@ int main(int argc, char** argv) {
     float offset = 0.1f;
     translations = DS::Vector<Math::Vec2>(100);
     translations.resize(100);
-    for(int y = -10; y < 10; y += 2) {
-        for(int x = -10; x < 10; x += 2) {
+    for (int y = -10; y < 10; y += 2) {
+        for (int x = -10; x < 10; x += 2) {
             Math::Vec2 translation;
             translation.x = (float)x / 10.0f + offset;
             translation.y = (float)y / 10.0f + offset;

@@ -289,7 +289,7 @@ namespace Renderer {
         Assimp::Importer importer;
         unsigned int assimp_flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices;
         const aiScene* scene = importer.ReadFile(path, assimp_flags);
-        if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
             LOG_ERROR("ASSIMP ERROR: %s\n", importer.GetErrorString());
         }
 
@@ -536,7 +536,7 @@ namespace Renderer {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 
             RUNTIME_ASSERT_MSG(mesh->mPrimitiveTypes != 0, "Primitive type not set by ASSIMP in mesh.\n");
-            if((mesh->mPrimitiveTypes & (mesh->mPrimitiveTypes-1)) != 0) {
+            if ((mesh->mPrimitiveTypes & (mesh->mPrimitiveTypes-1)) != 0) {
                 LOG_ERROR(
                     "This mesh has more than one primitive"
                     "type in it. The model should be loaded with the "
@@ -549,16 +549,16 @@ namespace Renderer {
             /* We assume that each mesh has its own primitive type. Here
             * we identify that type by number and by the OpenGL name.. */
             unsigned int meshPrimitiveType;
-            if(mesh->mPrimitiveTypes & aiPrimitiveType_POINT) {
+            if (mesh->mPrimitiveTypes & aiPrimitiveType_POINT) {
                 meshPrimitiveType = 1;
                 current->draw_type = GL_POINTS;
-            } else if(mesh->mPrimitiveTypes & aiPrimitiveType_LINE) {
+            } else if (mesh->mPrimitiveTypes & aiPrimitiveType_LINE) {
                 meshPrimitiveType = 2;
                 current->draw_type = GL_LINES;
-            } else if(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE) {
+            } else if (mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE) {
                 meshPrimitiveType = 3;
                 current->draw_type = GL_TRIANGLES;
-            } else if(mesh->mPrimitiveTypes & aiPrimitiveType_POLYGON) {
+            } else if (mesh->mPrimitiveTypes & aiPrimitiveType_POLYGON) {
                 LOG_ERROR(
                     "Mesh %u (%u/%u meshes in node \"%s\"): We only "
                     "support drawing triangle, line, or point meshes. "
@@ -609,24 +609,24 @@ namespace Renderer {
                 LOG_ERROR("Mesh doesn't have normals?\n");
             }
 
-            if(mesh->mTangents) {
+            if (mesh->mTangents) {
                 const aiVector3D& pTangents = mesh->mTangents[j];
                 Math::Vec4 transformed_tangents = parent_transform * Math::Vec4(pTangents.x, pTangents.y, pTangents.z, 0.0f);
                 v.aTangent = Math::Vec3(transformed_tangents);
             }
 
-            if(mesh->mBitangents) {
+            if (mesh->mBitangents) {
                 const aiVector3D& pBitangents = mesh->mBitangents[j];
                 Math::Vec4 transformed_bitangents = parent_transform * Math::Vec4(pBitangents.x, pBitangents.y, pBitangents.z, 0.0f);
                 v.aBitangent = Math::Vec3(transformed_bitangents);
             }
 
-            if(mesh->mColors[0]) {
+            if (mesh->mColors[0]) {
                 v.aColor = Math::Vec3(mesh->mColors[0]->r, mesh->mColors[0]->g, mesh->mColors[0]->b);
             } else { 
                 aiColor4D diffuse;
                 const aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-                if(AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse)) {
+                if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse)) {
                     v.aColor = Math::Vec3(diffuse.r, diffuse.g, diffuse.b);
                 }
             }
@@ -636,7 +636,7 @@ namespace Renderer {
 
             #if 0
                 /* Fill in bone information */
-                if(mesh->mBones && mesh->mNumBones > 0)
+                if (mesh->mBones && mesh->mNumBones > 0)
                 {
                     RUNTIME_ASSERT_MSG(mesh->mNumBones <= MAX_BONES, 
                         "This mesh has %d bones but we only support %d",
@@ -646,10 +646,10 @@ namespace Renderer {
                     float *indices = kuhl_malloc(sizeof(float)*mesh->mNumVertices*4);
                     float *weights = kuhl_malloc(sizeof(float)*mesh->mNumVertices*4);
                     /* For each vertex */
-                    for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                    for (unsigned int i=0; i<mesh->mNumVertices; i++)
                     {
                         /* Zero out weights */
-                        for(int j=0; j<4; j++)
+                        for (int j=0; j<4; j++)
                         {
                             // If weight is zero, it doesn't matter what the index
                             // is as long as it isn't out of bounds.
@@ -660,17 +660,17 @@ namespace Renderer {
                         int count = 0; /* How many bones refer to this vertex? */
                             
                         /* For each bone */
-                        for(unsigned int j=0; j<mesh->mNumBones; j++)
+                        for (unsigned int j=0; j<mesh->mNumBones; j++)
                         {
                             /* Each vertex that this bone refers to. */
-                            for(unsigned int k=0; k<mesh->mBones[j]->mNumWeights; k++)
+                            for (unsigned int k=0; k<mesh->mBones[j]->mNumWeights; k++)
                             {
                                 /* If this bone refers to a vertex that matches the one
                                 that we are on, use the data and send it to the vertex program.
                                 */
                                 unsigned int idx = mesh->mBones[j]->mWeights[k].mVertexId;
                                 float wght       = mesh->mBones[j]->mWeights[k].mWeight;
-                                if(idx == i)
+                                if (idx == i)
                                 {
                                     indices[i*4+count] = (float) j;
                                     weights[i*4+count] = wght;
@@ -680,8 +680,8 @@ namespace Renderer {
                         } // end for each bone
                     } // end for each vertex in mesh
 
-                    for(unsigned int i=0; i<mesh->mNumVertices; i++) {
-                        if(weights[i*4+0] == 0) {
+                    for (unsigned int i=0; i<mesh->mNumVertices; i++) {
+                        if (weights[i*4+0] == 0) {
                             msg(MSG_FATAL, "Every vertex should have at least one weight but vertex %ud has no weights!", i);
                             exit(EXIT_FAILURE);
                         }
@@ -759,18 +759,18 @@ namespace Renderer {
         
         /* Create a kuhl_geometry object for each of the meshes assigned
         * to this ASSIMP node. */
-        for(unsigned int n=0; n < nd->mNumMeshes; n++)
+        for (unsigned int n=0; n < nd->mNumMeshes; n++)
         {
             const struct aiMesh* mesh = sc->mMeshes[nd->mMeshes[n]];
 
             /* Confirm that the mesh has only one primitive type. */
-            if(mesh->mPrimitiveTypes == 0)
+            if (mesh->mPrimitiveTypes == 0)
             {
                 msg(MSG_ERROR, "Primitive type not set by ASSIMP in mesh.\n");
                 continue;
             }
             // Check if more than one bit (i.e., primitive type) is in this mesh.
-            if((mesh->mPrimitiveTypes & (mesh->mPrimitiveTypes-1)) != 0) 
+            if ((mesh->mPrimitiveTypes & (mesh->mPrimitiveTypes-1)) != 0) 
             {
                 msg(MSG_ERROR, "This mesh has more than one primitive "
                     "type in it. The model should be loaded with the "
@@ -782,22 +782,22 @@ namespace Renderer {
             * we identify that type by number and by the OpenGL name.. */
             unsigned int meshPrimitiveType;
             int meshPrimitiveTypeGL;
-            if(mesh->mPrimitiveTypes & aiPrimitiveType_POINT)
+            if (mesh->mPrimitiveTypes & aiPrimitiveType_POINT)
             {
                 meshPrimitiveType = 1;
                 meshPrimitiveTypeGL = GL_POINTS;
             }
-            else if(mesh->mPrimitiveTypes & aiPrimitiveType_LINE)
+            else if (mesh->mPrimitiveTypes & aiPrimitiveType_LINE)
             {
                 meshPrimitiveType = 2;
                 meshPrimitiveTypeGL = GL_LINES;
             }
-            else if(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE)
+            else if (mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE)
             {
                 meshPrimitiveType = 3;
                 meshPrimitiveTypeGL = GL_TRIANGLES;
             }
-            else if(mesh->mPrimitiveTypes & aiPrimitiveType_POLYGON)
+            else if (mesh->mPrimitiveTypes & aiPrimitiveType_POLYGON)
             {
                 msg(MSG_WARNING, "Mesh %u (%u/%u meshes in node \"%s\"): We only "
                     "support drawing triangle, line, or point meshes. "
@@ -832,7 +832,7 @@ namespace Renderer {
 
             /* Store the vertex position attribute into the kuhl_geometry struct */
             float *vertexPositions = kuhl_malloc(sizeof(float)*mesh->mNumVertices*3);
-            for(unsigned int i=0; i<mesh->mNumVertices; i++)
+            for (unsigned int i=0; i<mesh->mNumVertices; i++)
             {
                 vertexPositions[i*3+0] = (mesh->mVertices)[i].x;
                 vertexPositions[i*3+1] = (mesh->mVertices)[i].y;
@@ -842,10 +842,10 @@ namespace Renderer {
             free(vertexPositions);
 
             /* Store the normal vectors in the kuhl_geometry struct */
-            if(mesh->mNormals != NULL)
+            if (mesh->mNormals != NULL)
             {
                 float *normals = kuhl_malloc(sizeof(float)*mesh->mNumVertices*3);
-                for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                for (unsigned int i=0; i<mesh->mNumVertices; i++)
                 {
                     normals[i*3+0] = (mesh->mNormals)[i].x;
                     normals[i*3+1] = (mesh->mNormals)[i].y;
@@ -854,10 +854,10 @@ namespace Renderer {
                 kuhl_geometry_attrib(geom, normals, 3, "in_Normal", 0);
                 free(normals);
             }
-            if(mesh->mTangents)
+            if (mesh->mTangents)
             {
                 float *tangents = kuhl_malloc(sizeof(float)*mesh->mNumVertices*3);
-                for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                for (unsigned int i=0; i<mesh->mNumVertices; i++)
                 {
                     tangents[i*3+0] = (mesh->mTangents)[i].x;
                     tangents[i*3+1] = (mesh->mTangents)[i].y;
@@ -866,10 +866,10 @@ namespace Renderer {
                 kuhl_geometry_attrib(geom, tangents, 3, "in_Tangent", 0);
                 free(tangents);
             }
-            if(mesh->mBitangents)
+            if (mesh->mBitangents)
             {
                 float *bitangents = kuhl_malloc(sizeof(float)*mesh->mNumVertices*3);
-                for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                for (unsigned int i=0; i<mesh->mNumVertices; i++)
                 {
                     bitangents[i*3+0] = (mesh->mBitangents)[i].x;
                     bitangents[i*3+1] = (mesh->mBitangents)[i].y;
@@ -882,19 +882,19 @@ namespace Renderer {
 
             /* Store the vertex color attribute */
             // Note: mesh->mColors is a C array, not a pointer
-            if(mesh->mColors[0] != NULL)
+            if (mesh->mColors[0] != NULL)
             {
                 /* Don't use alpha by default; changing this to 4 may
                 require the size of in_Color the vertex program to be
                 adjusted. */
                 static const int colorComps = 3; 
                 float *colors = kuhl_malloc(sizeof(float)*mesh->mNumVertices*colorComps);
-                for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                for (unsigned int i=0; i<mesh->mNumVertices; i++)
                 {
                     colors[i*colorComps+0] = mesh->mColors[0][i].r;
                     colors[i*colorComps+1] = mesh->mColors[0][i].g;
                     colors[i*colorComps+2] = mesh->mColors[0][i].b;
-                    if(colorComps == 4)
+                    if (colorComps == 4)
                         colors[i*colorComps+3] = mesh->mColors[0][i].a;
                 }
                 kuhl_geometry_attrib(geom, colors, colorComps, "in_Color", 0);
@@ -910,11 +910,11 @@ namespace Renderer {
                 * a model. */
                 const struct aiMaterial *mtl = sc->mMaterials[mesh->mMaterialIndex];
                 struct aiColor4D diffuse;
-                if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &diffuse))
+                if (AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &diffuse))
                 {
                     static const int colorComps = 3;
                     float *colors = kuhl_malloc(sizeof(float)*mesh->mNumVertices*colorComps);
-                    for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                    for (unsigned int i=0; i<mesh->mNumVertices; i++)
                     {
                         colors[i*colorComps+0] = diffuse.r;
                         colors[i*colorComps+1] = diffuse.g;
@@ -928,10 +928,10 @@ namespace Renderer {
             
             /* Store the texture coordinate attribute */
             // Note: mesh->mTextureCoords is a C array, not a pointer
-            if(mesh->mTextureCoords[0] != NULL)
+            if (mesh->mTextureCoords[0] != NULL)
             {
                 float *texCoord = kuhl_malloc(sizeof(float)*mesh->mNumVertices*2);
-                for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                for (unsigned int i=0; i<mesh->mNumVertices; i++)
                 {
                     texCoord[i*2+0] = mesh->mTextureCoords[0][i].x;
                     texCoord[i*2+1] = mesh->mTextureCoords[0][i].y;
@@ -941,9 +941,9 @@ namespace Renderer {
             }
 
             /* Fill in bone information */
-            if(mesh->mBones != NULL && mesh->mNumBones > 0)
+            if (mesh->mBones != NULL && mesh->mNumBones > 0)
             {
-                if(mesh->mNumBones > MAX_BONES)
+                if (mesh->mNumBones > MAX_BONES)
                 {
                     msg(MSG_FATAL, "This mesh has %d bones but we only support %d",
                         mesh->mNumBones, MAX_BONES);
@@ -953,10 +953,10 @@ namespace Renderer {
                 float *indices = kuhl_malloc(sizeof(float)*mesh->mNumVertices*4);
                 float *weights = kuhl_malloc(sizeof(float)*mesh->mNumVertices*4);
                 /* For each vertex */
-                for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                for (unsigned int i=0; i<mesh->mNumVertices; i++)
                 {
                     /* Zero out weights */
-                    for(int j=0; j<4; j++)
+                    for (int j=0; j<4; j++)
                     {
                         // If weight is zero, it doesn't matter what the index
                         // is as long as it isn't out of bounds.
@@ -967,17 +967,17 @@ namespace Renderer {
                     int count = 0; /* How many bones refer to this vertex? */
                         
                     /* For each bone */
-                    for(unsigned int j=0; j<mesh->mNumBones; j++)
+                    for (unsigned int j=0; j<mesh->mNumBones; j++)
                     {
                         /* Each vertex that this bone refers to. */
-                        for(unsigned int k=0; k<mesh->mBones[j]->mNumWeights; k++)
+                        for (unsigned int k=0; k<mesh->mBones[j]->mNumWeights; k++)
                         {
                             /* If this bone refers to a vertex that matches the one
                             that we are on, use the data and send it to the vertex program.
                             */
                             unsigned int idx = mesh->mBones[j]->mWeights[k].mVertexId;
                             float wght       = mesh->mBones[j]->mWeights[k].mWeight;
-                            if(idx == i)
+                            if (idx == i)
                             {
                                 indices[i*4+count] = (float) j;
                                 weights[i*4+count] = wght;
@@ -987,9 +987,9 @@ namespace Renderer {
                     } // end for each bone
                 } // end for each vertex in mesh
 
-                for(unsigned int i=0; i<mesh->mNumVertices; i++)
+                for (unsigned int i=0; i<mesh->mNumVertices; i++)
                 {
-                    if(weights[i*4+0] == 0)
+                    if (weights[i*4+0] == 0)
                     {
                         msg(MSG_FATAL, "Every vertex should have at least one weight but vertex %ud has no weights!", i);
                         exit(EXIT_FAILURE);
@@ -1003,25 +1003,25 @@ namespace Renderer {
 
 
             /* Go through all texture types that ASSIMP supports. */
-            for(int tt=0; tt<TEX_TYPE_LEN; tt++)
+            for (int tt=0; tt<TEX_TYPE_LEN; tt++)
             {
                 /* Find our texture and tell our kuhl_geometry object about
                 * it. */
                 struct aiString texPath;	//contains filename of texture
                 int texIndex = 0;
-                if(AI_SUCCESS == aiGetMaterialTexture(sc->mMaterials[mesh->mMaterialIndex],
+                if (AI_SUCCESS == aiGetMaterialTexture(sc->mMaterials[mesh->mMaterialIndex],
                                                     texTypeList[tt], texIndex, &texPath,
                                                     NULL, NULL, NULL, NULL, NULL, NULL))
                 {
                     GLuint texture = 0;
-                    for(int i=0; i<textureIdMapSize; i++)
+                    for (int i=0; i<textureIdMapSize; i++)
                     {
                         char *fullpath = kuhl_private_assimp_fullpath(texPath.data, modelFilename, textureDirname);
-                        if(strcmp(textureIdMap[i].textureFileName, fullpath) == 0)
+                        if (strcmp(textureIdMap[i].textureFileName, fullpath) == 0)
                             texture = textureIdMap[i].textureID;
                         free(fullpath);
                     }
-                    if(texture == 0)
+                    if (texture == 0)
                     {
                         msg(MSG_WARNING, "Mesh %u uses %s texture '%s'."
                             "This texture should have been loaded earlier, but we can't find it now.",
@@ -1036,7 +1036,7 @@ namespace Renderer {
                         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
                         kuhl_errorcheck();
 
-                        if(texTypeList[tt] == aiTextureType_DIFFUSE)
+                        if (texTypeList[tt] == aiTextureType_DIFFUSE)
                             // use "tex" variable name for diffuse textures.
                             kuhl_geometry_texture(geom, texture, "tex", 0);
                         else
@@ -1050,15 +1050,15 @@ namespace Renderer {
                 } // end if assimp provides this texture 
             } // end loop through all of assimp supported texture types.
 
-            if(mesh->mNumFaces > 0)
+            if (mesh->mNumFaces > 0)
             {
                 /* Get indices to draw with */
                 GLuint numIndices = mesh->mNumFaces * meshPrimitiveType;
                 GLuint *indices = kuhl_malloc(sizeof(GLuint)*numIndices);
-                for(unsigned int t = 0; t<mesh->mNumFaces; t++) // for each face
+                for (unsigned int t = 0; t<mesh->mNumFaces; t++) // for each face
                 {
                     const struct aiFace* face = &mesh->mFaces[t];
-                    for(unsigned int x = 0; x < meshPrimitiveType; x++) // for each index
+                    for (unsigned int x = 0; x < meshPrimitiveType; x++) // for each index
                         indices[t*meshPrimitiveType+x] = face->mIndices[x];
                 }
                 kuhl_geometry_indices(geom, indices, numIndices);
@@ -1067,15 +1067,15 @@ namespace Renderer {
 
 
             /* Initialize list of bone matrices if this mesh has bones. */
-            if(mesh->mNumBones > 0)
+            if (mesh->mNumBones > 0)
             {
                 kuhl_bonemat *bones = (kuhl_bonemat*) kuhl_malloc(sizeof(kuhl_bonemat));
                 bones->count = mesh->mNumBones;
                 bones->mesh = n;
-                for(unsigned int b=0; b < mesh->mNumBones; b++)
+                for (unsigned int b=0; b < mesh->mNumBones; b++)
                     bones->boneList[b] = mesh->mBones[b];
                 // set any unused bone matrices to the identity.
-                for(unsigned int b=mesh->mNumBones; b < MAX_BONES; b++)
+                for (unsigned int b=mesh->mNumBones; b < MAX_BONES; b++)
                     mat4f_identity(bones->matrices[b]);
                 geom->bones = bones;
             }
@@ -1120,7 +1120,7 @@ namespace Renderer {
     */
     void kuhl_update_model(kuhl_geometry *first_geom, unsigned int animationNum, float time)
     {
-        for(kuhl_geometry *g = first_geom; g != NULL; g=g->next)
+        for (kuhl_geometry *g = first_geom; g != NULL; g=g->next)
         {
             /* The aiScene object that this kuhl_geometry refers to. */
             struct aiScene *scene = g->assimp_scene;
@@ -1130,13 +1130,13 @@ namespace Renderer {
             /* If the geometry contains no animations, isn't associated
             * with an ASSIMP scene or node, then there is no need to try
             * to animate it. */
-            if(scene == NULL || scene->mNumAnimations == 0 || node == NULL)
+            if (scene == NULL || scene->mNumAnimations == 0 || node == NULL)
                 continue;
 
             /* If there are no bones, or if a negative time value was
             * provided, update g->matrix. If there are bones, we assume
             * that the bones will drive the animation. */
-            if(g->bones == NULL )
+            if (g->bones == NULL )
             {
                 /* Start at our current node and traverse up. Apply all of the
                 * transformation matrices as we traverse up.
@@ -1161,15 +1161,15 @@ namespace Renderer {
             }
 
             /* Don't process bones if there aren't any. */
-            if(g->bones == NULL)
+            if (g->bones == NULL)
                 continue;
 
             /* Update the list of bone matrices. */
-            for(int b=0; b < g->bones->count; b++) // For each bone
+            for (int b=0; b < g->bones->count; b++) // For each bone
             {
                 // Find the bone node and the bone itself.
                 const struct aiNode *node = kuhl_assimp_find_node(g->bones->boneList[b]->mName.data, scene->mRootNode);
-                if(node == NULL)
+                if (node == NULL)
                 {
                     msg(MSG_FATAL, "Failed to find node that corresponded to bone: %s\n", g->bones->boneList[b]->mName.data);
                     exit(EXIT_FAILURE);
@@ -1231,7 +1231,7 @@ namespace Renderer {
         char *newModelFilename = kuhl_find_file(modelFilename);
         // Loads the model from the file and reads in all of the textures:
         const struct aiScene *scene = kuhl_private_assimp_load(newModelFilename, textureDirname);
-        if(scene == NULL)
+        if (scene == NULL)
         {
             msg(MSG_ERROR, "ASSIMP was unable to import the model '%s'.\n", modelFilename);
             //return NULL;
@@ -1265,9 +1265,9 @@ namespace Renderer {
 
         /* If the user requested bounding box information, give it to
         * them. */
-        if(bbox != NULL)
+        if (bbox != NULL)
         {
-            for(int i=0; i<6; i++)
+            for (int i=0; i<6; i++)
                 bbox[i] = bboxLocal[i];
         }
         return ret;

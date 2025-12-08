@@ -240,7 +240,7 @@ AI_FORCE_INLINE
 aiMatrix4x4t<TReal>& aiMatrix4x4t<TReal>::Inverse() {
     // Compute the reciprocal determinant
     const TReal det = Determinant();
-    if(det == static_cast<TReal>(0.0))
+    if (det == static_cast<TReal>(0.0))
     {
         // Matrix is not invertible. Setting all elements to nan is not really
         // correct in a mathematical sense but it is easy to debug for the
@@ -390,9 +390,9 @@ bool aiMatrix4x4t<TReal>::Equal(const aiMatrix4x4t<TReal>& m, TReal epsilon) con
 	if (Determinant() < 0) pScaling = -pScaling; \
 	\
 	/* and remove all scaling from the matrix */ \
-	if(pScaling.x) vCols[0] /= pScaling.x; \
-	if(pScaling.y) vCols[1] /= pScaling.y; \
-	if(pScaling.z) vCols[2] /= pScaling.z; \
+	if (pScaling.x) vCols[0] /= pScaling.x; \
+	if (pScaling.y) vCols[1] /= pScaling.y; \
+	if (pScaling.z) vCols[2] /= pScaling.z; \
 	\
 	do {} while(false)
 
@@ -440,7 +440,7 @@ void aiMatrix4x4t<TReal>::Decompose(aiVector3t<TReal>& pScaling, aiVector3t<TRea
 
 	TReal C = std::cos(pRotation.y);
 
-	if(std::fabs(C) > epsilon)
+	if (std::fabs(C) > epsilon)
 	{
 		// Finding angle around oX.
 		TReal tan_x = vCols[2].z / C;// A
@@ -483,7 +483,7 @@ void aiMatrix4x4t<TReal>::Decompose(aiVector3t<TReal>& pScaling, aiVector3t<TRea
 	// Use a small epsilon to solve floating-point inaccuracies
     const TReal epsilon = 10e-3f;
 
-	if(std::fabs(angle_sin) < epsilon) angle_sin = 1;
+	if (std::fabs(angle_sin) < epsilon) angle_sin = 1;
 
 	pRotationAxis.x = pRotation.x / angle_sin;
 	pRotationAxis.y = pRotation.y / angle_sin;

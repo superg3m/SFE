@@ -221,11 +221,11 @@ struct Vertex {
             out->mBitangents[idx] = bitangent;
         }
 
-        for(unsigned int i = 0; out->HasTextureCoords(i); ++i) {
+        for (unsigned int i = 0; out->HasTextureCoords(i); ++i) {
             out->mTextureCoords[i][idx] = texcoords[i];
         }
 
-        for(unsigned int i = 0; out->HasVertexColors(i); ++i) {
+        for (unsigned int i = 0; out->HasVertexColors(i); ++i) {
             out->mColors[i][idx] = colors[i];
         }
     }

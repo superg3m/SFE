@@ -60,7 +60,7 @@ namespace Assimp {
 // ------------------------------------------------------------------------------------------------
 /** Usage:
 @code
-for(LineSplitter splitter(stream);splitter;++splitter) {
+for (LineSplitter splitter(stream);splitter;++splitter) {
 
     if (*splitter == "hi!") {
        ...

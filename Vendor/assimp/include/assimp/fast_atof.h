@@ -321,7 +321,7 @@ inline const char* fast_atoreal_move(const char* c, Real& out, bool check_comma 
     }
 
     // A major 'E' must be allowed. Necessary for proper reading of some DXF files.
-    // Thanks to Zhao Lei to point out that this if() must be outside the if (*c == '.' ..)
+    // Thanks to Zhao Lei to point out that this if () must be outside the if (*c == '.' ..)
     if (*c == 'e' || *c == 'E') {
         ++c;
         const bool einv = (*c=='-');

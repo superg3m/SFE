@@ -6,11 +6,12 @@ namespace Random {
     const int LOWER_MASK       = 0x7fffffff;
     const int TEMPERING_MASK_B = 0x9d2c5680;
     const int TEMPERING_MASK_C = 0xefc60000;
+    u32 MAX_MASK = (u32)0xffffffff;
 
     inline static void _seeding(Seed* r, u32 seed) {
-        r->mt[0] = seed & 0xffffffff;
-        for(r->index = 1; r->index < STATE_VECTOR_LENGTH; r->index++) {
-            r->mt[r->index] = (6069 * r->mt[r->index-1]) & 0xffffffff;
+        r->mt[0] = seed & MAX_MASK;
+        while (r->index++ < STATE_VECTOR_LENGTH) {
+            r->mt[r->index] = (6069 * r->mt[r->index-1]) & MAX_MASK;
         }
     }
 
@@ -55,7 +56,6 @@ namespace Random {
 
     float GenerateF32(Seed* r) {
         u32 value = GenerateU32(r);
-        u32 MAX_MASK = (u32)0xffffffff;
         return (float)value / (float)MAX_MASK;
     }
 
