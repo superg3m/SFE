@@ -450,6 +450,7 @@ namespace Renderer {
         this->vertices = DS::Vector<Vertex>(total_vertex_count);
         this->indices = DS::Vector<GLuint>(total_index_count);
         this->materials = DS::Vector<Material>(scene->mNumMaterials);
+        this->materials.resize(scene->mNumMaterials);
 
         s64 index = String::LastIndexOf(path, path_length, STRING_LIT_ARG("/"));
         RUNTIME_ASSERT(index > -1);

@@ -9,6 +9,7 @@
 ShaderDiffuse diffuse_shader;
 ShaderModel model_shader;
 ShaderUniformColor uniform_shader;
+// ShaderParticle particle_shader;
 
 Math::Mat4 translate_mats[4];
 Math::Mat4 animals_rot[4];
@@ -17,6 +18,7 @@ Renderer::Geometry pole;
 Renderer::Geometry hexplane;
 Renderer::Geometry animals[4];
 Renderer::Geometry church;
+Renderer::Geometry particle_geometry;
 
 Renderer::Geometry quad;
 DS::Vector<Math::Vec2> translations;
@@ -37,7 +39,9 @@ float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
 Random::Seed seed;
-Particle particles[100];
+
+const int MAX_PARTICLES = 1000;
+Particle particles[MAX_PARTICLES];
 u32 next_available_particle_index;
 
 void cbMasterProfile() {
@@ -196,18 +200,18 @@ void display() {
         p.velocity = Math::Vec3(0, 1, 0);
 
         particles[next_available_particle_index] = p;
-        next_available_particle_index = (next_available_particle_index + 1) % ArrayCount(particles);
+        next_available_particle_index = (next_available_particle_index + 1) % MAX_PARTICLES;
     }
 
     // update and render particles
-    for (int i = 0; i < ArrayCount(particles); i++) {
+    for (int i = 0; i < MAX_PARTICLES; i++) {
         Particle* p = &particles[i];
         p->position += p->velocity.scale(dt);
-
-        // create model
-
-        // instance render particles
     }
+
+    // create model
+    // particle_geometry.setVertexAttribute(8, ) // This will rebind
+    //  particle_geometry.drawInstanced(&particle_shader, MAX_PARTICLES);
 
     Renderer::ClearTelemetry();
 }
