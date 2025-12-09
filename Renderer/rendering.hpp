@@ -9,6 +9,7 @@
 #include <Shader/shader_model.hpp>
 #include <Shader/shader_uniform_color.hpp>
 #include <Shader/shader_diffuse.hpp>
+#include <Shader/shader_particle.hpp>
 
 #include <Particles/particles.hpp>
 #include <renderer.hpp>

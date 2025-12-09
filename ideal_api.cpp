@@ -9,7 +9,7 @@
 ShaderDiffuse diffuse_shader;
 ShaderModel model_shader;
 ShaderUniformColor uniform_shader;
-// ShaderParticle particle_shader;
+ShaderParticle particle_shader;
 
 Math::Mat4 translate_mats[4];
 Math::Mat4 animals_rot[4];
@@ -19,8 +19,8 @@ Renderer::Geometry hexplane;
 Renderer::Geometry animals[4];
 Renderer::Geometry church;
 Renderer::Geometry particle_geometry;
-
 Renderer::Geometry quad;
+Renderer::Geometry tquad;
 DS::Vector<Math::Vec2> translations;
 
 float saved_rot = 0.0f;
@@ -127,13 +127,32 @@ void mouse(GLFWwindow *window, double mouse_x, double mouse_y) {
     }
 }
 
-void display() {
-    glClearColor(0.2f, 0.2f, 0.2f, 0);
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
+void update() {
     if (is_rotating == 1) {
         saved_rot = fmod(glfwGetTime() * 45.0f, 360);
     }
+
+    const float PARTICLE_SPAWN_COUNT_PER_FRAME = 5;
+    for (int i = 0; i < PARTICLE_SPAWN_COUNT_PER_FRAME; i++) {
+        Particle p;
+        // make this have some randomness Random::GenerateF32(&seed);
+        p.position = Math::Vec3(0, 0, 0);
+        p.velocity = Math::Vec3(0, 1, 0);
+
+        particles[next_available_particle_index] = p;
+        next_available_particle_index = (next_available_particle_index + 1) % MAX_PARTICLES;
+    }
+
+    // update and render particles
+    for (int i = 0; i < MAX_PARTICLES; i++) {
+        Particle* p = &particles[i];
+        p->position += p->velocity.scale(dt);
+    }
+}
+
+void display() {
+    glClearColor(0.2f, 0.2f, 0.2f, 0);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
     Math::Mat4 rot_mat = Math::Mat4::Identity(); 
     rot_mat = Math::Mat4::Rotate(rot_mat, saved_rot, 0, 1, 0);
@@ -146,6 +165,8 @@ void display() {
 
     model_shader.setProjection(perspective);
     model_shader.setView(view);
+
+    /*
 
     for (int i = 0; i < 4; i++) {
         Math::Mat4 model = Math::Mat4::Identity();
@@ -187,31 +208,22 @@ void display() {
     model_shader.setModel(model);
     church.draw(&model_shader);
 
-    quad.drawInstanced(&uniform_shader, 100);
+    // quad.drawInstanced(&uniform_shader, 100);
+
+    // create model matrix
+    particle_shader.setView(view);
+    particle_shader.setProjection(perspective);
+    // particle_geometry.setVertexAttribute(8, ) // This will rebind GL_DYNAMIC_DRAW
+    // particle_geometry.drawInstanced(&particle_shader, MAX_PARTICLES);
 
     // LOG_WARN("Draw Call Count: %d\n", Renderer::GetDrawCallCount());
 
-    // spawn particles
-    const float PARTICLE_SPAWN_COUNT_PER_FRAME = 5;
-    for (int i = 0; i < PARTICLE_SPAWN_COUNT_PER_FRAME; i++) {
-        Particle p;
-        // make this have some randomness Random::GenerateF32(&seed);
-        p.position = Math::Vec3(0, 0, 0);
-        p.velocity = Math::Vec3(0, 1, 0);
+    */
 
-        particles[next_available_particle_index] = p;
-        next_available_particle_index = (next_available_particle_index + 1) % MAX_PARTICLES;
-    }
-
-    // update and render particles
-    for (int i = 0; i < MAX_PARTICLES; i++) {
-        Particle* p = &particles[i];
-        p->position += p->velocity.scale(dt);
-    }
-
-    // create model
-    // particle_geometry.setVertexAttribute(8, ) // This will rebind
-    //  particle_geometry.drawInstanced(&particle_shader, MAX_PARTICLES);
+    Math::Mat4 model = Math::Mat4::Identity();
+    model = Math::Mat4::Scale(model, 1);
+    diffuse_shader.setModel(model);
+    tquad.draw(&diffuse_shader);
 
     Renderer::ClearTelemetry();
 }
@@ -261,11 +273,8 @@ void init_hexplane_geometry() {
     hexplane = Renderer::Geometry(vertices);
 }
 
-int main(int argc, char** argv) {
-    Memory::GeneralAllocator allocator = Memory::GeneralAllocator();
-    Memory::bindAllocator(&allocator);
-
-	glfwInit();
+GLFWwindow* GLFW_INIT() {
+glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -279,34 +288,21 @@ int main(int argc, char** argv) {
     if (window == nullptr) {
         LOG_ERROR("Failed to create GLFW window\n");
         glfwTerminate();
-        return -1;
+        exit(-1);
     }
 
     glfwMakeContextCurrent(window);
-    // glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    // glfwSetScrollCallback(window, scroll_callback);
-	// glfwSetKeyCallback(window, keyboard);
-	// glfwSetCursorPosCallback(window, mouse);
-
-    Input::Init();
-    if (!Input::GLFW_SETUP(window)) {
-        LOG_ERROR("Failed to setup GLFW\n");
-        glfwTerminate();
-        return -1;
-    }
-    // void GLFW_BIND_KEY_CALLBACK(GLFWkeyfun cb);
-    // void GLFW_BIND_MOUSE_BUTTON_CALLBACK(GLFWmousebuttonfun cb);
-    Input::GLFW_BIND_MOUSE_MOVE_CALLBACK(mouse);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         LOG_ERROR("Failed to initialize GLAD\n");
         glfwTerminate();
-        return -1;
+        exit(-1);
     }
+
 
     glfwSwapInterval(1);
     glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
-    
+
     glEnable(GL_MULTISAMPLE);
     Renderer::SetDepthTest(true);
     Renderer::SetStencilTest(true);
@@ -314,13 +310,10 @@ int main(int argc, char** argv) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // glEnable(GL_FRAMEBUFFER_SRGB);
 
-    diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
-    model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
-    uniform_shader = ShaderUniformColor({"../../ShaderSource/QuadInstance/quad.vert", "../../ShaderSource/QuadInstance/quad.frag"});
+    return window;
+}
 
-	init_pole_geometry();
-    init_hexplane_geometry();
-
+void init_models() {
     animals[0] = Renderer::Geometry::Model("../../Models/cow.ply");
     animals_rot[0] = Math::Mat4::Rotate(animals_rot[0], 270, 0, 1, 0);
     translate_mats[0] = Math::Mat4::Translate(translate_mats[0], -2, 0, 0);
@@ -348,6 +341,10 @@ int main(int argc, char** argv) {
 
     quad = Renderer::Geometry(quad_vertices);
 
+
+    tquad = Renderer::Geometry::Quad(1024, 512);
+    
+
     int index = 0;
     float offset = 0.1f;
     translations = DS::Vector<Math::Vec2>(100);
@@ -362,14 +359,33 @@ int main(int argc, char** argv) {
     }
 
     quad.addInstanceVertexAttribute(8, translations);
+}
 
+int main(int argc, char** argv) {
+    Random::Seed seed = Random::GenerateSeed(451);
+    Memory::GeneralAllocator allocator = Memory::GeneralAllocator();
+    Memory::bindAllocator(&allocator);
+
+    GLFWwindow* window = GLFW_INIT();
+    Input::Init();
+    if (!Input::GLFW_SETUP(window)) {
+        LOG_ERROR("Failed to setup GLFW\n");
+        glfwTerminate();
+        exit(-1);
+    }
+    Input::GLFW_BIND_MOUSE_MOVE_CALLBACK(mouse);
     Input::CreateProfile(MASTER_PROFILE, cbMasterProfile);
     Input::CreateProfile(MOVEMENT_PROFILE, cbMovementProfile);
+    
+    diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
+    model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
+    uniform_shader = ShaderUniformColor({"../../ShaderSource/QuadInstance/quad.vert", "../../ShaderSource/QuadInstance/quad.frag"});
+
+	init_pole_geometry();
+    init_hexplane_geometry();
+    init_models();
 
     camera = Camera(0, 0, 10);
-
-    Random::Seed seed = Random::GenerateSeed(451);
-
     float previous = 0;
 	while (!glfwWindowShouldClose(window)) {
         float current = glfwGetTime();
@@ -378,9 +394,8 @@ int main(int argc, char** argv) {
 
         Input::Poll();
 
+        update();
 		display();
-
-        LOG_DEBUG("Entropy: %f\n", Random::GenerateRange(&seed, 34.2f, 64.1f));
 
 		glfwPollEvents();
         glfwSwapBuffers(window);
