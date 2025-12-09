@@ -51,3 +51,5 @@ https://www.youtube.com/watch?v=kWQM1iQ1W0E
 // Platform should have window stuff, including glfw
 
 // Sphere: https://andrewnoske.com/wiki/Generating_a_sphere_as_a_3D_mesh
+
+// figure out the terrain math
