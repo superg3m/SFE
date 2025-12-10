@@ -109,7 +109,7 @@ namespace Renderer {
     Math::Mat4 GetProjectionMatrix3D(unsigned int width, unsigned int height, float fov) {
         float aspect = width / height;
         float near_plane = 0.1f;
-        float far_plane = 200.0f;
+        float far_plane = 3000.0f;
 
         return Math::Mat4::Perspective(fov, aspect, near_plane, far_plane);
     }

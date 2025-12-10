@@ -9,7 +9,7 @@ Texture::Texture() {
 
 }
 
-Texture Texture::LoadFromFile(char* path) {
+Texture Texture::LoadFromFile(const char* path) {
     RUNTIME_ASSERT_MSG(Platform::FilePathExists(path), "Texture path: '%s' doesn't exist!\n", path);
     
     GLenum MIPMAP_TYPE = GL_LINEAR; // GET_BIT(texture_flags, 0) ? GL_NEAREST : GL_LINEAR;

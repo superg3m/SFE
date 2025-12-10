@@ -146,6 +146,10 @@ void ShaderBase::setInt(const char* name, int value) const {
     this->use();
     glUniform1i(this->getUniformLocation(name, GL_INT), value);
 }
+void ShaderBase::setTextureUnit(const char* name, int value) const {
+    this->use();
+    glUniform1i(this->getUniformLocation(name, GL_SAMPLER_2D), value);
+}
 void ShaderBase::setFloat(const char* name, float value) const {
     this->use();
     glUniform1f(this->getUniformLocation(name, GL_FLOAT), value);

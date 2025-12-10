@@ -99,28 +99,29 @@ namespace Input {
     }
 
     bool GetKey(KeyCode code, KeyState state) {
+        if (!input_state.has(code)) {
+            LOG_WARN("Pressed a key and it is not mapped yet: %c\n", code);
+            return false;
+        }
+
         KeyState actual_state = input_state.get(code);
         return state & actual_state;
     }
 
     bool GetKeyUp(KeyCode code) {
-        KeyState actual_state = input_state.get(code);
-        return actual_state & KeyState::UP;
+        return GetKey(code, KeyState::UP);
     }
 
     bool GetKeyPressed(KeyCode code) {
-        KeyState actual_state = input_state.get(code);
-        return actual_state & KeyState::PRESSED;
+        return GetKey(code, KeyState::PRESSED);
     }
 
     bool GetKeyDown(KeyCode code) {
-        KeyState actual_state = input_state.get(code);
-        return actual_state & KeyState::DOWN;
+        return GetKey(code, KeyState::DOWN);
     }
 
     bool GetKeyReleased(KeyCode code) {
-        KeyState actual_state = input_state.get(code);
-        return actual_state & KeyState::RELEASED;
+        return GetKey(code, KeyState::RELEASED);
     }
 
     void CreateProfile(const char* key, CALLBACK callback) {

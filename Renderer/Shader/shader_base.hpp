@@ -38,6 +38,7 @@ struct ShaderBase {
 
     void setBool(const char* name, bool value) const;
     void setInt(const char* name, int value) const;
+    void setTextureUnit(const char* name, int value) const;
     void setFloat(const char* name, float value) const;
     void setVec2(const char* name, const Math::Vec2& value) const;
     void setVec2(const char* name, float x, float y) const;

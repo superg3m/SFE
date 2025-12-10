@@ -133,76 +133,64 @@ namespace Renderer {
     }
 
     Geometry Geometry::Quad(int width, int height) {
-        const int TOTAL_VERTEX_COUNT = width * height;
+        RUNTIME_ASSERT_MSG((width % 2) == 0, "width must be even\n");
+        RUNTIME_ASSERT_MSG((height % 2) == 0, "height must be even\n");
 
-        DS::Vector<Vertex> quad_vertices = DS::Vector<Vertex>(TOTAL_VERTEX_COUNT);
-        quad_vertices.resize(TOTAL_VERTEX_COUNT);
+        #if 0
+            const int WIDTH = 10;
+            const int HEIGHT = 10;
+            
+            DS::Vector<Vertex> quad_vertices = DS::Vector<Vertex>(1);
+            for (int i = 0; i < HEIGHT; i++) {
+                for (int j = 0; j < WIDTH + 1; j += 1) {
+                    quad_vertices.push(Vertex(Math::Vec3(j, -i, 0)));
+                    quad_vertices.push(Vertex(Math::Vec3(j, -i - 1, 0)));
+                }
 
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-
-                float x = ((float)j / (float)(width  - 1)) * width  - width  * 0.5f;
-                float y = 0.0f;
-                float z = ((float)i / (float)(height - 1)) * height - height * 0.5f;
-
-                quad_vertices[(i * width) + j].aPosition = Math::Vec3(x, y, z);
-            }
-        }
-
-
-        // const float X_UV_STEP = 1.0f / (float)width;
-        // const float Y_UV_STEP = 1.0f / (float)height;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                float x = -height / 2.0f + height * i /(float)height;
-                float y = 0.0f;
-                float z = -width / 2.0f + width * j / (float)width; 
-
-                // float u = X_UV_STEP * j;
-                // float v = Y_UV_STEP * i;
-
-                quad_vertices[(i * width) + j].aPosition = Math::Vec3(x, y, z);
-                // quad_vertices[VERTEX_INDEX].aTexCoord = Math::Vec2(u, v);
-            }
-        }
-
-        /*
-        for (unsigned int VERTEX_INDEX = 0; VERTEX_INDEX < TOTAL_VERTEX_COUNT; VERTEX_INDEX++) {
-            int i = VERTEX_INDEX / width; // y
-            int j = VERTEX_INDEX % width; // x
-
-            float x = -height / 2.0f + height * i /(float)height;
-            float y = 0.0f;
-            float z = -width / 2.0f + width * j / (float)width; 
-
-            float u = X_UV_STEP * j;
-            float v = Y_UV_STEP * i;
-
-            quad_vertices[VERTEX_INDEX].aPosition = Math::Vec3(x, y, z);
-            quad_vertices[VERTEX_INDEX].aTexCoord = Math::Vec2(u, v);
-        }
-        */
-
-        const int TOTAL_INDEX_COUNT = (height - 1) * (width * 2);
-        DS::Vector<unsigned int> quad_indices = DS::Vector<unsigned int>(TOTAL_INDEX_COUNT);
-        quad_indices.resize(TOTAL_INDEX_COUNT);
-
-        int indices_index = 0;
-        for(unsigned i = 0; i < height - 1; i++) {
-            for(unsigned j = 0; j < width; j++) {
-                for(unsigned k = 0; k < 2; k++) {
-                    quad_indices[indices_index++] = j + (width * (i + k));
+                if (i < (HEIGHT - 1)) {
+                    quad_vertices.push(Vertex(Math::Vec3(WIDTH, -i - 1, 0)));
+                    quad_vertices.push(Vertex(Math::Vec3(0, -i - 1, 0)));
                 }
             }
-        }
+        #else 
+            const int HALF_WIDTH = width / 2;
+            const int HALF_HEIGHT = height / 2;
 
-        const int numStrips = (height-1)/rez;
-        const int numTrisPerStrip = (width/rez)*2-2;
+            // const float X_UV_STEP = 1.0f / (float)width;
+            // const float Y_UV_STEP = 1.0f / (float)height;
+
+            const int VERTICES_PER_ROW = (width + 1) * 2;
+            const int NUM_DEGENERATES = (height - 1) * 2;
+            const int TOTAL_VERTEX_COUNT = (VERTICES_PER_ROW * height) + NUM_DEGENERATES;
+            DS::Vector<Vertex> quad_vertices = DS::Vector<Vertex>(TOTAL_VERTEX_COUNT);
+            quad_vertices.resize(TOTAL_VERTEX_COUNT);
+
+            int vertex_index = 0;
+            for (int i = -HALF_HEIGHT; i < HALF_HEIGHT; i++) {
+                const float v = Math::Remap(i, -HALF_HEIGHT, HALF_HEIGHT - 1, 0, 1);
+                for (int j = -HALF_WIDTH; j < HALF_WIDTH + 1; j++) {
+                    const float u = Math::Remap(j, -HALF_WIDTH, HALF_WIDTH, 0, 1);
+
+                    quad_vertices[vertex_index].aPosition = Math::Vec3(j, 0, -i);
+                    quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
+
+                    quad_vertices[vertex_index].aPosition = Math::Vec3(j, 0 , -i - 1);
+                    quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
+                }
+
+                if (i < (HALF_HEIGHT - 1)) {
+                    // Carrige Return
+                    quad_vertices[vertex_index++].aPosition = Math::Vec3(HALF_WIDTH, 0, -i - 1);
+                    quad_vertices[vertex_index++].aPosition = Math::Vec3(-HALF_WIDTH, 0, -i - 1);
+                }
+            }
+
+            // do indices
+        #endif
 
         Geometry ret;
         ret.draw_type = GL_TRIANGLE_STRIP;
         ret.vertices = quad_vertices;
-        ret.indices = quad_indices;
         ret.vertex_count = ret.vertices.count();
         ret.index_count = ret.indices.count();
 

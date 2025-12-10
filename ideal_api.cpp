@@ -20,7 +20,10 @@ Renderer::Geometry animals[4];
 Renderer::Geometry church;
 Renderer::Geometry particle_geometry;
 Renderer::Geometry quad;
+
+Texture world_color_map_diffuse;
 Renderer::Geometry tquad;
+
 DS::Vector<Math::Vec2> translations;
 
 float saved_rot = 0.0f;
@@ -222,8 +225,15 @@ void display() {
 
     Math::Mat4 model = Math::Mat4::Identity();
     model = Math::Mat4::Scale(model, 1);
-    diffuse_shader.setModel(model);
-    tquad.draw(&diffuse_shader);
+    uniform_shader.setModel(model);
+    uniform_shader.setView(view);
+    uniform_shader.setProjection(perspective);
+
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, world_color_map_diffuse.id);
+    uniform_shader.setTextureUnit("uTexture", 0);
+
+    tquad.draw(&uniform_shader);
 
     Renderer::ClearTelemetry();
 }
@@ -327,7 +337,7 @@ void init_models() {
     translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
     translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
 
-    church = Renderer::Geometry::Model("../../Models/church.glb");
+    // church = Renderer::Geometry::Model("../../Models/church.glb");
 
     DS::Vector<Renderer::Vertex> quad_vertices = {
         Math::Vec3(-0.05f, +0.05f, 0),
@@ -340,10 +350,9 @@ void init_models() {
     };
 
     quad = Renderer::Geometry(quad_vertices);
-
-
-    tquad = Renderer::Geometry::Quad(1024, 512);
     
+    world_color_map_diffuse = Texture::LoadFromFile("../../Assets/world_color_map.png");
+    tquad = Renderer::Geometry::Quad(world_color_map_diffuse.width, world_color_map_diffuse.height);
 
     int index = 0;
     float offset = 0.1f;
@@ -379,13 +388,13 @@ int main(int argc, char** argv) {
     
     diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
     model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
-    uniform_shader = ShaderUniformColor({"../../ShaderSource/QuadInstance/quad.vert", "../../ShaderSource/QuadInstance/quad.frag"});
+    uniform_shader = ShaderUniformColor({"../../ShaderSource/Uniform/uniform.vert", "../../ShaderSource/Uniform/uniform.frag"});
 
 	init_pole_geometry();
     init_hexplane_geometry();
     init_models();
 
-    camera = Camera(0, 0, 10);
+    camera = Camera(0, 1, 10);
     float previous = 0;
 	while (!glfwWindowShouldClose(window)) {
         float current = glfwGetTime();

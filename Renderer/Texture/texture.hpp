@@ -9,6 +9,6 @@ struct Texture {
     // sampler2d or cubemap
 
     Texture();
-    static Texture LoadFromFile(char* path);
+    static Texture LoadFromFile(const char* path);
     static Texture LoadFromMemory(const u8* data, int width, int height, int nrChannels);
 };

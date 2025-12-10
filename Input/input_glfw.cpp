@@ -115,6 +115,11 @@ namespace Input {
                 cb_keyboard((GLFWwindow*)glfw_window_instance, key, scancode, action, mods);  
             }
 
+            if (!glfw_to_key_code.has(key)) {
+                LOG_WARN("Pressed a glfw key and it is not mapped yet: %c\n", key);
+                return;
+            }
+
             KeyCode cb_code = glfw_to_key_code.get(key);
             UpdateInputCode(cb_code, action != GLFW_RELEASE);
             for (const auto profile : profiles) {
