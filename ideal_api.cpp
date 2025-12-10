@@ -7,28 +7,12 @@
 #include <glad/glad.h>
 
 ShaderModel model_shader;
-ShaderUniformColor uniform_shader;
-ShaderParticle particle_shader;
+// ShaderParticle particle_shader;
 
-Math::Mat4 translate_mats[4];
-Math::Mat4 animals_rot[4];
-
-Renderer::Geometry pole;
-Renderer::Geometry hexplane;
-Renderer::Geometry animals[4];
 Renderer::Geometry church;
-Renderer::Geometry particle_geometry;
-Renderer::Geometry quad;
+Renderer::Geometry terrain;
+// Renderer::Geometry particle_geometry;
 
-Texture world_color_map_diffuse;
-Renderer::Geometry tquad;
-
-DS::Vector<Math::Vec2> translations;
-
-float saved_rot = 0.0f;
-float saved_translation = 0.0f;
-bool is_rotating = false;
-bool is_translating = false;
 bool emit = false;
 
 #define MASTER_PROFILE "master"
@@ -56,7 +40,6 @@ void cbMasterProfile() {
 
     if (Input::GetKeyPressed(Input::KEY_R)) {
         model_shader.compile();
-        uniform_shader.compile();
     }
 
     if (Input::GetKeyPressed(Input::KEY_0)) {
@@ -77,11 +60,6 @@ void cbMasterProfile() {
     if (Input::GetKeyPressed(Input::KEY_C)) {
         mouse_captured = !mouse_captured;
         glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
-    }
-
-    if (Input::GetKeyPressed(Input::KEY_U)) {
-        is_rotating = !is_rotating;
-		is_translating = !is_translating;
     }
 }
 
@@ -129,10 +107,6 @@ void mouse(GLFWwindow *window, double mouse_x, double mouse_y) {
 }
 
 void update() {
-    if (is_rotating == 1) {
-        saved_rot = fmod(glfwGetTime() * 45.0f, 360);
-    }
-
     const float PARTICLE_SPAWN_COUNT_PER_FRAME = 5;
     for (int i = 0; i < PARTICLE_SPAWN_COUNT_PER_FRAME; i++) {
         Particle p;
@@ -155,138 +129,27 @@ void display() {
     glClearColor(0.2f, 0.2f, 0.2f, 0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-    Math::Mat4 rot_mat = Math::Mat4::Identity(); 
-    rot_mat = Math::Mat4::Rotate(rot_mat, saved_rot, 0, 1, 0);
-
     Math::Mat4 perspective = Renderer::GetProjectionMatrix3D(WIDTH, HEIGHT, camera.zoom);
     Math::Mat4 view = camera.getViewMatrix();
 
     model_shader.setProjection(perspective);
     model_shader.setView(view);
 
-    /*
-
-    for (int i = 0; i < 4; i++) {
-        Math::Mat4 model = Math::Mat4::Identity();
-        model = rot_mat * translate_mats[i] * rot_mat;
-        diffuse_shader.setModel(model);
-        pole.draw(&diffuse_shader);
-
-        Math::Mat4 translate_mat = translate_mats[i];
-        if (is_translating) {
-            translate_mat.v[1].w = sin(glfwGetTime() * (1 + i)) - 0.5f;
-        }
-
-        model = rot_mat * translate_mat * animals_rot[i];
-        diffuse_shader.setModel(model);
-        if (i != 3) {
-            animals[i].draw(&diffuse_shader);
-        }
-    }
- 
     Math::Mat4 model = Math::Mat4::Identity();
-    model = Math::Mat4::Scale(model, 2);
-    model = rot_mat * model;
-    model = Math::Mat4::Translate(model, 0, 2.5f, 0);
-    diffuse_shader.setModel(model);
-    hexplane.draw(&diffuse_shader);
+    // model = Math::Mat4::Scale(model, 5);
+    // model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 90, 0));
+    // model = Math::Mat4::Translate(model, 0, 5, 0);
+    // model_shader.setModel(model);
+    // church.draw(&model_shader);
 
     model = Math::Mat4::Identity();
-    model = Math::Mat4::Scale(model, 2);
-    model = rot_mat * model;
-    model = Math::Mat4::Translate(model, 0, -2.5f, 0);
-    diffuse_shader.setModel(model);
-    hexplane.draw(&diffuse_shader);
-
-    model = Math::Mat4::Identity();
-    model = Math::Mat4::Scale(model, 5);
-    model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 90, 0));
-    model = rot_mat * model;
-    model = Math::Mat4::Translate(model, 0, 5, 0);
+    model = Math::Mat4::Scale(model, 0.5f);
     model_shader.setModel(model);
-    church.draw(&model_shader);
-
-    // quad.drawInstanced(&uniform_shader, 100);
-
-    // create model matrix
-    particle_shader.setView(view);
-    particle_shader.setProjection(perspective);
-    // particle_geometry.setVertexAttribute(8, ) // This will rebind GL_DYNAMIC_DRAW
-    // particle_geometry.drawInstanced(&particle_shader, MAX_PARTICLES);
+    terrain.draw(&model_shader);
 
     // LOG_WARN("Draw Call Count: %d\n", Renderer::GetDrawCallCount());
 
-    */
-
-    Math::Mat4 model = Math::Mat4::Identity();
-    model = Math::Mat4::Identity();
-    model = Math::Mat4::Scale(model, 5);
-    model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 90, 0));
-    model = rot_mat * model;
-    model = Math::Mat4::Translate(model, 0, 5, 0);
-    model_shader.setModel(model);
-    church.draw(&model_shader);
-
-    /*
-    model = Math::Mat4::Identity();
-    model = Math::Mat4::Scale(model, 1);
-    uniform_shader.setModel(model);
-    uniform_shader.setView(view);
-    uniform_shader.setProjection(perspective);
-
-    glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_2D, world_color_map_diffuse.id);
-    uniform_shader.setTextureUnit("uTexture", 0);
-
-    tquad.draw(&uniform_shader);
-    */
-
     Renderer::ClearTelemetry();
-}
-
-void init_pole_geometry() {
-    DS::Vector<Renderer::Vertex> vertices = {
-        Renderer::Vertex(Math::Vec3{-0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{-0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{+0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-
-        Renderer::Vertex(Math::Vec3{+0.05f, +2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{-0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{+0.05f, -2.5f, +0.0f}, Math::Vec3{1, 1, 1}),
-    };
-
-    // TODO(Jovanni): can you derive these flags from the vertex data???
-    pole = Renderer::Geometry(vertices);
-}
-
-void init_hexplane_geometry() {
-    DS::Vector<Renderer::Vertex> vertices = {
-        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{-0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{+0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
-
-        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{+0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{+1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-
-        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{+1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{+0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
-
-        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{+0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{-0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
-
-        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{-0.5f, +0.0f, -1.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{-1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-
-        Renderer::Vertex(Math::Vec3{+0.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{-1.0f, +0.0f, +0.0f}, Math::Vec3{1, 1, 1}),
-        Renderer::Vertex(Math::Vec3{-0.5f, +0.0f, +1.0f}, Math::Vec3{1, 1, 1}),
-    };
-
-    hexplane = Renderer::Geometry(vertices);
 }
 
 GLFWwindow* GLFW_INIT() {
@@ -330,50 +193,11 @@ glfwInit();
 }
 
 void init_models() {
-    animals[0] = Renderer::Geometry::Model("../../Models/cow.ply");
-    animals_rot[0] = Math::Mat4::Rotate(animals_rot[0], 270, 0, 1, 0);
-    translate_mats[0] = Math::Mat4::Translate(translate_mats[0], -2, 0, 0);
-
-    animals[1] = Renderer::Geometry::Model("../../Models/hippo.ply");
-    animals_rot[1] = Math::Mat4::Rotate(animals_rot[1], 90, 0, 1, 0);
-    translate_mats[1] = Math::Mat4::Translate(translate_mats[1], 2, 0, 0);
-
-    animals[2] = Renderer::Geometry::Model("../../Models/lion.ply");
-    animals_rot[2] = Math::Mat4::Rotate(animals_rot[2], 0, 0, 1, 0);
-    translate_mats[2] = Math::Mat4::Translate(translate_mats[2], 0, 0, 2);
-    translate_mats[3] = Math::Mat4::Translate(translate_mats[3], 0, 0, -2);
-
     church = Renderer::Geometry::Model("../../Models/church.glb");
-
-    DS::Vector<Renderer::Vertex> quad_vertices = {
-        Math::Vec3(-0.05f, +0.05f, 0),
-        Math::Vec3(+0.05f, -0.05f, 0),
-        Math::Vec3(-0.05f, -0.05f, 0),
-
-        Math::Vec3(-0.05f, +0.05f, 0),
-        Math::Vec3(+0.05f, -0.05f, 0),
-        Math::Vec3(+0.05f, +0.05f, 0),
-    };
-
-    quad = Renderer::Geometry(quad_vertices);
     
-    world_color_map_diffuse = Texture::LoadFromFile("../../Assets/world_color_map.png");
-    tquad = Renderer::Geometry::Quad(world_color_map_diffuse.width, world_color_map_diffuse.height);
-
-    int index = 0;
-    float offset = 0.1f;
-    translations = DS::Vector<Math::Vec2>(100);
-    translations.resize(100);
-    for (int y = -10; y < 10; y += 2) {
-        for (int x = -10; x < 10; x += 2) {
-            Math::Vec2 translation;
-            translation.x = (float)x / 10.0f + offset;
-            translation.y = (float)y / 10.0f + offset;
-            translations[index++] = translation;
-        }
-    }
-
-    quad.addInstanceVertexAttribute(8, translations);
+    Texture diffuse = Texture::LoadFromFile("../../Assets/world_color_map.png");
+    terrain = Renderer::Geometry::Quad(diffuse.width, diffuse.height, "../../Assets/world_height_map.png");
+    terrain.material.textures[TEXTURE_TYPE_DIFFUSE] = diffuse;
 }
 
 int main(int argc, char** argv) {
@@ -393,10 +217,7 @@ int main(int argc, char** argv) {
     Input::CreateProfile(MOVEMENT_PROFILE, cbMovementProfile);
     
     model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
-    uniform_shader = ShaderUniformColor({"../../ShaderSource/Uniform/uniform.vert", "../../ShaderSource/Uniform/uniform.frag"});
 
-	init_pole_geometry();
-    init_hexplane_geometry();
     init_models();
 
     camera = Camera(0, 1, 10);

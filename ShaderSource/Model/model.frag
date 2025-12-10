@@ -41,7 +41,7 @@ void main() {
         base_color = uMaterial.diffuse_color;
     }
 
-    vec3 ambient_light = (base_color * 0.25);
+    vec3 ambient_light = (base_color * 1.0); // 0.25
     final_rgb += ambient_light;
 
     if (uMaterial.has_normals || !uMaterial.has_normals) {

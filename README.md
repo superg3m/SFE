@@ -43,15 +43,12 @@ https://www.youtube.com/watch?v=kWQM1iQ1W0E
 // texture cache
 // adjust models to have bone info
 
-// terrain
-
 // Telemetry should be a seperate module thats robust
 
 // restructure renderer module
 // Platform should have window stuff, including glfw
-
+// Particles need Dynamic_Draw
 // Sphere: https://andrewnoske.com/wiki/Generating_a_sphere_as_a_3D_mesh
-
 // Implement Fog: https://www.youtube.com/watch?v=qslBNLeSPUc
 
 // Standardize Shaders

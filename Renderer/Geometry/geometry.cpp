@@ -8,6 +8,7 @@
 #include <Shader/shader_base.hpp>
 
 #include <renderer.hpp>
+#include <Random/random.hpp>
 
 namespace Renderer {
     static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
@@ -132,61 +133,74 @@ namespace Renderer {
         return ret;
     }
 
-    Geometry Geometry::Quad(int width, int height) {
-        RUNTIME_ASSERT_MSG((width % 2) == 0, "width must be even\n");
-        RUNTIME_ASSERT_MSG((height % 2) == 0, "height must be even\n");
+    float SampleHeight(int pixelY, int pixelX, const Texture& tex, float minH = -10.0f, float maxH = 10.0f) {
+        int index = (pixelY * tex.width + pixelX) * 4;
+        unsigned char value = tex.data[index];
 
-        #if 0
-            const int WIDTH = 10;
-            const int HEIGHT = 10;
-            
-            DS::Vector<Vertex> quad_vertices = DS::Vector<Vertex>(1);
-            for (int i = 0; i < HEIGHT; i++) {
-                for (int j = 0; j < WIDTH + 1; j += 1) {
-                    quad_vertices.push(Vertex(Math::Vec3(j, -i, 0)));
-                    quad_vertices.push(Vertex(Math::Vec3(j, -i - 1, 0)));
-                }
+        float t = (float)value / 255.0f;
 
-                if (i < (HEIGHT - 1)) {
-                    quad_vertices.push(Vertex(Math::Vec3(WIDTH, -i - 1, 0)));
-                    quad_vertices.push(Vertex(Math::Vec3(0, -i - 1, 0)));
-                }
-            }
-        #else 
-            const int HALF_WIDTH = width / 2;
-            const int HALF_HEIGHT = height / 2;
+        return Math::Lerp(minH, maxH, t);
+    }
 
-            // const float X_UV_STEP = 1.0f / (float)width;
-            // const float Y_UV_STEP = 1.0f / (float)height;
+    Geometry Geometry::Quad(int width, int height, const char* height_map_path) {
+        RUNTIME_ASSERT_MSG((width & 1) == 0, "width must be even\n");
+        RUNTIME_ASSERT_MSG((height & 1) == 0, "height must be even\n");
 
-            const int VERTICES_PER_ROW = (width + 1) * 2;
-            const int NUM_DEGENERATES = (height - 1) * 2;
-            const int TOTAL_VERTEX_COUNT = (VERTICES_PER_ROW * height) + NUM_DEGENERATES;
-            DS::Vector<Vertex> quad_vertices = DS::Vector<Vertex>(TOTAL_VERTEX_COUNT);
-            quad_vertices.resize(TOTAL_VERTEX_COUNT);
+        const int HALF_WIDTH = width / 2;
+        const int HALF_HEIGHT = height / 2;
 
-            int vertex_index = 0;
-            for (int i = -HALF_HEIGHT; i < HALF_HEIGHT; i++) {
-                const float v = Math::Remap(i, -HALF_HEIGHT, HALF_HEIGHT - 1, 0, 1);
-                for (int j = -HALF_WIDTH; j < HALF_WIDTH + 1; j++) {
-                    const float u = Math::Remap(j, -HALF_WIDTH, HALF_WIDTH, 0, 1);
+        // const float X_UV_STEP = 1.0f / (float)width;
+        // const float Y_UV_STEP = 1.0f / (float)height;
 
-                    quad_vertices[vertex_index].aPosition = Math::Vec3(j, 0, -i);
-                    quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
+        const int VERTICES_PER_ROW = (width + 1) * 2;
+        const int NUM_DEGENERATES = (height - 1) * 2;
+        const int TOTAL_VERTEX_COUNT = (VERTICES_PER_ROW * height) + NUM_DEGENERATES;
+        DS::Vector<Vertex> quad_vertices = DS::Vector<Vertex>(TOTAL_VERTEX_COUNT);
+        quad_vertices.resize(TOTAL_VERTEX_COUNT);
 
-                    quad_vertices[vertex_index].aPosition = Math::Vec3(j, 0 , -i - 1);
-                    quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
-                }
+        const int MIN_HEIGHT = 0;
+        const int MAX_HEIGHT = 20;
+ 
+        Texture height_map;
+        if (height_map_path) {
+            height_map = Texture::LoadFromFile(height_map_path, false);
+        }
+ 
+        int vertex_index = 0;
+        for (int i = -HALF_HEIGHT; i < HALF_HEIGHT; i++) {
+            const float v = Math::Remap(i, -HALF_HEIGHT, HALF_HEIGHT - 1, 0, 1);
+            for (int j = -HALF_WIDTH; j < HALF_WIDTH + 1; j++) {
+                const float u = Math::Remap(j, -HALF_WIDTH, HALF_WIDTH, 0, 1);
+                const int pi = Math::Remap(i, -HALF_HEIGHT, HALF_HEIGHT, 0, height - 1);
+                const int pj = Math::Remap(j, -HALF_WIDTH, HALF_WIDTH, 0, width - 1);
 
-                if (i < (HALF_HEIGHT - 1)) {
-                    // Carrige Return
-                    quad_vertices[vertex_index++].aPosition = Math::Vec3(HALF_WIDTH, 0, -i - 1);
-                    quad_vertices[vertex_index++].aPosition = Math::Vec3(-HALF_WIDTH, 0, -i - 1);
-                }
+                int y1 = SampleHeight(pi, pj, height_map, MIN_HEIGHT, MAX_HEIGHT);
+                quad_vertices[vertex_index].aPosition = Math::Vec3(j, y1, -i);
+                quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
+
+                int y2 = SampleHeight(pi + 1, pj, height_map, MIN_HEIGHT, MAX_HEIGHT);
+                quad_vertices[vertex_index].aPosition = Math::Vec3(j, y2 , -i - 1);
+                quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
             }
 
-            // do indices
-        #endif
+            // TODO(Jovanni): fix this degenerate vertex. Go left instead of doing the carrige return
+            if (i < (HALF_HEIGHT - 1)) {
+                // NOTE(Jovanni): This is basically a carrige return
+                int pi_next = Math::Remap(i + 1, -HALF_HEIGHT, HALF_HEIGHT, 0, height - 1);
+
+                int pj_right = width - 1;
+                float y_right = SampleHeight(pi_next, pj_right, height_map, MIN_HEIGHT, MAX_HEIGHT);
+                quad_vertices[vertex_index].aPosition = Math::Vec3(HALF_WIDTH, y_right, -i - 1);
+                quad_vertices[vertex_index++].aTexCoord = Math::Vec2(1, v);
+
+                int pj_left = 0;
+                float y_left = SampleHeight(pi_next, pj_left, height_map, MIN_HEIGHT, MAX_HEIGHT);
+                quad_vertices[vertex_index].aPosition = Math::Vec3(-HALF_WIDTH, y_left, -i - 1);
+                quad_vertices[vertex_index++].aTexCoord = Math::Vec2(0, v);
+            }
+        }
+
+        // do indices
 
         Geometry ret;
         ret.draw_type = GL_TRIANGLE_STRIP;
@@ -201,19 +215,16 @@ namespace Renderer {
 
     Geometry Geometry::AABB() {
         DS::Vector<Vertex> aabb_vertices = {
-            // Bottom face
             Vertex{Math::Vec3(-1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
             Vertex{Math::Vec3( 1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
             Vertex{Math::Vec3( 1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
             Vertex{Math::Vec3(-1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
 
-            // Top Math::Vec3(face
             Vertex{Math::Vec3(-1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
             Vertex{Math::Vec3( 1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
             Vertex{Math::Vec3( 1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
             Vertex{Math::Vec3(-1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
 
-            // Vertical edges
             Vertex{Math::Vec3(-1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3(-1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
             Vertex{Math::Vec3( 1.0f, -1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, 1.0f, -1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},
             Vertex{Math::Vec3( 1.0f, -1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)}, Vertex{Math::Vec3( 1.0f, 1.0f,  1.0f), Math::Vec3(0, 0, 0), Math::Vec2(0, 0)},

@@ -9,7 +9,7 @@ Texture::Texture() {
 
 }
 
-Texture Texture::LoadFromFile(const char* path) {
+Texture Texture::LoadFromFile(const char* path, bool should_free) {
     RUNTIME_ASSERT_MSG(Platform::FilePathExists(path), "Texture path: '%s' doesn't exist!\n", path);
     
     GLenum MIPMAP_TYPE = GL_LINEAR; // GET_BIT(texture_flags, 0) ? GL_NEAREST : GL_LINEAR;
@@ -49,7 +49,11 @@ Texture Texture::LoadFromFile(const char* path) {
         LOG_ERROR("TextureLoader | Failed to load texture\n");
     }
 
-    stbi_image_free(data);
+    if (should_free) {
+        stbi_image_free(data);
+        data = nullptr;
+    }
+
     stbi_set_flip_vertically_on_load(false);
 
     if (texture == 0) {
@@ -60,6 +64,7 @@ Texture Texture::LoadFromFile(const char* path) {
     ret.id = texture;
     ret.width = width;
     ret.height = height;
+    ret.data = data;
 
     LOG_WARN("Texture: %s\n", path);
     
@@ -105,4 +110,11 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
     ret.height = height;
 
     return ret;
+}
+
+void Texture::freeData() {
+    RUNTIME_ASSERT_MSG(this->data, "trying to free data that has already been freed or is nullptr\n");
+
+    stbi_image_free(this->data);
+    this->data = nullptr;
 }
