@@ -470,6 +470,15 @@ namespace Renderer {
         flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
+        for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
+            if (geo->vertex_count == 0) {
+                continue;
+            }
+
+            geo->material.has_normals = flags & VertexAttributeFlag::aNormal;
+            geo->material.has_texcoord = flags & VertexAttributeFlag::aTexCoord;
+        }
+
         for (const auto& desc : ALL_ATTRIBUTE_DESCRIPTORS) {
             if (flags & desc.flag) {
                 glEnableVertexAttribArray(desc.location);

@@ -6,7 +6,6 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-ShaderDiffuse diffuse_shader;
 ShaderModel model_shader;
 ShaderUniformColor uniform_shader;
 ShaderParticle particle_shader;
@@ -28,8 +27,8 @@ DS::Vector<Math::Vec2> translations;
 
 float saved_rot = 0.0f;
 float saved_translation = 0.0f;
-static int is_rotating = 1;
-static int is_translating = 1;
+bool is_rotating = false;
+bool is_translating = false;
 bool emit = false;
 
 #define MASTER_PROFILE "master"
@@ -56,7 +55,6 @@ void cbMasterProfile() {
     }
 
     if (Input::GetKeyPressed(Input::KEY_R)) {
-        diffuse_shader.compile();
         model_shader.compile();
         uniform_shader.compile();
     }
@@ -162,9 +160,6 @@ void display() {
 
     Math::Mat4 perspective = Renderer::GetProjectionMatrix3D(WIDTH, HEIGHT, camera.zoom);
     Math::Mat4 view = camera.getViewMatrix();
-
-    diffuse_shader.setProjection(perspective);
-    diffuse_shader.setView(view);
 
     model_shader.setProjection(perspective);
     model_shader.setView(view);
@@ -397,7 +392,6 @@ int main(int argc, char** argv) {
     Input::CreateProfile(MASTER_PROFILE, cbMasterProfile);
     Input::CreateProfile(MOVEMENT_PROFILE, cbMovementProfile);
     
-    diffuse_shader = ShaderDiffuse({"../../ShaderSource/Diffuse/diffuse.vert", "../../ShaderSource/Diffuse/diffuse.frag"});
     model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
     uniform_shader = ShaderUniformColor({"../../ShaderSource/Uniform/uniform.vert", "../../ShaderSource/Uniform/uniform.frag"});
 

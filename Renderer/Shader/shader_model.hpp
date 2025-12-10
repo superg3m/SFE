@@ -8,25 +8,16 @@ struct ShaderModel : public ShaderBase {
     ShaderModel(DS::Vector<const char*> shader_paths);
 
     void compile() override;
-    void setMaterial(const Material &material) const override;
+
     
     // Fragment Uniforms
+    void setLightPosition(Math::Vec3 &light_position) const;
+    void setCameraPosition(Math::Vec3 &camera_position) const;
+    void setMaterial(const Material &material) const override;
     void setEmissiveMaterial(bool should_emit) const;
-    void setViewPosition(Math::Vec3 &view_position) const;
-    void setUseFlashlight(bool useFlashlight) const;
-
-    // void setSpotLight(SpotLight &spot_light) const;
-    // void setDirectionalLight(DirectionalLight &directional_light) const;
-    // void setPointLight(PointLight &point_light, int index) const;
 private:
     // Fragment Uniforms
+    unsigned int uCameraPosition_Location;
     unsigned int uApplyEmissiveMaterial_Location;
-
-    // unsigned int uViewPosition_Location;
-    // unsigned int uUseFlashlight_Location;
-    // SpotLightLocation uSpotLight_Location;
-    // DirectionalLightLocation uDirectionalLight_Location;
-    // PointLightLocation uPointLight_Locations[LIGHT_COUNT];
-
     MaterialLocation uMaterial_Location;
 };

@@ -48,12 +48,15 @@ struct Material {
     
     Texture textures[TEXTURE_COUNT];
 
-    float shininess = 32.0f;
-    float opacity = 1.0f;
-
     Math::Vec3 ambient_color = Math::Vec3(1.0f);
     Math::Vec3 diffuse_color = Math::Vec3(1.0f);
     Math::Vec3 specular_color = Math::Vec3(1.0f);
+
+    float shininess = 32.0f;
+    float opacity = 1.0f;
+
+    bool has_normals = false;
+    bool has_texcoord = false;
 };
 
 struct MaterialLocation {
@@ -63,6 +66,10 @@ struct MaterialLocation {
     unsigned int ambient_color;
     unsigned int diffuse_color;
     unsigned int specular_color;
+
     unsigned int shininess;
     unsigned int opacity;
+
+    unsigned int has_normals;
+    unsigned int has_texcoord;
 };

@@ -56,7 +56,7 @@ https://www.youtube.com/watch?v=kWQM1iQ1W0E
 
 // Standardize Shaders
 - ShaderModel (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
-- ShaderUnlit (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
+- ShaderUnlit (pos, texture) (emissive)
 - ShaderUI (for ui and screen space stuff)
 - ShaderParticle (pos, texture, instancing and stuff)
 - ShaderSkyBox (pos, texture, instancing and stuff)
