@@ -12,19 +12,21 @@ struct ShaderModel : public ShaderBase {
     
     // Fragment Uniforms
     void setEmissiveMaterial(bool should_emit) const;
-    void setSpotLight(SpotLight &spot_light) const;
-    void setDirectionalLight(DirectionalLight &directional_light) const;
-    void setPointLight(PointLight &point_light, int index) const;
     void setViewPosition(Math::Vec3 &view_position) const;
     void setUseFlashlight(bool useFlashlight) const;
+
+    // void setSpotLight(SpotLight &spot_light) const;
+    // void setDirectionalLight(DirectionalLight &directional_light) const;
+    // void setPointLight(PointLight &point_light, int index) const;
 private:
     // Fragment Uniforms
-    SpotLightLocation uSpotLight_Location;
-    DirectionalLightLocation uDirectionalLight_Location;
-    PointLightLocation uPointLight_Locations[LIGHT_COUNT];
-    unsigned int uViewPosition_Location;
-    unsigned int uUseFlashlight_Location;
     unsigned int uApplyEmissiveMaterial_Location;
+
+    // unsigned int uViewPosition_Location;
+    // unsigned int uUseFlashlight_Location;
+    // SpotLightLocation uSpotLight_Location;
+    // DirectionalLightLocation uDirectionalLight_Location;
+    // PointLightLocation uPointLight_Locations[LIGHT_COUNT];
 
     MaterialLocation uMaterial_Location;
 };

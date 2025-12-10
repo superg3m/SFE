@@ -52,4 +52,11 @@ https://www.youtube.com/watch?v=kWQM1iQ1W0E
 
 // Sphere: https://andrewnoske.com/wiki/Generating_a_sphere_as_a_3D_mesh
 
-// figure out the terrain math
+// Implement Fog: https://www.youtube.com/watch?v=qslBNLeSPUc
+
+// Standardize Shaders
+- ShaderModel (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
+- ShaderUnlit (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
+- ShaderUI (for ui and screen space stuff)
+- ShaderParticle (pos, texture, instancing and stuff)
+- ShaderSkyBox (pos, texture, instancing and stuff)
