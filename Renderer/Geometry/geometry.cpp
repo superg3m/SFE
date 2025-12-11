@@ -149,9 +149,6 @@ namespace Renderer {
         const int HALF_WIDTH = width / 2;
         const int HALF_HEIGHT = height / 2;
 
-        // const float X_UV_STEP = 1.0f / (float)width;
-        // const float Y_UV_STEP = 1.0f / (float)height;
-
         const int VERTICES_PER_ROW = (width + 1) * 2;
         const int NUM_DEGENERATES = (height - 1) * 2;
         const int TOTAL_VERTEX_COUNT = (VERTICES_PER_ROW * height) + NUM_DEGENERATES;
