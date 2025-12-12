@@ -133,9 +133,11 @@ namespace Renderer {
         return ret;
     }
 
-    float SampleHeight(int pixelY, int pixelX, const Texture& tex, float minH = -10.0f, float maxH = 10.0f) {
-        int index = (pixelY * tex.width + pixelX) * 4;
-        unsigned char value = tex.data[index];
+    float getHeight(int pixelY, int pixelX, const Texture& texure, float minH = -10.0f, float maxH = 10.0f) {
+        if (texure.data == nullptr) return 0.0;
+
+        int index = (pixelY * texure.width + pixelX) * 4;
+        unsigned char value = texure.data[index];
 
         float t = (float)value / 255.0f;
 
@@ -171,11 +173,11 @@ namespace Renderer {
                 const int pi = Math::Remap(i, -HALF_HEIGHT, HALF_HEIGHT, 0, height - 1);
                 const int pj = Math::Remap(j, -HALF_WIDTH, HALF_WIDTH, 0, width - 1);
 
-                int y1 = SampleHeight(pi, pj, height_map, MIN_HEIGHT, MAX_HEIGHT);
+                int y1 = getHeight(pi, pj, height_map, MIN_HEIGHT, MAX_HEIGHT);
                 quad_vertices[vertex_index].aPosition = Math::Vec3(j, y1, -i);
                 quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
 
-                int y2 = SampleHeight(pi + 1, pj, height_map, MIN_HEIGHT, MAX_HEIGHT);
+                int y2 = getHeight(pi + 1, pj, height_map, MIN_HEIGHT, MAX_HEIGHT);
                 quad_vertices[vertex_index].aPosition = Math::Vec3(j, y2 , -i - 1);
                 quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
             }
@@ -186,12 +188,12 @@ namespace Renderer {
                 int pi_next = Math::Remap(i + 1, -HALF_HEIGHT, HALF_HEIGHT, 0, height - 1);
 
                 int pj_right = width - 1;
-                float y_right = SampleHeight(pi_next, pj_right, height_map, MIN_HEIGHT, MAX_HEIGHT);
+                float y_right = getHeight(pi_next, pj_right, height_map, MIN_HEIGHT, MAX_HEIGHT);
                 quad_vertices[vertex_index].aPosition = Math::Vec3(HALF_WIDTH, y_right, -i - 1);
                 quad_vertices[vertex_index++].aTexCoord = Math::Vec2(1, v);
 
                 int pj_left = 0;
-                float y_left = SampleHeight(pi_next, pj_left, height_map, MIN_HEIGHT, MAX_HEIGHT);
+                float y_left = getHeight(pi_next, pj_left, height_map, MIN_HEIGHT, MAX_HEIGHT);
                 quad_vertices[vertex_index].aPosition = Math::Vec3(-HALF_WIDTH, y_left, -i - 1);
                 quad_vertices[vertex_index++].aTexCoord = Math::Vec2(0, v);
             }

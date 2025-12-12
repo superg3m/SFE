@@ -34,7 +34,7 @@ because using globals is such a footgun...
 // Fix the namespacing (has to be less stuff to type)
 // Add ECS
 // OpenAL (Audio): https://www.youtube.com/watch?v=kWQM1iQ1W0E
-// Add GUI Module (Text, Immediate Mode Buttons, Slider, Color Picker, CheckMark, Radio)
+// Add GUI Module (Text, Immediate Mode Buttons, Slider, Color Picker, CheckMark, Radio, GUIZMO)
 // Add Hot Reloading
 
 // Standardize Shaders
