@@ -305,7 +305,7 @@ namespace DS {
 
         }
 
-        bool enqueue(T value) {
+        void enqueue(T value) {
             RUNTIME_ASSERT_MSG(!this->full(), "You may not enqueue if the ring queue is full!\n");
 
             this->m_data[this->m_write] = value;

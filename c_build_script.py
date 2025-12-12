@@ -55,14 +55,20 @@ libs = [
 ]
 
 if IS_WINDOWS():
+    if cc.compiler_name == "cl":
+        glfw_path = "../../Vendor/glfw/bin/windows/lib-static-ucrt/glfw3dll.lib"  
+    else: 
+        glfw_path = "../../Vendor/glfw/bin/windows/lib-mingw-w64/libglfw3dll.a"
+        inject += ["-L/ucrt64/lib", "-lassimp"] #hacky but works for now
+    
     libs += [
-        f"../../Vendor/glfw/bin/windows/lib-static-ucrt/glfw3dll.lib",
+        glfw_path,
         f"../../Vendor/assimp/bin/windows/assimp-vc143-mtd.lib",
-        "Kernel32.lib",
-        "User32.lib",
-        "Gdi32.lib",
-        "OpenGL32.lib", 
-        "Winmm.lib",
+        GET_LIB_FLAG(cc, "Kernel32"),
+        GET_LIB_FLAG(cc, "User32"),
+        GET_LIB_FLAG(cc, "Gdi32"),
+        GET_LIB_FLAG(cc, "OpenGL32"), 
+        GET_LIB_FLAG(cc, "Winmm"),
     ]
 elif IS_DARWIN():
     inject += ["-Wl,-rpath,@executable_path"]
@@ -101,7 +107,9 @@ procedures_config = {
             "../../Vendor/glfw",
             "../../Vendor/assimp/include",
         ],
-        compiler_inject_into_args=[]
+        compiler_inject_into_args=[
+
+        ]
     ),
 
     "sfe exe": ProcedureConfig(
@@ -132,7 +140,11 @@ manager.build_project()
 # ------------------------------------------------------------------------------------
 
 if IS_WINDOWS():
-    COPY_FILE_TO_DIR("./Vendor/glfw/bin/windows/lib-static-ucrt", "glfw3.dll", build_postfix)
+    if cc.compiler_name == "cl":
+        COPY_FILE_TO_DIR("./Vendor/glfw/bin/windows/lib-static-ucrt", "glfw3.dll", build_postfix)
+    else:
+        COPY_FILE_TO_DIR("./Vendor/glfw/bin/windows/lib-mingw-w64", "glfw3.dll", build_postfix)
+            
     COPY_FILE_TO_DIR("./Vendor/assimp/bin/windows", "assimp-vc143-mtd.dll", build_postfix)
 elif IS_DARWIN():
     COPY_FILE_TO_DIR("./Vendor/assimp/bin/macos", "libassimp.6.dylib", build_postfix)
