@@ -1,10 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <string>
-
 #include <glad/glad.h>
-
 #include <DataStructure/ds.hpp>
 #include <Geometry/material.hpp>
 #include <Math/matrix.hpp>

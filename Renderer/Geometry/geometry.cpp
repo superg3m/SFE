@@ -5,9 +5,9 @@
 #include <DataStructure/contiguous.hpp>
 #include <Geometry/geometry.hpp>
 #include <Geometry/vertex.hpp>
-#include <Shader/shader_base.hpp>
+#include <ShaderBase/shader_base.hpp>
 
-#include <renderer.hpp>
+#include <renderer_state.hpp>
 #include <Random/random.hpp>
 
 namespace Renderer {

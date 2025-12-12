@@ -11,7 +11,7 @@
 #include <Geometry/material.hpp>
 #include <Geometry/vertex.hpp>
 
-#include <renderer.hpp>
+#include <renderer_state.hpp>
 
 #define MAX_BONES 128
 

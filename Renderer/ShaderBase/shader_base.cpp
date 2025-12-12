@@ -1,9 +1,8 @@
-#include "shader_base.hpp"
-
+#include <ShaderBase/shader_base.hpp>
 #include <DataStructure/ds.hpp>
 #include <String/string.hpp>
 #include <platform.hpp>
-#include <renderer.hpp>
+#include <renderer_state.hpp>
 
 static const char* glEnumToString(GLenum type) {
     switch (type) {

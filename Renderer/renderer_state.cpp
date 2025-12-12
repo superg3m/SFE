@@ -1,6 +1,7 @@
-#include <renderer.hpp>
 #include <glad/glad.h>
+
 #include <Common/common.hpp>
+#include <renderer_state.hpp>
 
 void glCheckError_(const char *file, int line) {
     GLenum errorCode;
