@@ -45,6 +45,7 @@ u32 next_available_particle_index;
 
 Math::Vec3 light_position = Math::Vec3(0, 10, 0);
 
+Math::Vec3 camera_target = Math::Vec3(0, 20, 0);
 int camera_point_index = 0;
 Math::Vec3 camera_points[4];
 const float TERRAIN_SCALE = 0.25;
@@ -204,6 +205,8 @@ void update() {
 
     if (smooth_camera) {
         camera.position = vec3MoveTowardModified(camera.position, camera_points[camera_point_index], camera.movement_speed * dt);
+        camera.front = (camera_target - camera.position).normalize();
+        camera.up = Math::Vec3(0, 1, 0);
         if (camera.position == camera_points[camera_point_index]) {
             camera_point_index = (camera_point_index + 1) % 4;
         }
@@ -215,7 +218,7 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
     Math::Mat4 perspective = Renderer::GetProjectionMatrix3D(WIDTH, HEIGHT, camera.zoom);
-    Math::Mat4 view = smooth_camera ? Math::Mat4::Lookat(camera.position, Math::Vec3(0, 20, 0), Math::Vec3(0, 1, 0)) : camera.getViewMatrix();
+    Math::Mat4 view = smooth_camera ? Math::Mat4::Lookat(camera.position, camera_target, Math::Vec3(0, 1, 0)) : camera.getViewMatrix();
 
     cloud_shader.setProjection(perspective);
     terrain_shader.setProjection(perspective);
