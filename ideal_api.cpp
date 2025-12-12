@@ -32,6 +32,7 @@ bool smooth_camera = false;
 Camera camera;
 bool mouse_captured = true;
 float dt = 0;
+float accumulator = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
 int height_boost = 0;
@@ -75,7 +76,7 @@ void cbMasterProfile() {
 
     if (Input::GetKeyPressed(Input::KEY_K)) {
         smooth_camera = !smooth_camera;
-        Input::ToggleProfile(MOVEMENT_PROFILE, !smooth_camera);
+        Input::ToggleProfile(MOVEMENT_PROFILE, movement_profile_active && !smooth_camera);
     }
 
     if (Input::GetKeyPressed(Input::KEY_0)) {
@@ -255,10 +256,12 @@ void display() {
 
     model = Math::Mat4::Identity();
     model = Math::Mat4::Scale(model, diffuse.width * TERRAIN_SCALE, diffuse.height * TERRAIN_SCALE, 1);
-    model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 0, 0));
-    model = Math::Mat4::Translate(model, 0, 20, 0);
+    model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(-90, 0, 0));
+    model = Math::Mat4::Translate(model, 0, 40, 0);
     cloud_shader.setModel(model);
     cloud_shader.setCloudTexture(cloud);
+    cloud_shader.setFloat("uOffsetX", cosf(0.05 * accumulator));
+    cloud_shader.setFloat("uOffsetY", sinf(0.05 * accumulator));
     Renderer::SetBlending(true);
     clouds.draw(&cloud_shader);
     Renderer::SetBlending(false);
@@ -325,9 +328,9 @@ void init_geometry() {
 
     terrain = Renderer::Geometry::Quad(diffuse.width, diffuse.height);
     camera_points[0] = Math::Vec3{-((diffuse.width * TERRAIN_SCALE) / 2.0f), 60, (diffuse.height * TERRAIN_SCALE) / 2.0f};
-    camera_points[1] = Math::Vec3{-((diffuse.width * TERRAIN_SCALE) / 2.0f), 40, -(diffuse.height * TERRAIN_SCALE) / 2.0f};
+    camera_points[1] = Math::Vec3{-((diffuse.width * TERRAIN_SCALE) / 2.0f), 30, -(diffuse.height * TERRAIN_SCALE) / 2.0f};
     camera_points[2] = Math::Vec3{((diffuse.width * TERRAIN_SCALE) / 2.0f), 60, -(diffuse.height * TERRAIN_SCALE) / 2.0f};
-    camera_points[3] = Math::Vec3{((diffuse.width * TERRAIN_SCALE) / 2.0f), 40, (diffuse.height * TERRAIN_SCALE) / 2.0f};
+    camera_points[3] = Math::Vec3{((diffuse.width * TERRAIN_SCALE) / 2.0f), 30, (diffuse.height * TERRAIN_SCALE) / 2.0f};
 
     light = Renderer::Geometry::Cube();
 
@@ -365,6 +368,8 @@ int main(int argc, char** argv) {
         float current = glfwGetTime();
         dt = current - previous;
         previous = current;
+
+        accumulator += dt;
 
         if (timer == 0) {
             timer = 2;
