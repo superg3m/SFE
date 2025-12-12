@@ -140,6 +140,7 @@ void display() {
     // church.draw(&model_shader);
 
     model = Math::Mat4::Identity();
+    // model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 0, 0));
     model = Math::Mat4::Scale(model, 0.5f);
     model_shader.setModel(model);
     terrain.draw(&model_shader);
@@ -184,7 +185,7 @@ GLFWwindow* GLFW_INIT() {
     }
 
 
-    glfwSwapInterval(1);
+    glfwSwapInterval(1); // vsync
     glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
 
     glEnable(GL_MULTISAMPLE);
@@ -200,8 +201,8 @@ GLFWwindow* GLFW_INIT() {
 void init_models() {
     church = Renderer::Geometry::Model("../../Models/church.glb");
     
-    Texture diffuse = Texture::LoadFromFile("../../Assets/world_color_map.png");
-    terrain = Renderer::Geometry::Quad(diffuse.width, diffuse.height, "../../Assets/world_height_map.png");
+    Texture diffuse = Texture::LoadFromFile("../../Assets/iceland_heightmap.png");
+    terrain = Renderer::Geometry::Quad(diffuse.width, diffuse.height, "../../Assets/iceland_heightmap.png");
     terrain.material.textures[TEXTURE_TYPE_DIFFUSE] = diffuse;
 }
 
@@ -227,10 +228,18 @@ int main(int argc, char** argv) {
 
     camera = Camera(0, 1, 10);
     float previous = 0;
+    float timer = 1;
 	while (!glfwWindowShouldClose(window)) {
         float current = glfwGetTime();
         dt = current - previous;
         previous = current;
+
+        if (timer == 0) {
+            timer = 1;
+            LOG_DEBUG("FPS: %d\n", (int)(1.0f / dt));
+        } else {
+            timer = Math::MoveToward(timer, 0, dt);
+        }
 
         Input::Poll();
 

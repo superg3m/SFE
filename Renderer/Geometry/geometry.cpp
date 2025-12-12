@@ -148,67 +148,69 @@ namespace Renderer {
         RUNTIME_ASSERT_MSG((width & 1) == 0, "width must be even\n");
         RUNTIME_ASSERT_MSG((height & 1) == 0, "height must be even\n");
 
-        const int HALF_WIDTH = width / 2;
-        const int HALF_HEIGHT = height / 2;
-
-        const int VERTICES_PER_ROW = (width + 1) * 2;
-        const int NUM_DEGENERATES = (height - 1) * 2;
-        const int TOTAL_VERTEX_COUNT = (VERTICES_PER_ROW * height) + NUM_DEGENERATES;
-        DS::Vector<Vertex> quad_vertices = DS::Vector<Vertex>(TOTAL_VERTEX_COUNT);
-        quad_vertices.resize(TOTAL_VERTEX_COUNT);
-
-        const int MIN_HEIGHT = 0;
-        const int MAX_HEIGHT = 20;
- 
         Texture height_map;
         if (height_map_path) {
             height_map = Texture::LoadFromFile(height_map_path, false);
         }
- 
-        int vertex_index = 0;
-        for (int i = -HALF_HEIGHT; i < HALF_HEIGHT; i++) {
-            const float v = Math::Remap(i, -HALF_HEIGHT, HALF_HEIGHT - 1, 0, 1);
-            for (int j = -HALF_WIDTH; j < HALF_WIDTH + 1; j++) {
-                const float u = Math::Remap(j, -HALF_WIDTH, HALF_WIDTH, 0, 1);
-                const int pi = Math::Remap(i, -HALF_HEIGHT, HALF_HEIGHT, 0, height - 1);
-                const int pj = Math::Remap(j, -HALF_WIDTH, HALF_WIDTH, 0, width - 1);
 
-                int y1 = getHeight(pi, pj, height_map, MIN_HEIGHT, MAX_HEIGHT);
-                quad_vertices[vertex_index].aPosition = Math::Vec3(j, y1, -i);
-                quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
+        const int TOTAL_VERTEX_COUNT = width * height;
+        DS::Vector<Vertex> vertices = DS::Vector<Vertex>(TOTAL_VERTEX_COUNT);
+        vertices.resize(TOTAL_VERTEX_COUNT);
 
-                int y2 = getHeight(pi + 1, pj, height_map, MIN_HEIGHT, MAX_HEIGHT);
-                quad_vertices[vertex_index].aPosition = Math::Vec3(j, y2 , -i - 1);
-                quad_vertices[vertex_index++].aTexCoord = Math::Vec2(u, v);
-            }
+        int idx = 0;
+        const int HALF_WIDTH = width / 2;
+        const int HALF_HEIGHT = height / 2;
+        float yScale = 64.0f / 256.0f, yShift = 16.0f;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                float x = j - HALF_WIDTH;
+                float y = 0.0f;
+                float z = HALF_HEIGHT - i;
+                if (height_map_path) {
+                    unsigned char red_pixel_value = height_map.data[(i * height_map.width + j) * 4];
+                    // float t = (float)red_pixel_value / 255.0f;
 
-            // TODO(Jovanni): fix this degenerate vertex. Go left instead of doing the carrige return
-            if (i < (HALF_HEIGHT - 1)) {
-                // NOTE(Jovanni): This is basically a carrige return
-                int pi_next = Math::Remap(i + 1, -HALF_HEIGHT, HALF_HEIGHT, 0, height - 1);
+                    y = red_pixel_value;
+                }
 
-                int pj_right = width - 1;
-                float y_right = getHeight(pi_next, pj_right, height_map, MIN_HEIGHT, MAX_HEIGHT);
-                quad_vertices[vertex_index].aPosition = Math::Vec3(HALF_WIDTH, y_right, -i - 1);
-                quad_vertices[vertex_index++].aTexCoord = Math::Vec2(1, v);
+                const float u = Math::Remap(j, 0, width, 0, 1);
+                const float v = Math::Remap(i, 0, height - 1, 0, 1);
 
-                int pj_left = 0;
-                float y_left = getHeight(pi_next, pj_left, height_map, MIN_HEIGHT, MAX_HEIGHT);
-                quad_vertices[vertex_index].aPosition = Math::Vec3(-HALF_WIDTH, y_left, -i - 1);
-                quad_vertices[vertex_index++].aTexCoord = Math::Vec2(0, v);
+                vertices[idx].aPosition = Math::Vec3(x, (int)y * yScale - yShift, z);
+                vertices[idx++].aTexCoord = Math::Vec2(u, v);
             }
         }
 
-        // do indices
+        DS::Vector<unsigned> indices = DS::Vector<unsigned>((width - 1) * (height - 1) * 6);
+        for (int i = 0; i < height - 1; i++) {
+            for (int j = 0; j < width - 1; j++) {
+
+                unsigned tl =  i      * width + j;
+                unsigned tr =  i      * width + (j + 1);
+                unsigned bl = (i + 1) * width + j;
+                unsigned br = (i + 1) * width + (j + 1);
+
+                // Triangle 1 (counter-clockwise)
+                indices.push(tl);
+                indices.push(bl);
+                indices.push(tr);
+
+                // Triangle 2 (counter-clockwise)
+                indices.push(bl);
+                indices.push(br);
+                indices.push(tr);
+            }
+        }
 
         Geometry ret;
-        ret.draw_type = GL_TRIANGLE_STRIP;
-        ret.vertices = quad_vertices;
-        ret.vertex_count = ret.vertices.count();
-        ret.index_count = ret.indices.count();
+        ret.draw_type = GL_TRIANGLES;
+        ret.vertices = vertices;
+        ret.indices = indices;
+
+        ret.vertex_count = vertices.count();
+        ret.index_count = indices.count();
 
         ret.setup();
-
         return ret;
     }
 

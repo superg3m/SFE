@@ -87,7 +87,7 @@ namespace DS {
             const byte_t new_allocation_size = sizeof(T) * count;
 
             if (new_allocation_size > total_allocation_size) {
-                this->m_data = Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
+                this->m_data = (T*)Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
                 this->m_capacity = count;
             }
         }
