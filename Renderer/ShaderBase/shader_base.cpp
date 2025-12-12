@@ -3,6 +3,7 @@
 #include <String/string.hpp>
 #include <platform.hpp>
 #include <renderer_state.hpp>
+#include <gl_check.hpp>
 
 static const char* glEnumToString(GLenum type) {
     switch (type) {

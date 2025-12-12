@@ -6,9 +6,9 @@
 #include <Geometry/geometry.hpp>
 #include <Geometry/vertex.hpp>
 #include <ShaderBase/shader_base.hpp>
-
-#include <renderer_state.hpp>
 #include <Random/random.hpp>
+#include <renderer_state.hpp>
+#include <gl_check.hpp>
 
 namespace Renderer {
     static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
