@@ -28,7 +28,7 @@ pc: ProjectConfig = ProjectConfig(
 )
 
 if IS_WINDOWS() and not C_BUILD_IS_DEPENDENCY():
-    cc.compiler_name = "cl"
+    cc.compiler_name = "g++"
 elif IS_DARWIN() and not C_BUILD_IS_DEPENDENCY():
     cc.compiler_name = "clang"
 elif IS_LINUX() and not C_BUILD_IS_DEPENDENCY():
@@ -55,9 +55,6 @@ libs = [
 ]
 
 if IS_WINDOWS():
-    COPY_FILE_TO_DIR("./Vendor/glfw/bin/windows/lib-static-ucrt", "glfw3.dll", build_postfix)
-    COPY_FILE_TO_DIR("./Vendor/assimp/bin/windows", "assimp-vc143-mtd.dll", build_postfix)
-    
     libs += [
         f"../../Vendor/glfw/bin/windows/lib-static-ucrt/glfw3dll.lib",
         f"../../Vendor/assimp/bin/windows/assimp-vc143-mtd.lib",
@@ -68,8 +65,6 @@ if IS_WINDOWS():
         "Winmm.lib",
     ]
 elif IS_DARWIN():
-    COPY_FILE_TO_DIR("./Vendor/assimp/bin/macos", "libassimp.6.dylib", build_postfix)
-    
     inject += ["-Wl,-rpath,@executable_path"]
     libs += [
         f"../../Vendor/glfw/bin/macos/lib-arm64/libglfw3.a",
@@ -135,3 +130,9 @@ procedures_config = {
 manager: Manager = Manager(cc, pc, procedures_config)
 manager.build_project()
 # ------------------------------------------------------------------------------------
+
+if IS_WINDOWS():
+    COPY_FILE_TO_DIR("./Vendor/glfw/bin/windows/lib-static-ucrt", "glfw3.dll", build_postfix)
+    COPY_FILE_TO_DIR("./Vendor/assimp/bin/windows", "assimp-vc143-mtd.dll", build_postfix)
+elif IS_DARWIN():
+    COPY_FILE_TO_DIR("./Vendor/assimp/bin/macos", "libassimp.6.dylib", build_postfix)
