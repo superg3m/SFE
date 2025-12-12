@@ -12,9 +12,9 @@ uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
 
-uniform float uWidth;        // grid width  (number of quads)
-uniform float uHeight;       // grid height (number of quads)
-uniform int uHeightBoost;  // height scale
+uniform float uWidth;
+uniform float uHeight;
+uniform int uHeightBoost;
 uniform sampler2D uHeightTexture;
 
 void main()
@@ -23,9 +23,7 @@ void main()
     float Z_STEP = 1.0 / uHeight;
 
     vec2 tc_uv = aTexCoord;
-
     float hC = texture(uHeightTexture, tc_uv).r * uHeightBoost;
-
     vec3 worldPos = aPos;
     worldPos.y += hC;
 
