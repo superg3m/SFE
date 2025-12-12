@@ -1,3 +1,4 @@
+#include <input.hpp>
 #include <input_glfw.hpp>
 
 namespace Input {
