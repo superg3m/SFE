@@ -156,53 +156,49 @@ void ShaderBase::setProjection(Math::Mat4 &projection) const {
 
 void ShaderBase::setBool(const char* name, bool value) const {
     this->use();
-    glUniform1i(this->getUniformLocation(name, GL_BOOL), (int)value);
+    glCheckError(glUniform1i(this->getUniformLocation(name, GL_BOOL), (int)value));
 }
 void ShaderBase::setInt(const char* name, int value) const {
     this->use();
-    glUniform1i(this->getUniformLocation(name, GL_INT), value);
-}
-void ShaderBase::setTextureUnit(const char* name, int value) const {
-    this->use();
-    glUniform1i(this->getUniformLocation(name, GL_SAMPLER_2D), value);
+    glCheckError(glUniform1i(this->getUniformLocation(name, GL_INT), value));
 }
 void ShaderBase::setFloat(const char* name, float value) const {
     this->use();
-    glUniform1f(this->getUniformLocation(name, GL_FLOAT), value);
+    glCheckError(glUniform1f(this->getUniformLocation(name, GL_FLOAT), value));
 }
 void ShaderBase::setVec2(const char* name, const Math::Vec2& value) const {
     this->use();
-    glUniform2fv(this->getUniformLocation(name, GL_FLOAT_VEC2), 1, &value.x);
+    glCheckError(glUniform2fv(this->getUniformLocation(name, GL_FLOAT_VEC2), 1, &value.x));
 }
 void ShaderBase::setVec2(const char* name, float x, float y) const {
     this->use();
-    glUniform2f(this->getUniformLocation(name, GL_FLOAT_VEC2), x, y);
+    glCheckError(glUniform2f(this->getUniformLocation(name, GL_FLOAT_VEC2), x, y));
 }
 void ShaderBase::setVec3(const char* name, const Math::Vec3& value) const {
     this->use();
-    glUniform3fv(this->getUniformLocation(name, GL_FLOAT_VEC3), 1, &value.x);
+    glCheckError(glUniform3fv(this->getUniformLocation(name, GL_FLOAT_VEC3), 1, &value.x));
 }
 void ShaderBase::setVec3(const char* name, float x, float y, float z) const {
     this->use();
-    glUniform3f(this->getUniformLocation(name, GL_FLOAT_VEC3), x, y, z);
+    glCheckError(glUniform3f(this->getUniformLocation(name, GL_FLOAT_VEC3), x, y, z));
 }
 void ShaderBase::setVec4(const char* name, const Math::Vec4& value) const {
     this->use();
-    glUniform4fv(this->getUniformLocation(name, GL_FLOAT_VEC4), 1, &value.x);
+    glCheckError(glUniform4fv(this->getUniformLocation(name, GL_FLOAT_VEC4), 1, &value.x));
 }
 void ShaderBase::setVec4(const char* name, float x, float y, float z, float w) const {
     this->use();
-    glUniform4f(this->getUniformLocation(name, GL_FLOAT_VEC4), x, y, z, w);
+    glCheckError(glUniform4f(this->getUniformLocation(name, GL_FLOAT_VEC4), x, y, z, w));
 }
 void ShaderBase::setMat4(const char* name, const Math::Mat4& mat) const {
     this->use();
-    glUniformMatrix4fv(this->getUniformLocation(name, GL_FLOAT_MAT4), 1, GL_TRUE, &mat.v[0].x);
+    glCheckError(glUniformMatrix4fv(this->getUniformLocation(name, GL_FLOAT_MAT4), 1, GL_TRUE, &mat.v[0].x));
 }
 
 // protected
 void ShaderBase::setBool(unsigned int location, bool value) const {
     this->use();
-    glUniform1i(location, (int)value);
+    glCheckError(glUniform1i(location, (int)value));
 }
 void ShaderBase::setInt(unsigned int location, int value) const {
     this->use();
@@ -210,33 +206,33 @@ void ShaderBase::setInt(unsigned int location, int value) const {
 }
 void ShaderBase::setFloat(unsigned int location, float value) const {
     this->use();
-    glUniform1f(location, value);
+    glCheckError(glUniform1f(location, value));
 }
 void ShaderBase::setVec2(unsigned int location, const Math::Vec2& value) const {
     this->use();
-    glUniform2fv(location, 1, &value.x);
+    glCheckError(glUniform2fv(location, 1, &value.x));
 }
 void ShaderBase::setVec2(unsigned int location, float x, float y) const {
     this->use();
-    glUniform2f(location, x, y);
+    glCheckError(glUniform2f(location, x, y));
 }
 void ShaderBase::setVec3(unsigned int location, const Math::Vec3& value) const {
     this->use();
-    glUniform3fv(location, 1, &value.x);
+    glCheckError(glUniform3fv(location, 1, &value.x));
 }
 void ShaderBase::setVec3(unsigned int location, float x, float y, float z) const {
     this->use();
-    glUniform3f(location, x, y, z);
+    glCheckError(glUniform3f(location, x, y, z));
 }
 void ShaderBase::setVec4(unsigned int location, const Math::Vec4& value) const {
     this->use();
-    glUniform4fv(location, 1, &value.x);
+    glCheckError(glUniform4fv(location, 1, &value.x));
 }
 void ShaderBase::setVec4(unsigned int location, float x, float y, float z, float w) const {
     this->use();
-    glUniform4f(location, x, y, z, w);
+    glCheckError(glUniform4f(location, x, y, z, w));
 }
 void ShaderBase::setMat4(unsigned int location, const Math::Mat4& mat) const {
     this->use();
-    glUniformMatrix4fv(location, 1, GL_TRUE, &mat.v[0].x);
+    glCheckError(glUniformMatrix4fv(location, 1, GL_TRUE, &mat.v[0].x));
 }

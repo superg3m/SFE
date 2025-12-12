@@ -69,9 +69,9 @@ namespace Input {
     float GetMouseX();
     float GetMouseY();
 
-    void CreateProfile(const char* key, CALLBACK callback);
+    void CreateProfile(const char* key, CALLBACK callback, bool active = true);
     void DeleteProfile(const char* key);
-    void ToggleProfile(const char* key);
+    void ToggleProfile(const char* key, bool toggle);
     void EnableProfile(const char* key);
     void DisableProfile(const char* key);
 

@@ -31,6 +31,7 @@ namespace Math {
         static float DistanceSquared(Vec2 a, Vec2 b);
         static Vec2 Closest(Vec2 a, Vec2 b, Vec2 target = Vec2(0)); // normally the target is the origin
         static Vec2 Lerp(Vec2 a, Vec2 b, float t);
+        static Vec2 MoveToward(Vec2 a, Vec2 b, float dt);
         static Vec2 Euler(float yaw, float pitch);
 
         Vec2 operator+(const Vec2 &right);
@@ -93,6 +94,7 @@ namespace Math {
         static float DistanceSquared(Vec3 a, Vec3 b);
         static Vec3 Closest(Vec3 a, Vec3 b, Vec3 target = Vec3(0)); // normally the target is the origin
         static Vec3 Lerp(Vec3 a, Vec3 b, float t);
+        static Vec3 MoveToward(Vec3 a, Vec3 b, float dt);
         static Vec3 Cross(Vec3 a, Vec3 b);
         static Vec3 Euler(float yaw, float pitch);
 
@@ -153,6 +155,7 @@ namespace Math {
          */
         static float Dot(Vec4 a, Vec4 b);
         static Vec4 Lerp(Vec4 a, Vec4 b, float t);
+        static Vec4 MoveToward(Vec4 a, Vec4 b, float dt);
         static float Distance(Vec4 a, Vec4 b);
         static float DistanceSquared(Vec4 a, Vec4 b);
         static Vec4 Closest(Vec4 a, Vec4 b, Vec4 target = Vec4(0)); // normally the target is the origin

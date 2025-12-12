@@ -1,5 +1,6 @@
 #include <Common/common.hpp>
 #include <Math/vector.hpp>
+#include <Math/utility.hpp>
 
 namespace Math {
     Vec2::Vec2() {
@@ -76,6 +77,14 @@ namespace Math {
     Vec2 Vec2::Lerp(Vec2 a, Vec2 b, float t) {
         Vec2 ab = (b - a);
         return a + (ab.scale(t));
+    }
+
+    Vec2 Vec2::MoveToward(Vec2 a, Vec2 b, float dt) {
+        Vec2 ret = Vec2(0);
+        ret.x = Math::MoveToward(a.x, b.x, dt);
+        ret.y = Math::MoveToward(a.y, b.y, dt);
+        
+        return ret;
     }
 
     Vec2 Vec2::Euler(float yaw, float pitch) {
@@ -225,6 +234,15 @@ namespace Math {
     Vec3 Vec3::Lerp(Vec3 a, Vec3 b, float t) {
         Vec3 ab = (b - a);
         return a + (ab.scale(t));
+    }
+
+    Vec3 Vec3::MoveToward(Vec3 a, Vec3 b, float dt) {
+        Vec3 ret = Vec3(0);
+        ret.x = Math::MoveToward(a.x, b.x, dt);
+        ret.y = Math::MoveToward(a.y, b.y, dt);
+        ret.z = Math::MoveToward(a.z, b.z, dt);
+        
+        return ret;
     }
 
     Vec3 Vec3::Cross(Vec3 A, Vec3 B) {
@@ -390,6 +408,15 @@ namespace Math {
         return a + (ab.scale(t));
     }
 
+    Vec4 Vec4::MoveToward(Vec4 a, Vec4 b, float dt) {
+        Vec4 ret = Vec4(0);
+        ret.x = Math::MoveToward(a.x, b.x, dt);
+        ret.y = Math::MoveToward(a.y, b.y, dt);
+        ret.z = Math::MoveToward(a.z, b.z, dt);
+        ret.w = Math::MoveToward(a.w, b.w, dt);
+        
+        return ret;
+    }
 
     Vec4 Vec4::operator+(const Vec4 &right) {
         return Vec4(this->x + right.x, this->y + right.y, this->z + right.z, this->w + right.w);

@@ -6,28 +6,58 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-ShaderModel model_shader;
+// ShaderModel model_shader;
+ShaderCloud cloud_shader;
+ShaderTerrain terrain_shader;
+ShaderUniformColor uniform_shader;
 // ShaderParticle particle_shader;
 
 Renderer::Geometry church;
 Renderer::Geometry terrain;
+Renderer::Geometry clouds;
+Renderer::Geometry light;
 // Renderer::Geometry particle_geometry;
 
 bool emit = false;
+Texture diffuse;
+Texture height;
+Texture cloud;
 
 #define MASTER_PROFILE "master"
 #define MOVEMENT_PROFILE "movement"
+#define LIGHT_PROFILE "light"
 
 // This should be a grouping of state
+bool smooth_camera = false;
 Camera camera;
 bool mouse_captured = true;
 float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
+int height_boost = 0;
+bool render_shading = true;
+bool render_normals = false;
 
 const int MAX_PARTICLES = 1000;
 Particle particles[MAX_PARTICLES];
 u32 next_available_particle_index;
+
+Math::Vec3 light_position = Math::Vec3(0, 10, 0);
+
+int camera_point_index = 0;
+Math::Vec3 camera_points[4];
+const float TERRAIN_SCALE = 0.25;
+
+bool movement_profile_active = true; 
+
+Math::Vec3 vec3MoveTowardModified(Math::Vec3 a, Math::Vec3 b, float delta) {
+    Math::Vec3 ret = Math::Vec3(0);
+    ret.x = Math::MoveToward(a.x, b.x, delta);
+    ret.y = Math::MoveToward(a.y, b.y, 0.2f * delta);
+    ret.z = Math::MoveToward(a.z, b.z, delta);
+    
+    return ret;
+}
 
 void cbMasterProfile() {
     GLFWwindow* window = (GLFWwindow*)Input::glfw_window_instance;
@@ -38,16 +68,24 @@ void cbMasterProfile() {
     }
 
     if (Input::GetKeyPressed(Input::KEY_R)) {
-        model_shader.compile();
+        cloud_shader.compile();
+        terrain_shader.compile();
+        uniform_shader.compile();
+    }
+
+    if (Input::GetKeyPressed(Input::KEY_K)) {
+        smooth_camera = !smooth_camera;
+        Input::ToggleProfile(MOVEMENT_PROFILE, !smooth_camera);
     }
 
     if (Input::GetKeyPressed(Input::KEY_0)) {
         emit = !emit;
-        model_shader.setEmissiveMaterial(emit);
     }
 
     if (SHIFT && Input::GetKeyPressed(Input::KEY_W)) {
-        Input::ToggleProfile(MOVEMENT_PROFILE);
+        movement_profile_active = !movement_profile_active;
+        Input::ToggleProfile(MOVEMENT_PROFILE, movement_profile_active && !smooth_camera);
+        Input::ToggleProfile(LIGHT_PROFILE, !movement_profile_active);
     }
 
     if (Input::GetKeyPressed(Input::KEY_L)) {
@@ -59,6 +97,22 @@ void cbMasterProfile() {
     if (Input::GetKeyPressed(Input::KEY_C)) {
         mouse_captured = !mouse_captured;
         glfwSetInputMode(window, GLFW_CURSOR, mouse_captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+    }
+
+    if (Input::GetKeyPressed(Input::KEY_0)) {
+        render_shading = !render_shading;
+    }
+
+    if (Input::GetKeyPressed(Input::KEY_N)) {
+        render_normals = !render_normals;
+    }
+
+    if (Input::GetKey(Input::KEY_UP, Input::PRESSED|Input::DOWN)) {
+        height_boost += 2;
+    }
+
+    if (Input::GetKey(Input::KEY_DOWN, Input::PRESSED|Input::DOWN)) {
+        height_boost -= 2;
     }
 }
 
@@ -85,6 +139,32 @@ void cbMovementProfile() {
 
     if (Input::GetKey(Input::KEY_D, Input::PRESSED|Input::DOWN)) {
         camera.processKeyboard(RIGHT, dt); 
+    }
+}
+
+void cbLightMovementProfile() {
+    if (Input::GetKey(Input::KEY_SPACE, Input::PRESSED|Input::DOWN)) {
+        light_position.y += 1;
+    }
+
+    if (Input::GetKey(Input::KEY_CTRL, Input::PRESSED|Input::DOWN)) {
+        light_position.y -= 1;
+    }
+
+    if (Input::GetKey(Input::KEY_W, Input::PRESSED|Input::DOWN)) {
+        light_position.z -= 1;
+    }
+
+    if (Input::GetKey(Input::KEY_A, Input::PRESSED|Input::DOWN)) {
+        light_position.x -= 1;
+    }
+
+    if (Input::GetKey(Input::KEY_S, Input::PRESSED|Input::DOWN)) {
+        light_position.z += 1;
+    }
+
+    if (Input::GetKey(Input::KEY_D, Input::PRESSED|Input::DOWN)) {
+        light_position.x += 1;
     }
 }
 
@@ -120,6 +200,13 @@ void update() {
         Particle* p = &particles[i];
         p->position += p->velocity.scale(dt);
     }
+
+    if (smooth_camera) {
+        camera.position = vec3MoveTowardModified(camera.position, camera_points[camera_point_index], camera.movement_speed * dt);
+        if (camera.position == camera_points[camera_point_index]) {
+            camera_point_index = (camera_point_index + 1) % 4;
+        }
+    }
 }
 
 void display() {
@@ -127,23 +214,54 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
     Math::Mat4 perspective = Renderer::GetProjectionMatrix3D(WIDTH, HEIGHT, camera.zoom);
-    Math::Mat4 view = camera.getViewMatrix();
+    Math::Mat4 view = smooth_camera ? Math::Mat4::Lookat(camera.position, Math::Vec3(0, 20, 0), Math::Vec3(0, 1, 0)) : camera.getViewMatrix();
 
-    model_shader.setProjection(perspective);
-    model_shader.setView(view);
+    cloud_shader.setProjection(perspective);
+    terrain_shader.setProjection(perspective);
+    uniform_shader.setProjection(perspective);
+
+    cloud_shader.setView(view);
+    terrain_shader.setView(view);
+    uniform_shader.setView(view);
 
     Math::Mat4 model = Math::Mat4::Identity();
     // model = Math::Mat4::Scale(model, 5);
     // model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 90, 0));
     // model = Math::Mat4::Translate(model, 0, 5, 0);
     // model_shader.setModel(model);
+    // model_shader.setEmissiveMaterial(emit);
     // church.draw(&model_shader);
+
+
+    model = Math::Mat4::Identity();
+    model = Math::Mat4::Translate(model, light_position);
+    uniform_shader.setModel(model);
+    light.draw(&uniform_shader);
+
 
     model = Math::Mat4::Identity();
     // model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 0, 0));
-    model = Math::Mat4::Scale(model, 0.5f);
-    model_shader.setModel(model);
-    terrain.draw(&model_shader);
+    model = Math::Mat4::Scale(model, TERRAIN_SCALE);
+    terrain_shader.setModel(model);
+    terrain_shader.setHeightBoost(height_boost);
+    terrain_shader.setRenderNormals(render_normals);
+    terrain_shader.setRenderShading(render_shading);
+    terrain_shader.setLightPosition(light_position);
+    terrain_shader.setDimensions(diffuse.width, diffuse.height);
+    terrain_shader.setColorTexture(diffuse);
+    terrain_shader.setHeightTexture(height);
+    // terrain_shader.setRenderDepth(height_boost);
+    terrain.draw(&terrain_shader);
+
+    model = Math::Mat4::Identity();
+    model = Math::Mat4::Scale(model, diffuse.width * TERRAIN_SCALE, diffuse.height * TERRAIN_SCALE, 1);
+    model = Math::Mat4::Rotate(model, Math::Quat::FromEuler(90, 0, 0));
+    model = Math::Mat4::Translate(model, 0, 20, 0);
+    cloud_shader.setModel(model);
+    cloud_shader.setCloudTexture(cloud);
+    Renderer::SetBlending(true);
+    clouds.draw(&cloud_shader);
+    Renderer::SetBlending(false);
 
     // LOG_WARN("Draw Call Count: %d\n", Renderer::GetDrawCallCount());
 
@@ -198,12 +316,23 @@ GLFWwindow* GLFW_INIT() {
     return window;
 }
 
-void init_models() {
-    church = Renderer::Geometry::Model("../../Models/church.glb");
+void init_geometry() {
+    // church = Renderer::Geometry::Model("../../Models/church.glb");
     
-    Texture diffuse = Texture::LoadFromFile("../../Assets/iceland_heightmap.png");
-    terrain = Renderer::Geometry::Quad(diffuse.width, diffuse.height, "../../Assets/iceland_heightmap.png");
-    terrain.material.textures[TEXTURE_TYPE_DIFFUSE] = diffuse;
+    diffuse = Texture::LoadFromFile("../../Assets/world_color_map.png");
+    height = Texture::LoadFromFile("../../Assets/world_height_map.png");
+    cloud = Texture::LoadFromFile("../../Assets/world_cloud_map.png");
+
+    terrain = Renderer::Geometry::Quad(diffuse.width, diffuse.height);
+    camera_points[0] = Math::Vec3{-((diffuse.width * TERRAIN_SCALE) / 2.0f), 60, (diffuse.height * TERRAIN_SCALE) / 2.0f};
+    camera_points[1] = Math::Vec3{-((diffuse.width * TERRAIN_SCALE) / 2.0f), 40, -(diffuse.height * TERRAIN_SCALE) / 2.0f};
+    camera_points[2] = Math::Vec3{((diffuse.width * TERRAIN_SCALE) / 2.0f), 60, -(diffuse.height * TERRAIN_SCALE) / 2.0f};
+    camera_points[3] = Math::Vec3{((diffuse.width * TERRAIN_SCALE) / 2.0f), 40, (diffuse.height * TERRAIN_SCALE) / 2.0f};
+
+    light = Renderer::Geometry::Cube();
+
+    clouds = Renderer::Geometry::Quad();
+
 }
 
 int main(int argc, char** argv) {
@@ -221,21 +350,24 @@ int main(int argc, char** argv) {
     Input::GLFW_BIND_MOUSE_MOVE_CALLBACK(mouse);
     Input::CreateProfile(MASTER_PROFILE, cbMasterProfile);
     Input::CreateProfile(MOVEMENT_PROFILE, cbMovementProfile);
+    Input::CreateProfile(LIGHT_PROFILE, cbLightMovementProfile, false);
     
-    model_shader = ShaderModel({"../../ShaderSource/Model/model.vert", "../../ShaderSource/Model/model.frag"});
+    cloud_shader = ShaderCloud({"../../ShaderSource/Cloud/cloud.vert", "../../ShaderSource/Cloud/cloud.frag"});
+    terrain_shader = ShaderTerrain({"../../ShaderSource/Terrain/terrain.vert", "../../ShaderSource/Terrain/terrain.frag"});
+    uniform_shader = ShaderUniformColor({"../../ShaderSource/Uniform/uniform.vert", "../../ShaderSource/Uniform/uniform.frag"});
 
-    init_models();
+    init_geometry();
 
     camera = Camera(0, 1, 10);
     float previous = 0;
-    float timer = 1;
+    float timer = 2;
 	while (!glfwWindowShouldClose(window)) {
         float current = glfwGetTime();
         dt = current - previous;
         previous = current;
 
         if (timer == 0) {
-            timer = 1;
+            timer = 2;
             LOG_DEBUG("FPS: %d\n", (int)(1.0f / dt));
         } else {
             timer = Math::MoveToward(timer, 0, dt);

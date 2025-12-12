@@ -52,7 +52,7 @@ namespace Renderer  {
 		Geometry(const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type = GL_TRIANGLES);
 
 		static Geometry Quad();
-		static Geometry Quad(int width, int height, const char* height_map_path = nullptr); // tessellated quad
+		static Geometry Quad(int width, int height); // tessellated quad
 		static Geometry AABB();
 		static Geometry Cube();
 		static Geometry Sphere(int segments);

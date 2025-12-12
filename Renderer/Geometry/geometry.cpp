@@ -110,10 +110,10 @@ namespace Renderer {
     Geometry Geometry::Quad() {
         DS::Vector<Vertex> quad_vertices = {
             //         Position                              Normal                        UV
-            Vertex{Math::Vec3( 1.0f,  1.0f, 0.0f),  Math::Vec3(1.0f, 0.0f, 0.0f),  Math::Vec2(1, 1)}, // top right
-            Vertex{Math::Vec3( 1.0f, -1.0f, 0.0f),  Math::Vec3(0.0f, 1.0f, 0.0f),  Math::Vec2(1, 0)}, // bottom right
-            Vertex{Math::Vec3(-1.0f, -1.0f, 0.0f),  Math::Vec3(0.0f, 0.0f, 1.0f),  Math::Vec2(0, 0)}, // bottom left
-            Vertex{Math::Vec3(-1.0f,  1.0f, 0.0f),  Math::Vec3(1.0f, 1.0f, 0.0f),  Math::Vec2(0, 1)}  // top left 
+            Vertex{Math::Vec3( 0.5f,  0.5f, 0.0f),  Math::Vec3(1.0f, 0.0f, 0.0f),  Math::Vec2(1, 1)}, // top right
+            Vertex{Math::Vec3( 0.5f, -0.5f, 0.0f),  Math::Vec3(0.0f, 1.0f, 0.0f),  Math::Vec2(1, 0)}, // bottom right
+            Vertex{Math::Vec3(-0.5f, -0.5f, 0.0f),  Math::Vec3(0.0f, 0.0f, 1.0f),  Math::Vec2(0, 0)}, // bottom left
+            Vertex{Math::Vec3(-0.5f,  0.5f, 0.0f),  Math::Vec3(1.0f, 1.0f, 0.0f),  Math::Vec2(0, 1)}  // top left 
         }; 
 
         DS::Vector<unsigned int> quad_indices = {
@@ -133,25 +133,9 @@ namespace Renderer {
         return ret;
     }
 
-    float getHeight(int pixelY, int pixelX, const Texture& texure, float minH = -10.0f, float maxH = 10.0f) {
-        if (texure.data == nullptr) return 0.0;
-
-        int index = (pixelY * texure.width + pixelX) * 4;
-        unsigned char value = texure.data[index];
-
-        float t = (float)value / 255.0f;
-
-        return Math::Lerp(minH, maxH, t);
-    }
-
-    Geometry Geometry::Quad(int width, int height, const char* height_map_path) {
+    Geometry Geometry::Quad(int width, int height) {
         RUNTIME_ASSERT_MSG((width & 1) == 0, "width must be even\n");
         RUNTIME_ASSERT_MSG((height & 1) == 0, "height must be even\n");
-
-        Texture height_map;
-        if (height_map_path) {
-            height_map = Texture::LoadFromFile(height_map_path, false);
-        }
 
         const int TOTAL_VERTEX_COUNT = width * height;
         DS::Vector<Vertex> vertices = DS::Vector<Vertex>(TOTAL_VERTEX_COUNT);
@@ -160,23 +144,16 @@ namespace Renderer {
         int idx = 0;
         const int HALF_WIDTH = width / 2;
         const int HALF_HEIGHT = height / 2;
-        float yScale = 64.0f / 256.0f, yShift = 16.0f;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 float x = j - HALF_WIDTH;
                 float y = 0.0f;
                 float z = HALF_HEIGHT - i;
-                if (height_map_path) {
-                    unsigned char red_pixel_value = height_map.data[(i * height_map.width + j) * 4];
-                    // float t = (float)red_pixel_value / 255.0f;
-
-                    y = red_pixel_value;
-                }
 
                 const float u = Math::Remap(j, 0, width, 0, 1);
                 const float v = Math::Remap(i, 0, height - 1, 0, 1);
 
-                vertices[idx].aPosition = Math::Vec3(x, (int)y * yScale - yShift, z);
+                vertices[idx].aPosition = Math::Vec3(x, y, z);
                 vertices[idx++].aTexCoord = Math::Vec2(u, v);
             }
         }
@@ -184,7 +161,6 @@ namespace Renderer {
         DS::Vector<unsigned> indices = DS::Vector<unsigned>((width - 1) * (height - 1) * 6);
         for (int i = 0; i < height - 1; i++) {
             for (int j = 0; j < width - 1; j++) {
-
                 unsigned tl =  i      * width + j;
                 unsigned tr =  i      * width + (j + 1);
                 unsigned bl = (i + 1) * width + j;

@@ -124,11 +124,11 @@ namespace Input {
         return GetKey(code, KeyState::RELEASED);
     }
 
-    void CreateProfile(const char* key, CALLBACK callback) {
+    void CreateProfile(const char* key, CALLBACK callback, bool active) {
         Profile ret;
         ret.name = key;
         ret.callback = callback;
-        ret.active = true;
+        ret.active = active;
         profiles.push(ret);
     }
 
@@ -144,11 +144,11 @@ namespace Input {
         LOG_DEBUG("Could not find profile: %s\n", key);
     }
 
-    void ToggleProfile(const char* key) {
+    void ToggleProfile(const char* key, bool toggle) {
         for (int i = 0; i < profiles.count(); i++) {
             Profile* profile = &profiles[i];
             if (String::Equal(profile->name, key)) {
-                profile->active = !profile->active;
+                profile->active = toggle;
                 return;
             }
         }
