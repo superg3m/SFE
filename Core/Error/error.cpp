@@ -2,7 +2,7 @@
 
 #include <Error/error.hpp>
 
-static const char* ERROR_STRINGS[ERROR_COUNT] = {
+static const char* ERROR_STRINGS[(int)Error::COUNT] = {
     stringify(ERROR_SUCCESS),
     stringify(ERROR_RESOURCE_NOT_FOUND),
     stringify(ERROR_RESOURCE_TOO_BIG),
@@ -11,7 +11,7 @@ static const char* ERROR_STRINGS[ERROR_COUNT] = {
 };
 
 const char* getErrorString(Error error_code) {
-    RUNTIME_ASSERT((error_code >= 0) && (error_code < ERROR_COUNT));
+    RUNTIME_ASSERT(((int)error_code >= 0) && ((int)error_code < (int)Error::COUNT));
 
-    return ERROR_STRINGS[error_code];
+    return ERROR_STRINGS[(int)error_code];
 }

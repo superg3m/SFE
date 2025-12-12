@@ -20,8 +20,8 @@ void glCheckError_(const char *file, int line) {
 }
 
 namespace Renderer {
-    static unsigned int VAO = -1;
-    static unsigned int PROGRAM = -1;
+    static unsigned int VAO = (unsigned int)-1;
+    static unsigned int PROGRAM = (unsigned int)-1;
     static bool DEPTH = false;
     static bool STENCIL = false;
     static bool BLENDING = false;

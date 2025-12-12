@@ -1,12 +1,12 @@
 #pragma once
 
-enum Error {
-    ERROR_SUCCESS = 0,
-    ERROR_RESOURCE_NOT_FOUND,
-    ERROR_RESOURCE_TOO_BIG,
-    ERROR_NULL_PARAMETER,
-    ERROR_INVALID_PARAMETER,
-    ERROR_COUNT
+enum class Error : int {
+    SUCCESS = 0,
+    RESOURCE_NOT_FOUND,
+    RESOURCE_TOO_BIG,
+    NULL_PARAMETER,
+    INVALID_PARAMETER,
+    COUNT
 };
 
 /**

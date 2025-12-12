@@ -283,9 +283,8 @@ namespace DS {
                 return this->m_hash_func(&key, NOT_USED);
             } else {
                 RUNTIME_ASSERT_MSG(false, "WE ARE IN HELL?\n");
+                return 0;
             }
-
-            return 0;
         }
 
         bool safeEquality(K k1, K k2) const {
@@ -302,9 +301,8 @@ namespace DS {
                 return this->m_equal_func(&k1, NOT_USED, &k2, NOT_USED);
             } else {
                 RUNTIME_ASSERT_MSG(false, "WE ARE IN HELL?\n");
+                return false;
             }
-
-            return false;
         }
 
         #undef NOT_USED

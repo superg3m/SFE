@@ -5,6 +5,22 @@
 #include <platform.hpp>
 #include <renderer.hpp>
 
+static const char* glEnumToString(GLenum type) {
+    switch (type) {
+        case GL_BOOL:          return "bool";
+        case GL_INT:           return "int";
+        case GL_FLOAT:         return "float";
+        case GL_FLOAT_VEC2:    return "vec2";
+        case GL_FLOAT_VEC3:    return "vec3";
+        case GL_FLOAT_VEC4:    return "vec4";
+        case GL_FLOAT_MAT4:    return "mat4";
+        case GL_SAMPLER_2D:    return "sampler2D";
+        case GL_SAMPLER_CUBE:  return "samplerCube";
+        
+        default:               return "unknown";
+    }
+}
+
 GLenum ShaderBase::typeFromPath(const char* shader_source_path) {
     u64 shader_path_length = String::Length(shader_source_path);
     s64 extension_index = String::LastIndexOf(shader_source_path, shader_path_length, STRING_LIT_ARG("."));
@@ -36,9 +52,9 @@ void ShaderBase::checkCompileError(unsigned int source_id, const char* path) {
 
 unsigned int ShaderBase::shaderSourceCompile(const char* path) {
     byte_t file_size = 0;
-    Error error = ERROR_SUCCESS;
+    Error error = Error::SUCCESS;
     GLchar* shader_source = (GLchar*)Platform::ReadEntireFile(path, file_size, error);
-    RUNTIME_ASSERT_MSG(error == ERROR_SUCCESS, "Shader Error: %s\n", path, getErrorString(error));
+    RUNTIME_ASSERT_MSG(error == Error::SUCCESS, "Shader Error: %s\n", path, getErrorString(error));
 
     GLenum type = this->typeFromPath(path);
     unsigned int source_id = glCreateShader(type);
@@ -59,7 +75,7 @@ unsigned int ShaderBase::getUniformLocation(const char* name, GLenum type) const
         if (expected != type) {
             LOG_ERROR("Shader {%s} Uniform: '%s' type missmatch\n", this->shader_paths[0], name);
             LOG_ERROR("Expected: %s | Got: %s\n", glEnumToString(expected), glEnumToString(type));
-            return -1;
+            return (unsigned int)-1;
         }
     }
     

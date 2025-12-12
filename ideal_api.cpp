@@ -24,7 +24,6 @@ bool mouse_captured = true;
 float dt = 0;
 float WIDTH = 900;
 float HEIGHT = 900;
-Random::Seed seed;
 
 const int MAX_PARTICLES = 1000;
 Particle particles[MAX_PARTICLES];
@@ -64,8 +63,6 @@ void cbMasterProfile() {
 }
 
 void cbMovementProfile() {
-    GLFWwindow* window = (GLFWwindow*)Input::glfw_window_instance;
-
     if (Input::GetKey(Input::KEY_SPACE, Input::PRESSED|Input::DOWN)) {
         camera.processKeyboard(UP, dt);
     }
@@ -152,8 +149,16 @@ void display() {
     Renderer::ClearTelemetry();
 }
 
+void error_callback( int error, const char *msg ) {
+    std::string s;
+    s = " [" + std::to_string(error) + "] " + msg + '\n';
+    LOG_ERROR("%s\n", s.c_str());
+}
+
 GLFWwindow* GLFW_INIT() {
-glfwInit();
+    RUNTIME_ASSERT_MSG(glfwInit(), "Failed to init glfw\n");
+    glfwSetErrorCallback(error_callback);
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);

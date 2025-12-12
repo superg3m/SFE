@@ -23,7 +23,7 @@ cc: CompilerConfig = CompilerConfig(
 pc: ProjectConfig = ProjectConfig(
     project_name = "SFE",
     project_dependencies = [],
-    project_debug_with_visual_studio = True,
+    project_debug_with_visual_studio = False,
     project_executable_names = ["sfe.exe"]
 )
 
@@ -47,23 +47,33 @@ else:
     ]
 
 
-build_postfix = f"build_{cc.compiler_name}/{C_BUILD_BUILD_TYPE()}"
+build_postfix = f"./build_{cc.compiler_name}/{C_BUILD_BUILD_TYPE()}"
 
+inject = []
 libs = [
     f"sfe.lib",
-    f"../../Vendor/glfw/bin/macos/lib-arm64/libglfw3.a",
-    f"../../Vendor/assimp/bin/macos/libassimp.dylib"
 ]
 
 if IS_WINDOWS():
+    COPY_FILE_TO_DIR("./Vendor/glfw/bin/windows/lib-static-ucrt", "glfw3.dll", build_postfix)
+    COPY_FILE_TO_DIR("./Vendor/assimp/bin/windows", "assimp-vc143-mtd.dll", build_postfix)
+    
     libs += [
-        GET_LIB_FLAG(cc, "Kernel32"),
-        GET_LIB_FLAG(cc, "User32"),
-        GET_LIB_FLAG(cc, "Gdi32"),
-        GET_LIB_FLAG(cc, "OpenGL32"),
+        f"../../Vendor/glfw/bin/windows/lib-static-ucrt/glfw3dll.lib",
+        f"../../Vendor/assimp/bin/windows/assimp-vc143-mtd.lib",
+        "Kernel32.lib",
+        "User32.lib",
+        "Gdi32.lib",
+        "OpenGL32.lib", 
+        "Winmm.lib",
     ]
 elif IS_DARWIN():
+    COPY_FILE_TO_DIR("./Vendor/assimp/bin/macos", "libassimp.6.dylib", build_postfix)
+    
+    inject += ["-Wl,-rpath,@executable_path"]
     libs += [
+        f"../../Vendor/glfw/bin/macos/lib-arm64/libglfw3.a",
+        f"../../Vendor/assimp/bin/macos/libassimp.dylib"
         "-framework OpenGL",
         "-framework Cocoa",
         "-framework IOKit",
@@ -118,16 +128,10 @@ procedures_config = {
             "../../Vendor/glfw",
             "../../Vendor/assimp/include",
         ],
-        compiler_inject_into_args=[
-            "-Wl,-rpath,@executable_path"
-        ]
+        compiler_inject_into_args=inject
     )
 }
 
 manager: Manager = Manager(cc, pc, procedures_config)
 manager.build_project()
 # ------------------------------------------------------------------------------------
-
-# --     
-COPY_FILE_TO_DIR("./Vendor/assimp/bin/macos", "libassimp.6.dylib", build_postfix)
-# --

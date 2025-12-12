@@ -9,22 +9,6 @@
 #include <Geometry/material.hpp>
 #include <Math/matrix.hpp>
 
-static const char* glEnumToString(GLenum type) {
-    switch (type) {
-        case GL_BOOL:          return "bool";
-        case GL_INT:           return "int";
-        case GL_FLOAT:         return "float";
-        case GL_FLOAT_VEC2:    return "vec2";
-        case GL_FLOAT_VEC3:    return "vec3";
-        case GL_FLOAT_VEC4:    return "vec4";
-        case GL_FLOAT_MAT4:    return "mat4";
-        case GL_SAMPLER_2D:    return "sampler2D";
-        case GL_SAMPLER_CUBE:  return "samplerCube";
-        
-        default:               return "unknown";
-    }
-}
-
 struct ShaderBase {
     unsigned int program_id = 0;
 

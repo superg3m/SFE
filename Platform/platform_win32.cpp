@@ -4,17 +4,20 @@
     #define NOMINMAX
     #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
+    #undef CopyFile
+
     #include <windowsx.h>
     #include <timeapi.h>
 
     #include <Common/logger.hpp>
     #include <Common/assert.hpp>
-    #include <Common/error.hpp>
+    #include <Memory/memory.hpp>
+    #include <Error/error.hpp>
 
     namespace Platform {
-        global double g_frequency = {0};
-        global double g_start_time = {0};
-        global TIMECAPS g_device_time_caps;
+        double g_frequency = {0};
+        double g_start_time = {0};
+        TIMECAPS g_device_time_caps;
 
         bool Init() {
             LARGE_INTEGER frequency;
@@ -47,17 +50,17 @@
         bool CopyFile(const char* source_path, const char* dest_path, bool block_until_success) {
             if (block_until_success) {
                 while (!CopyFileA(source_path, dest_path, FALSE)) {
-                    sleep(10);
+                    Platform::SleepForMilliseconds(10);
                 }
 
                 return true;
             } 
 
             return CopyFileA(source_path, dest_path, FALSE) == 0;
-        }
+         }
 
         void SleepForMilliseconds(u32 ms) {
-            SleepForMilliseconds((DWORD)ms);
+            Sleep((DWORD)ms);
         }
 
         double GetSecondsElapsed() {
@@ -68,6 +71,7 @@
             return time_in_seconds;
         }
 
+        /*
         void* win32_malloc(const Memory::BaseAllocator** allocator, byte_t allocation_size) {
             (void)allocator;
             return VirtualAlloc(nullptr, allocation_size, MEM_COMMIT, PAGE_READWRITE);
@@ -77,12 +81,13 @@
             (void)allocator;
             VirtualFree(data, 0, MEM_RELEASE);
         }
+        */
 
         u8* ReadEntireFile( const char* file_path, byte_t& out_file_size, Error& error) {
             HANDLE file_handle = CreateFileA(file_path, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
             if (file_handle == INVALID_HANDLE_VALUE) {
                 LOG_ERROR("CreateFileA() returned an INVALID_HANDLE_VALUE, the file_path/path is likely wrong: ReadEntireFile(%s)\n", file_path);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
                 
                 return nullptr;
             }
@@ -92,7 +97,7 @@
             BOOL success = GetFileSizeEx(file_handle, &large_int);
             if (!success) {
                 LOG_ERROR("GetFileSizeEx() Failed to get size from file_handle: ReadEntireFile(%s)\n", file_path);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
                 CloseHandle(file_handle);
                 return nullptr;
             }
@@ -100,7 +105,7 @@
             byte_t file_size = (byte_t)large_int.QuadPart;
             if (file_size > SIZE_MAX) {
                 LOG_ERROR("File size is bigger than max size: ReadEntireFile(%s)\n", file_path);
-                error = ERROR_RESOURCE_TOO_BIG;
+                error = Error::RESOURCE_TOO_BIG;
                 CloseHandle(file_handle);
 
                 return nullptr;
@@ -113,7 +118,7 @@
             CloseHandle(file_handle);
             if (!success && bytes_read == file_size) {
                 LOG_ERROR("ReadFile() Failed to get the file data or bytes read doesn't match file_size: ReadEntireFile(%s)\n", file_path);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
                 Memory::Free(file_data);
                 return nullptr;
             }
@@ -127,7 +132,7 @@
             HMODULE library = LoadLibraryA(dll_path);
             if (!library) {
                 LOG_ERROR("LoadLibraryA() failed: LoadDLL(%s)\n", dll_path);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
 
                 return nullptr;
             }
@@ -148,7 +153,7 @@
             void* proc = (void*)GetProcAddress((HMODULE)dll, proc_name);
             if (!proc) {
                 LOG_ERROR("GetProcAddress() failed: GetProcAddress(%s)\n", proc_name);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
                 return nullptr;
             }
 

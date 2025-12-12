@@ -409,7 +409,7 @@ namespace Math {
     }
 
     void Mat4::print() const {
-        printf(
+        LOG_TRACE(
             "---------------------\n"
             "[%.2f %.2f %.2f %.2f]\n"
             "[%.2f %.2f %.2f %.2f]\n"

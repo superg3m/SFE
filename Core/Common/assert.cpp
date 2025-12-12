@@ -36,8 +36,8 @@ void MACRO_RUNTIME_ASSERT_MSG(bool expression, const char* function, const char*
 
         // stack_trace_dump(function, file, line);
         LOG_FATAL("%.*s", message_length, message);                                 
-        char msg[] = "Func: %s, File: %s:%d\n";          
-        LOG_FATAL(msg, function, file, line);
+        char func_file_msg[] = "Func: %s, File: %s:%d\n";          
+        LOG_FATAL(func_file_msg, function, file, line);
 
         CRASH();                                                
     }                                                                                    

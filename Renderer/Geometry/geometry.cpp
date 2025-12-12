@@ -521,7 +521,7 @@ namespace Renderer {
         Geometry* current = this;
         unsigned int total_vertex_count = 0;
         unsigned int total_index_count = 0;
-        for (int i = 0; i < scene->mNumMeshes; i++) {
+        for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
             total_vertex_count += scene->mMeshes[i]->mNumVertices;
             total_index_count  += scene->mMeshes[i]->mNumFaces * 3;
 
