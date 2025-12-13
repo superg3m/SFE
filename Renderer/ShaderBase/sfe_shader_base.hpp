@@ -5,6 +5,7 @@
 #include "../../Core/DataStructure/sfe_ds.hpp"
 #include "../../Core/Math/sfe_matrix.hpp"
 #include "../Geometry/sfe_material.hpp"
+#include "../sfe_gl_check.hpp"
 
 struct ShaderBase {
     unsigned int program_id = 0;
