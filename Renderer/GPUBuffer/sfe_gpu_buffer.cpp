@@ -15,6 +15,7 @@ namespace Renderer {
     GPUBuffer GPUBuffer::EBO(byte_t indices_count, unsigned int* indices_data) {
         GPUBuffer ret;
         ret.type = BufferType::INDEX;
+        ret.usage = BufferUsage::STATIC;
         ret.buffer_size = sizeof(unsigned int) * indices_count;
         ret.allocate(indices_data);
 
