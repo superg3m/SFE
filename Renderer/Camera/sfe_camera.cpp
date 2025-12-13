@@ -43,6 +43,7 @@ void Camera::lookat(Math::Vec3 target_position) {
     Math::Vec3 target_direction = (target_position - this->position).normalize(); 
     this->yaw   = RAD_TO_DEGREES(atan2(target_direction.z, target_direction.x));
     this->pitch = RAD_TO_DEGREES(asin(target_direction.y));
+    
     this->update();
 }
 
@@ -50,6 +51,7 @@ void Camera::lookat(float x, float y, float z) {
     Math::Vec3 target_direction = (Math::Vec3(x, y, z) - this->position).normalize(); 
     this->yaw   = RAD_TO_DEGREES(atan2(target_direction.z, target_direction.x));
     this->pitch = RAD_TO_DEGREES(asin(target_direction.y));
+    
     this->update();
 }
 
