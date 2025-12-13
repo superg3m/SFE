@@ -9,10 +9,6 @@ namespace Renderer {
         return ret;
     }
 
-    VertexArray::~VertexArray() { 
-        glDeleteVertexArrays(1, &this->id);
-    }
-
     void VertexArray::bind() const { 
         glBindVertexArray(this->id); 
     }

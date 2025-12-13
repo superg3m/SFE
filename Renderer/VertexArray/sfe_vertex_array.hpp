@@ -11,8 +11,6 @@ namespace Renderer {
         GLuint id = 0;
 
         VertexArray() = default;
-        ~VertexArray();
-
         static VertexArray Create();
 
         void bind() const;
