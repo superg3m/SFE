@@ -454,7 +454,9 @@ namespace Renderer {
         stride_type_info.push(BufferStrideTypeInfo::IVEC4);
         stride_type_info.push(BufferStrideTypeInfo::VEC3);
 
+        this->VAO = VertexArray::Create();
         this->VAO.bind();
+        
         this->VBO = GPUBuffer::VBO(BufferType::VERTEX, BufferUsage::STATIC, stride, stride_type_info, vertex_data_size, this->vertices.data());
         this->EBO = GPUBuffer::EBO(this->indices.count(), this->indices.data());
         this->VAO.bindBuffer(0, false, this->VBO);
