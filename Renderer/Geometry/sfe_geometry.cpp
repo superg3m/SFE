@@ -444,19 +444,19 @@ namespace Renderer {
         flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
-        DS::Vector<Renderer::BufferStrideTypeInfo> stride_type_info = DS::Vector<Renderer::BufferStrideTypeInfo>(1);
-
-        stride_type_info.push(BufferStrideTypeInfo::VEC3);
-        stride_type_info.push(BufferStrideTypeInfo::VEC3);
-        stride_type_info.push(BufferStrideTypeInfo::VEC2);
-        stride_type_info.push(BufferStrideTypeInfo::VEC3);
-        stride_type_info.push(BufferStrideTypeInfo::VEC3);
-        stride_type_info.push(BufferStrideTypeInfo::IVEC4);
-        stride_type_info.push(BufferStrideTypeInfo::VEC3);
+        DS::Vector<Renderer::BufferStrideTypeInfo> stride_type_info = {
+            BufferStrideTypeInfo::VEC3,
+            BufferStrideTypeInfo::VEC3,
+            BufferStrideTypeInfo::VEC2,
+            BufferStrideTypeInfo::VEC3,
+            BufferStrideTypeInfo::VEC3,
+            BufferStrideTypeInfo::IVEC4,
+            BufferStrideTypeInfo::VEC3,
+        };
 
         this->VAO = VertexArray::Create();
         this->VAO.bind();
-        
+
         this->VBO = GPUBuffer::VBO(BufferType::VERTEX, BufferUsage::STATIC, stride, stride_type_info, vertex_data_size, this->vertices.data());
         this->EBO = GPUBuffer::EBO(this->indices.count(), this->indices.data());
         this->VAO.bindBuffer(0, false, this->VBO);
