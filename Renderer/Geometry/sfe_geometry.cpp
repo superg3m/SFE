@@ -381,8 +381,7 @@ namespace Renderer {
             if (geo->index_count > 0) {
                 Renderer::IncrementDrawCallCount();
                 glCheckError(glDrawElementsBaseVertex(
-                    this->draw_type, geo->index_count, 
-                    GL_UNSIGNED_INT, 
+                    this->draw_type, geo->index_count, GL_UNSIGNED_INT, 
                     (void*)(sizeof(unsigned int) * geo->base_index), 
                     geo->base_vertex
                 ));
