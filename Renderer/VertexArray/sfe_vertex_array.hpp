@@ -10,8 +10,11 @@ namespace Renderer {
     struct VertexArray {
         GLuint id = 0;
 
-        VertexArray();
+        VertexArray() = default;
         ~VertexArray();
+
+        static VertexArray Create();
+
         void bind() const;
         void bindBuffer(int location, bool instanced, const GPUBuffer& buffer);
        

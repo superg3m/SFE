@@ -1,8 +1,11 @@
 #include "sfe_vertex_array.hpp"
 
 namespace Renderer {
-    VertexArray::VertexArray() { 
-        glGenVertexArrays(1, &this->id);
+    VertexArray VertexArray::Create() { 
+        VertexArray ret;
+        glGenVertexArrays(1, &ret.id);
+
+        return ret;
     }
 
     VertexArray::~VertexArray() { 
