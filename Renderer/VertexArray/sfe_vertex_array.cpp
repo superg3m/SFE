@@ -36,6 +36,11 @@ namespace Renderer {
     }
 
     void VertexArray::bindVertexAttribute(int &location, bool instanced, byte_t stride, byte_t offset, BufferStrideTypeInfo type_info) {
+        RUNTIME_ASSERT_MSG(
+            !this->vertex_attribute_locations.has(location),
+            "Location already assigned"
+        );
+
         bool is_integer = (type_info == BufferStrideTypeInfo::INT) || (type_info == BufferStrideTypeInfo::IVEC4);
         GLenum gl_type  = is_integer ? GL_INT : GL_FLOAT;
         bool is_matrix = type_info == BufferStrideTypeInfo::MAT4;
