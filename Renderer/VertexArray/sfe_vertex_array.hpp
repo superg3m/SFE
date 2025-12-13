@@ -1,0 +1,22 @@
+#pragma once
+
+#include <glad/glad.h>
+#include "../../Core/Common/sfe_common.hpp"
+#include "../GPUBuffer/sfe_gpu_buffer.hpp"
+#include "../Geometry/sfe_vertex.hpp"
+#include "../GPUBuffer/sfe_gpu_buffer.hpp"
+
+namespace Renderer {
+    struct VertexArray {
+        GLuint id = 0;
+
+        VertexArray();
+        ~VertexArray();
+        void bind() const;
+        void bindBuffer(int location, bool instanced, const GPUBuffer& buffer);
+       
+    private:
+        // track used locations
+        void bindVertexAttribute(int &location, bool instanced, byte_t stride, byte_t offset, BufferStrideTypeInfo type_info);
+    };
+}

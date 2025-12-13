@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 
 #include "../../Core/Math/sfe_math.hpp"
+#include "../../Core/Common/sfe_common.hpp"
 
 namespace Renderer {
     const float MAGIC_NUMBER = -123450510.0f;
@@ -55,11 +56,12 @@ namespace Renderer {
     struct AttributeDescriptor {
         VertexAttributeFlag flag;
         int location;
-        int componentCount;       // e.g., 3 for vec3, 4 for vec4
-        GLenum glType;            // e.g., GL_FLOAT, GL_INT
+        int component_count;
+        GLenum gl_type; // float, int
         bool normalized;
-        bool isInteger;           // True if using glVertexAttribIPointer
-        size_t byteSize;
+        bool is_integer;     
+        byte_t data_size;
+        int is_instanced;
     };
 
     extern const AttributeDescriptor ALL_ATTRIBUTE_DESCRIPTORS[8];

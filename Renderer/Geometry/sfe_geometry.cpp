@@ -70,10 +70,6 @@ namespace Renderer {
     }
 
     Geometry::Geometry() {
-        this->VAO = 0;
-        this->VBO = 0;
-        this->EBO = 0;
-
         this->draw_type = GL_TRIANGLES;
         this->vertex_count = 0;
         this->index_count = 0;
@@ -355,7 +351,7 @@ namespace Renderer {
 
     void Geometry::draw(const ShaderBase* shader) {
         shader->use();
-        Renderer::BindVAO(this->VAO);
+        this->VAO.bind();
 
         /*
         struct Batch {
@@ -403,7 +399,7 @@ namespace Renderer {
 
     void Geometry::drawInstanced(const ShaderBase* shader, int instance_count) {
         shader->use();
-        Renderer::BindVAO(this->VAO);
+        this->VAO.bind();
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {
@@ -470,13 +466,13 @@ namespace Renderer {
         for (const auto& desc : ALL_ATTRIBUTE_DESCRIPTORS) {
             if (flags & desc.flag) {
                 glEnableVertexAttribArray(desc.location);
-                if (desc.isInteger) {
-                    glVertexAttribIPointer(desc.location, desc.componentCount, desc.glType, sizeof(Vertex), (void*)offset);
+                if (desc.is_integer) {
+                    glVertexAttribIPointer(desc.location, desc.component_count, desc.gl_type, sizeof(Vertex), (void*)offset);
                 } else {
-                    glVertexAttribPointer(desc.location, desc.componentCount, desc.glType, desc.normalized, sizeof(Vertex), (void*)offset);
+                    glVertexAttribPointer(desc.location, desc.component_count, desc.gl_type, desc.normalized, sizeof(Vertex), (void*)offset);
                 }
 
-                offset += desc.byteSize;
+                offset += desc.data_size;
             } else {
                 glDisableVertexAttribArray(desc.location);
             }
