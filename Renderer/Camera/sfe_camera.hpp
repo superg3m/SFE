@@ -18,6 +18,12 @@ const float DEFAULTED_SENSITIVITY =  0.1f;
 const float DEFAULTED_ZOOM        =  65.0f;
 
 struct Camera {
+    Math::Vec3 position;
+    Math::Vec3 front;
+    Math::Vec3 up;
+    Math::Vec3 right;
+    Math::Vec3 world_up;
+
     float movement_speed = DEFAULTED_SPEED;
     float mouse_sensitivity = DEFAULTED_SENSITIVITY;
     float zoom = DEFAULTED_ZOOM;
@@ -31,15 +37,10 @@ struct Camera {
     void processKeyboard(CameraDirection direction, float deltaTime);
     void processMouseMovement(float xoffset, float yoffset, bool contrain_pitch = true);
     void processMouseScroll(float yoffset);
-    void update();
 
     private:
-        Math::Vec3 position;
-        Math::Vec3 front;
-        Math::Vec3 up;
-        Math::Vec3 right;
-        Math::Vec3 world_up;
-
         float yaw = DEFAULTED_YAW;
         float pitch = DEFAULTED_PITCH;
+
+        void update();
 };
