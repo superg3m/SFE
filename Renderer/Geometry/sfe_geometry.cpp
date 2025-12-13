@@ -460,6 +460,7 @@ namespace Renderer {
         this->VBO = GPUBuffer::VBO(BufferType::VERTEX, BufferUsage::STATIC, stride, stride_type_info, vertex_data_size, this->vertices.data());
         this->EBO = GPUBuffer::EBO(this->indices.count(), this->indices.data());
         this->VAO.bindBuffer(0, false, this->VBO);
+        this->EBO.bind();
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {

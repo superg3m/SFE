@@ -13,6 +13,7 @@ namespace Renderer {
         glBindVertexArray(this->id); 
     }
 
+    // TODO(Jovanni): this is scuffeds
     void VertexArray::bindBuffer(int location, bool instanced, const GPUBuffer& buffer) {
         this->bind();
         buffer.bind();
