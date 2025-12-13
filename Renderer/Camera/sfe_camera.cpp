@@ -1,3 +1,4 @@
+#include "../../Core/Common/sfe_logger.hpp"
 #include "sfe_camera.hpp"
 
 void Camera::updateCamera() {

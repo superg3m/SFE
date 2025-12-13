@@ -40,7 +40,5 @@ struct Camera {
     void processKeyboard(CameraDirection direction, float deltaTime);
     void processMouseMovement(float xoffset, float yoffset, bool contrain_pitch = true);
     void processMouseScroll(float yoffset);
-    
-private:
     void updateCamera();
 };
