@@ -68,9 +68,7 @@ unsigned int ShaderBase::shaderSourceCompile(const char* path) {
 }
 
 unsigned int ShaderBase::getUniformLocation(const char* name, GLenum type) const {
-    if (!this->uniforms.has(name)) {
-       // LOG_WARN("Shader {%s} Uniform: '%s' is not cached\n", this->shader_paths[0], name);
-    } else {
+    if (this->uniforms.has(name)) {
         GLenum expected = this->uniforms.get(name);
         if (expected != type) {
             LOG_ERROR("Shader {%s} Uniform: '%s' type missmatch\n", this->shader_paths[0], name);
@@ -139,6 +137,7 @@ void ShaderBase::use() const {
     Renderer::BindProgram(this->program_id);
 }
 
+// TODO(Jovanni): Make this use the locations instead of string lookups
 void ShaderBase::setModel(Math::Mat4 &model) const {
     this->use();
     this->setMat4("uModel", model);

@@ -1,7 +1,7 @@
 #include "../../Core/Common/sfe_logger.hpp"
 #include "sfe_camera.hpp"
 
-void Camera::updateCamera() {
+void Camera::update() {
     Math::Vec3 new_front = Math::Vec3::Euler(this->yaw, this->pitch);
     this->front = new_front.normalize();
     this->right = Math::Vec3::Cross(this->front, this->world_up).normalize();
@@ -20,7 +20,7 @@ Camera::Camera(Math::Vec3 position) {
     this->yaw = DEFAULTED_YAW;
     this->pitch = DEFAULTED_PITCH;
 
-    this->updateCamera();
+    this->update();
 }
 
 Camera::Camera(float x, float y, float z) {
@@ -35,16 +35,20 @@ Camera::Camera(float x, float y, float z) {
     this->yaw = DEFAULTED_YAW;
     this->pitch = DEFAULTED_PITCH;
 
-    this->updateCamera();
+    this->update();
 }
 
 
-Math::Mat4 Camera::lookat(Math::Vec3 target_position) {
-    return Math::Mat4::Lookat(this->position, target_position, this->up);
+void Camera::lookat(Math::Vec3 target_position) {
+    Math::Vec3 target_direction = (target_position - this->position).normalize(); 
+    this->yaw   = RAD_TO_DEGREES(atan2(target_direction.z, target_direction.x));
+    this->pitch = RAD_TO_DEGREES(asin(target_direction.y));
 }
 
-Math::Mat4 Camera::lookat(float x, float y, float z) {
-    return Math::Mat4::Lookat(this->position, Math::Vec3(x, y, z), this->up);
+void Camera::lookat(float x, float y, float z) {
+    Math::Vec3 target_direction = (Math::Vec3(x, y, z) - this->position).normalize(); 
+    this->yaw   = RAD_TO_DEGREES(atan2(target_direction.z, target_direction.x));
+    this->pitch = RAD_TO_DEGREES(asin(target_direction.y));
 }
 
 Math::Mat4 Camera::getViewMatrix() {
@@ -94,7 +98,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset, bool contrain_pi
         }
     }
 
-    this->updateCamera();
+    this->update();
 }
 
 void Camera::processMouseScroll(float yoffset) {

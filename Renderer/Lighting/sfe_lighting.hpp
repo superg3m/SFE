@@ -1,5 +1,5 @@
 #pragma once
 
-#include <Lighting/directional_light.hpp>
-#include <Lighting/point_light.hpp>
-#include <Lighting/spot_light.hpp>
+#include "sfe_directional_light.hpp"
+#include "sfe_point_light.hpp"
+#include "sfe_spot_light.hpp"

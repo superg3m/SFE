@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Math/math.hpp>
+#include "../../Core/Math/sfe_math.hpp"
 
 struct DirectionalLight {
     Math::Vec3 direction;
