@@ -3,8 +3,9 @@
 namespace Renderer {
     VertexArray VertexArray::Create() { 
         VertexArray ret;
-        glGenVertexArrays(1, &ret.id);
+        ret.vertex_attribute_locations = DS::Hashmap<int, bool>(1);
 
+        glGenVertexArrays(1, &ret.id);
         return ret;
     }
 
