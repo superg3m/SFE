@@ -8,6 +8,7 @@
 #include "../../Core/DataStructure/sfe_ds.hpp"
 #include "../../Core/Math/sfe_math.hpp"
 #include "../GPUBuffer/sfe_gpu_buffer.hpp"
+#include "../VertexArray/sfe_vertex_array.hpp"
 #include "../Core/Common/sfe_common.hpp"
 #include "../sfe_renderer_state.hpp"
 #include "sfe_material.hpp"
@@ -30,7 +31,7 @@ namespace Renderer  {
     );
 
 	struct Geometry {
-		GPUBuffer VAO; 
+		VertexArray VAO; 
 		GPUBuffer VBO; 
 		GPUBuffer EBO;
 		GLuint vertex_count = 0;
@@ -65,10 +66,8 @@ namespace Renderer  {
 			DS::Vector<Vertex> vertices; // only the root will have vertices
 			DS::Vector<GLuint> indices;  // only the root will have indices
 			DS::Vector<Material> materials;
-			DS::Hashmap<int, bool> vertex_attribute_locations;
 
 			void setup(bool should_destory_data = true);
-
 			void loadMeshFromData(const DS::Vector<Vertex> &vertices, const DS::Vector<unsigned int> &indices);
 			void loadMeshFromScene(const char *path, u64 path_length, const aiScene* scene);
 			Geometry* processNode(Geometry* root, aiNode* node, const aiScene* scene, Math::Mat4 parent_transform);

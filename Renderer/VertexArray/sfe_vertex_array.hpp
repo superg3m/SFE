@@ -16,6 +16,8 @@ namespace Renderer {
         void bindBuffer(int location, bool instanced, const GPUBuffer& buffer);
        
     private:
+        DS::Hashmap<int, bool> vertex_attribute_locations;
+
         // track used locations
         void bindVertexAttribute(int &location, bool instanced, byte_t stride, byte_t offset, BufferStrideTypeInfo type_info);
     };

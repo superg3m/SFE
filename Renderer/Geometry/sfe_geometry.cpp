@@ -431,18 +431,8 @@ namespace Renderer {
         this->aabb = CalculateAABB(vertices);
         this->total_vertex_count = this->vertices.count();
 
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, this->vertices.count() * sizeof(Vertex), this->vertices.data(), GL_STATIC_DRAW);
-
-        glGenBuffers(1, &EBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.count() * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW);
-        
-        size_t offset = 0;
+        int stride = sizeof(Vertex);
+        int vertex_data_size = this->vertices.count() * sizeof(Vertex);
 
         VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
         flags = (vertices[0].aPosition != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aPosition : flags;
@@ -454,6 +444,21 @@ namespace Renderer {
         flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
+        DS::Vector<Renderer::BufferStrideTypeInfo> stride_type_info = DS::Vector<Renderer::BufferStrideTypeInfo>(1);
+
+        stride_type_info.push(BufferStrideTypeInfo::VEC3);
+        stride_type_info.push(BufferStrideTypeInfo::VEC3);
+        stride_type_info.push(BufferStrideTypeInfo::VEC2);
+        stride_type_info.push(BufferStrideTypeInfo::VEC3);
+        stride_type_info.push(BufferStrideTypeInfo::VEC3);
+        stride_type_info.push(BufferStrideTypeInfo::IVEC4);
+        stride_type_info.push(BufferStrideTypeInfo::VEC3);
+
+        this->VAO.bind();
+        this->VBO = GPUBuffer::VBO(BufferType::VERTEX, BufferUsage::STATIC, stride, stride_type_info, vertex_data_size, this->vertices.data());
+        this->EBO = GPUBuffer::EBO(this->indices.count(), this->indices.data());
+        this->VAO.bindBuffer(0, false, this->VBO);
+
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {
                 continue;
@@ -463,21 +468,6 @@ namespace Renderer {
             geo->material.has_texcoord = flags & VertexAttributeFlag::aTexCoord;
         }
 
-        for (const auto& desc : ALL_ATTRIBUTE_DESCRIPTORS) {
-            if (flags & desc.flag) {
-                glEnableVertexAttribArray(desc.location);
-                if (desc.is_integer) {
-                    glVertexAttribIPointer(desc.location, desc.component_count, desc.gl_type, sizeof(Vertex), (void*)offset);
-                } else {
-                    glVertexAttribPointer(desc.location, desc.component_count, desc.gl_type, desc.normalized, sizeof(Vertex), (void*)offset);
-                }
-
-                offset += desc.data_size;
-            } else {
-                glDisableVertexAttribArray(desc.location);
-            }
-        }
-
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
@@ -485,11 +475,6 @@ namespace Renderer {
             this->vertices.~Vector();
             this->indices.~Vector();
             this->materials.~Vector();
-        }
-
-        this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
-        for (int i = 0; i < RESERVED_VERTEX_ATTRIBUTE_LOCATIONS; i++) {
-            this->vertex_attribute_locations.put(i, true);
         }
     }
 

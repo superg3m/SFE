@@ -2,7 +2,7 @@
 
 namespace Renderer {
     VertexArray::VertexArray() { 
-        glGenVertexArrays(1, &this->id); 
+        glGenVertexArrays(1, &this->id);
     }
 
     VertexArray::~VertexArray() { 
@@ -17,10 +17,21 @@ namespace Renderer {
         this->bind();
         buffer.bind();
 
+        int start_location = location; 
+
         byte_t offset = 0;
         for (const auto& type_info : buffer.stride_type_info) {
             this->bindVertexAttribute(location, instanced, buffer.stride, offset, type_info);
             offset += (int)type_info;
+        }
+
+        // hacky
+        if (this->vertex_attribute_locations.count() == 0) {
+            this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
+        }
+
+        for (int i = start_location; i < location; i++) {
+            this->vertex_attribute_locations.put(i, true);
         }
     }
 

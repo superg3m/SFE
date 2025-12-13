@@ -1,6 +1,14 @@
 #include "sfe_gpu_buffer.hpp"
 
 namespace Renderer {
+    GPUBuffer GPUBuffer::VBO(BufferUsage usage, byte_t stride, DS::Vector<BufferStrideTypeInfo> stride_type_info, byte_t buffer_size, const void* buffer_data) {
+
+    }
+
+    GPUBuffer GPUBuffer::EBO(byte_t indices_count, const unsigned int* indices_data) {
+        
+    }
+
     GPUBuffer::GPUBuffer(BufferType type, BufferUsage usage, byte_t stride, DS::Vector<BufferStrideTypeInfo> stride_type_info, byte_t buffer_size, const void* buffer_data) {
         this->type = type;
         this->usage = usage;
@@ -39,6 +47,8 @@ namespace Renderer {
         this->bind();
 
         glGenBuffers(1, &this->id);
-        glBufferData(this->id, this->buffer_size, buffer_data, this->gl_usage);
+        if (buffer_data) {
+            glBufferData(this->id, this->buffer_size, buffer_data, this->gl_usage);
+        }
     }
 }
