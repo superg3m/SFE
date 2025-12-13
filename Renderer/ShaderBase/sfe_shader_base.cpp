@@ -1,9 +1,9 @@
 
 #include "../../Core/DataStructure/sfe_ds.hpp"
 #include "../../Core/String/sfe_string.hpp"
-#include <sfe_platform.hpp>
-#include <sfe_renderer_state.hpp>
-#include <sfe_gl_check.hpp>
+#include "../../Platform/sfe_platform.hpp"
+#include "../sfe_renderer_state.hpp"
+#include "../sfe_gl_check.hpp"
 #include "sfe_shader_base.hpp"
 
 static const char* glEnumToString(GLenum type) {

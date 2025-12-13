@@ -5,10 +5,10 @@
 #include "../../Core/DataStructure/sfe_contiguous.hpp"
 #include "../../Core/Random/sfe_random.hpp"
 #include "../ShaderBase/sfe_shader_base.hpp"
+#include "../sfe_renderer_state.hpp"
+#include "../sfe_gl_check.hpp"
 #include "sfe_geometry.hpp"
 #include "sfe_vertex.hpp"
-#include "sfe_renderer_state.hpp"
-#include "sfe_gl_check.hpp"
 
 namespace Renderer {
     static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {

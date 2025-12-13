@@ -62,11 +62,6 @@ procedures_config = {
         ],
         additional_libs = [],
         include_paths = [
-            "../../Core",
-            "../../Platform",
-            "../../Renderer",
-            "../../Input",
-
             "../../Vendor",
             "../../Vendor/stb",
             "../../Vendor/glad/include", 

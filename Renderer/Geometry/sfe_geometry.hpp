@@ -8,10 +8,9 @@
 #include "../../Core/DataStructure/sfe_ds.hpp"
 #include "../../Core/Math/sfe_math.hpp"
 #include "../Core/Common/sfe_common.hpp"
-
+#include "../sfe_renderer_state.hpp"
 #include "sfe_material.hpp"
 #include "sfe_vertex.hpp"
-#include "sfe_renderer_state.hpp"
 
 #define MAX_BONES 128
 
