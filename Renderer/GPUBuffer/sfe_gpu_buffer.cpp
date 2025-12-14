@@ -50,6 +50,7 @@ namespace Renderer {
     }
 
     void GPUBuffer::allocate(const void* buffer_data) {
+        glCheckError(glGenBuffers(1, &this->id));
         this->bind();
 
         glCheckError(glGenBuffers(1, &this->id));
