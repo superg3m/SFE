@@ -462,6 +462,7 @@ namespace Renderer {
         this->EBO = GPUBuffer::EBO(this->indices.count(), this->indices.data());
         this->EBO.bind();
 
+        // TODO(Jovanni): This is odd tbh, seems like VAO, VBO, UBO are enough differnt to warrent their own thing
         this->VAO.bindBuffer(0, false, this->VBO);
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
