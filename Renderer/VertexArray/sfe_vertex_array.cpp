@@ -21,7 +21,7 @@ namespace Renderer {
 
         int start_location = location; 
 
-        size_t offset = 0;
+        int offset = 0;
         for (const auto& type_info : buffer.stride_type_info) {
             this->bindVertexAttribute(location, instanced, buffer.stride, offset, type_info);
             offset += (int)type_info;
@@ -37,7 +37,7 @@ namespace Renderer {
         }
     }
 
-    void VertexArray::bindVertexAttribute(int &location, bool instanced, GLsizei stride, GLsizei offset, BufferStrideTypeInfo type_info) {
+    void VertexArray::bindVertexAttribute(int &location, bool instanced, s64 stride, s64 offset, BufferStrideTypeInfo type_info) {
         RUNTIME_ASSERT_MSG(
             !this->vertex_attribute_locations.has(location),
             "Location already assigned"
