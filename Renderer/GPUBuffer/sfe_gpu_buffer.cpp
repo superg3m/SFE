@@ -2,12 +2,12 @@
 #include "../sfe_gl_check.hpp"
 
 namespace Renderer {
-    GPUBuffer GPUBuffer::VBO(BufferType type, BufferUsage usage, int stride, DS::Vector<BufferStrideTypeInfo> stride_type_info, size_t buffer_size, void* buffer_data) {
+    GPUBuffer GPUBuffer::VBO(BufferType type, BufferUsage usage, int stride, DS::Vector<VertexAttributeDescriptor> descriptors, size_t buffer_size, void* buffer_data) {
         GPUBuffer ret;
         ret.type = type;
         ret.usage = usage;
         ret.stride = stride;
-        ret.stride_type_info = stride_type_info;
+        ret.descriptors = descriptors;
         ret.gl_type = (
             (type == BufferType::VERTEX) ? GL_ARRAY_BUFFER : 
             (type == BufferType::UNIFORM) ? GL_UNIFORM_BUFFER : -1

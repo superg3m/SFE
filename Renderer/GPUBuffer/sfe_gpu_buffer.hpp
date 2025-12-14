@@ -29,17 +29,22 @@ namespace Renderer {
         MAT4 = 16
     };
 
+    struct VertexAttributeDescriptor {
+        BufferStrideTypeInfo type;
+        s64 offset;
+    };
+
     // TODO(Jovanni): Delete these buffers prob put them in a vao or something
     struct GPUBuffer {
         GLuint id = 0;
         
-        DS::Vector<BufferStrideTypeInfo> stride_type_info;
+        DS::Vector<VertexAttributeDescriptor> descriptors;
         int stride;
         BufferType type = type;
         BufferUsage usage = usage;
         
         GPUBuffer() = default;
-        static GPUBuffer VBO(BufferType type, BufferUsage usage, int stride, DS::Vector<BufferStrideTypeInfo> stride_type_info, size_t buffer_size, void* buffer_data);
+        static GPUBuffer VBO(BufferType type, BufferUsage usage, int stride, DS::Vector<VertexAttributeDescriptor> descriptors, size_t buffer_size, void* buffer_data);
         static GPUBuffer EBO(int index_count, void* indices);
         void bind() const;
         void updateEntireBuffer(size_t buffer_size, void* buffer_data);

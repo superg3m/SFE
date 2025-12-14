@@ -18,10 +18,8 @@ namespace Renderer {
     void VertexArray::bindBuffer(int location, bool instanced, const GPUBuffer& buffer) {
         int start_location = location; 
 
-        int offset = 0;
-        for (const auto& type_info : buffer.stride_type_info) {
-            this->bindVertexAttribute(location, instanced, buffer.stride, offset, type_info);
-            offset += sizeof(float) * (int)type_info; // TODO(Jovanni): not robust at all its wrong fix it later, I need to actually have the type info and offsets somehow
+        for (VertexAttributeDescriptor desc : buffer.descriptors) {
+            this->bindVertexAttribute(location, instanced, buffer.stride, desc);
         }
 
         if (this->vertex_attribute_locations.count() == 0) {
@@ -33,15 +31,15 @@ namespace Renderer {
         }
     }
 
-    void VertexArray::bindVertexAttribute(int &location, bool instanced, s64 stride, s64 offset, BufferStrideTypeInfo type_info) {
+    void VertexArray::bindVertexAttribute(int &location, bool instanced, s64 stride, VertexAttributeDescriptor desc) {
         RUNTIME_ASSERT_MSG(
             !this->vertex_attribute_locations.has(location),
             "Location already assigned"
         );
 
-        bool is_integer = (type_info == BufferStrideTypeInfo::INT) || (type_info == BufferStrideTypeInfo::IVEC4);
+        bool is_integer = (desc.type == BufferStrideTypeInfo::INT) || (desc.type == BufferStrideTypeInfo::IVEC4);
         GLenum gl_type  = is_integer ? GL_INT : GL_FLOAT;
-        bool is_matrix = type_info == BufferStrideTypeInfo::MAT4;
+        bool is_matrix = desc.type == BufferStrideTypeInfo::MAT4;
 
         int max_attributes = 0;
         glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_attributes);
@@ -55,7 +53,7 @@ namespace Renderer {
                 );
 
                 glEnableVertexAttribArray(location + i);
-                glVertexAttribPointer(location + i, 4, gl_type, false, stride, (void*)(offset + (sizeof(Math::Vec4) * i)));
+                glVertexAttribPointer(location + i, 4, gl_type, false, stride, (void*)(desc.offset + (sizeof(Math::Vec4) * i)));
                 
                 glVertexAttribDivisor(location + i, instanced);
             }
@@ -64,9 +62,9 @@ namespace Renderer {
         } else {
             glEnableVertexAttribArray(location);
             if (is_integer) {
-                glVertexAttribIPointer(location, (int)type_info, gl_type, stride, (void*)offset);
+                glVertexAttribIPointer(location, (int)desc.type, gl_type, stride, (void*)desc.offset);
             } else {
-                glVertexAttribPointer(location, (int)type_info, gl_type, false, stride, (void*)offset);
+                glVertexAttribPointer(location, (int)desc.type, gl_type, false, stride, (void*)desc.offset);
             }
 
             glVertexAttribDivisor(location, instanced);

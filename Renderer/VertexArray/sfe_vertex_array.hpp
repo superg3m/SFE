@@ -18,6 +18,6 @@ namespace Renderer {
        
     private:
         DS::Hashmap<int, bool> vertex_attribute_locations;
-        void bindVertexAttribute(int &location, bool instanced, s64 stride, s64 offset, BufferStrideTypeInfo type_info);
+        void bindVertexAttribute(int &location, bool instanced, s64 stride, VertexAttributeDescriptor desc);
     };
 }

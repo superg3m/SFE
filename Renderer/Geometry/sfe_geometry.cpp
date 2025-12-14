@@ -440,14 +440,14 @@ namespace Renderer {
         flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
-        DS::Vector<Renderer::BufferStrideTypeInfo> stride_type_info = {
-            BufferStrideTypeInfo::VEC3,
-            BufferStrideTypeInfo::VEC3,
-            BufferStrideTypeInfo::VEC2,
-            BufferStrideTypeInfo::VEC3,
-            BufferStrideTypeInfo::VEC3,
-            BufferStrideTypeInfo::IVEC4,
-            BufferStrideTypeInfo::VEC3,
+        DS::Vector<Renderer::VertexAttributeDescriptor> stride_type_info = {
+            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aPosition)},
+            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aNormal)},
+            {BufferStrideTypeInfo::VEC2, OFFSET_OF(Vertex, aTexCoord)},
+            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aBitangent)},
+            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aColor)},
+            {BufferStrideTypeInfo::IVEC4, OFFSET_OF(Vertex, aBoneIDs)},
+            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aBoneWeights)},
         };
 
         //int stride = sizeof(Vertex);
@@ -463,10 +463,6 @@ namespace Renderer {
         this->EBO.bind();
 
         this->VAO.bindBuffer(0, false, this->VBO);
-        
-        // glCheckError(glGenBuffers(1, &this->EBO.id));
-        // glCheckError(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO.id));
-        // glCheckError(glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.count() * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW));
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {

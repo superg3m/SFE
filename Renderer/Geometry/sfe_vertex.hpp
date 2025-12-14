@@ -63,6 +63,4 @@ namespace Renderer {
         size_t data_size;
         int is_instanced;
     };
-
-    extern const AttributeDescriptor ALL_ATTRIBUTE_DESCRIPTORS[8];
 }
