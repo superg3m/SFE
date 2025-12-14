@@ -53,7 +53,6 @@ namespace Renderer {
         glCheckError(glGenBuffers(1, &this->id));
         this->bind();
 
-        glCheckError(glGenBuffers(1, &this->id));
         if (buffer_data) {
             glCheckError(glBufferData(this->id, this->buffer_size, buffer_data, this->gl_usage));
         }
