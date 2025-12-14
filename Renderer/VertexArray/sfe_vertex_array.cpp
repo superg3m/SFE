@@ -5,8 +5,8 @@ namespace Renderer {
     VertexArray VertexArray::Create() { 
         VertexArray ret;
         ret.vertex_attribute_locations = DS::Hashmap<int, bool>(1);
-
         glCheckError(glGenVertexArrays(1, &ret.id));
+
         return ret;
     }
 
@@ -16,9 +16,6 @@ namespace Renderer {
 
     // TODO(Jovanni): this is scuffeds
     void VertexArray::bindBuffer(int location, bool instanced, const GPUBuffer& buffer) {
-        this->bind();
-        buffer.bind();
-
         int start_location = location; 
 
         int offset = 0;
@@ -27,7 +24,6 @@ namespace Renderer {
             offset += (int)type_info;
         }
 
-        // hacky
         if (this->vertex_attribute_locations.count() == 0) {
             this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
         }
@@ -60,7 +56,6 @@ namespace Renderer {
 
                 glEnableVertexAttribArray(location + i);
                 glVertexAttribPointer(location + i, 4, gl_type, false, stride, (void*)(offset + (sizeof(Math::Vec4) * i)));
-                // this->vertex_attribute_locations.put(location + i, true);
                 
                 glVertexAttribDivisor(location + i, instanced);
             }
@@ -74,7 +69,6 @@ namespace Renderer {
                 glVertexAttribPointer(location, (int)type_info, gl_type, false, stride, (void*)offset);
             }
 
-            // this->vertex_attribute_locations.put(location, true);
             glVertexAttribDivisor(location, instanced);
             location += 1;
         }

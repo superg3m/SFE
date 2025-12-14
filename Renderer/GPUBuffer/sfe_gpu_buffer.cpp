@@ -2,7 +2,7 @@
 #include "../sfe_gl_check.hpp"
 
 namespace Renderer {
-    GPUBuffer GPUBuffer::VBO(BufferType type, BufferUsage usage, int stride, DS::Vector<BufferStrideTypeInfo> stride_type_info) {
+    GPUBuffer GPUBuffer::VBO(BufferType type, BufferUsage usage, int stride, DS::Vector<BufferStrideTypeInfo> stride_type_info, size_t buffer_size, void* buffer_data) {
         GPUBuffer ret;
         ret.type = type;
         ret.usage = usage;
@@ -18,15 +18,19 @@ namespace Renderer {
             (usage == BufferUsage::STREAM) ? GL_STREAM_DRAW : -1
         );
 
+        ret.allocate(buffer_size, buffer_data);
+
         return ret;
     }
 
-    GPUBuffer GPUBuffer::EBO() {
+    GPUBuffer GPUBuffer::EBO(int index_count, void* indices) {
         GPUBuffer ret;
         ret.type = BufferType::INDEX;
         ret.usage = BufferUsage::STATIC;
         ret.gl_type = GL_ELEMENT_ARRAY_BUFFER;
         ret.gl_usage = GL_STATIC_DRAW;
+
+        ret.allocate(sizeof(unsigned int) * index_count, indices);
 
         return ret;
     }
@@ -36,18 +40,18 @@ namespace Renderer {
         glCheckError(glBindBuffer(this->gl_type, this->id));
     }
 
-    void GPUBuffer::updateEntireBuffer(size_t buffer_size, const void* buffer_data) {
+    void GPUBuffer::updateEntireBuffer(size_t buffer_size, void* buffer_data) {
         this->bind();
         glCheckError(glBufferSubData(this->id, 0, buffer_size, buffer_data));
     }
 
-    void GPUBuffer::allocate(size_t buffer_size, const void* buffer_data) {
+    void GPUBuffer::allocate(size_t buffer_size, void* buffer_data) {
         glCheckError(glGenBuffers(1, &this->id));
         this->bind();
 
         if (buffer_data) {
             LOG_DEBUG("id: %d, gl_usage: %d\n", this->id, this->gl_usage);
-            glCheckError(glBufferData(this->id, buffer_size, buffer_data, this->gl_usage));
+            glCheckError(glBufferData(this->gl_type, buffer_size, buffer_data, this->gl_usage));
         }
     }
 }

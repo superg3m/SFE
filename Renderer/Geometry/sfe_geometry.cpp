@@ -456,14 +456,33 @@ namespace Renderer {
         this->VAO = VertexArray::Create();
         this->VAO.bind();
 
-        this->VBO = GPUBuffer::VBO(BufferType::VERTEX, BufferUsage::STATIC, stride, stride_type_info);
-        this->VBO.allocate(vertex_data_size, this->vertices.data());
+        this->VBO = GPUBuffer::VBO(BufferType::VERTEX, BufferUsage::STATIC, sizeof(Vertex), stride_type_info, this->vertices.count() * sizeof(Vertex), this->vertices.data());
+        this->VBO.bind();
 
-        this->EBO = GPUBuffer::EBO();
-        this->VBO.allocate(sizeof(unsigned int) * this->indices.count(), this->indices.data());
+        this->EBO = GPUBuffer::EBO(this->indices.count(), this->indices.data());
+        this->EBO.bind();
 
         this->VAO.bindBuffer(0, false, this->VBO);
-        this->EBO.bind();
+        
+        // glCheckError(glGenBuffers(1, &this->EBO.id));
+        // glCheckError(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO.id));
+        // glCheckError(glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.count() * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW));
+
+        s64 offset = 0;
+        for (const auto& desc : ALL_ATTRIBUTE_DESCRIPTORS) {
+            if (flags & desc.flag) {
+                glEnableVertexAttribArray(desc.location);
+                if (desc.is_integer) {
+                    glVertexAttribIPointer(desc.location, desc.component_count, desc.gl_type, sizeof(Vertex), (void*)offset);
+                } else {
+                    glVertexAttribPointer(desc.location, desc.component_count, desc.gl_type, desc.normalized, sizeof(Vertex), (void*)offset);
+                }
+
+                offset += desc.data_size;
+            } else {
+                glDisableVertexAttribArray(desc.location);
+            }
+        }
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {

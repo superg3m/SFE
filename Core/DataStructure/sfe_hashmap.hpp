@@ -100,6 +100,8 @@ namespace DS {
 
         Hashmap& operator=(const Hashmap& other) {
             if (this != &other) {
+                if (other.m_entries == nullptr) return *this;
+
                 if (this->m_entries) {
                     Memory::Free(m_entries);
                 }
