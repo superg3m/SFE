@@ -2,7 +2,7 @@
 #include "../sfe_gl_check.hpp"
 
 namespace Renderer {
-    GPUBuffer GPUBuffer::VBO(BufferType type, BufferUsage usage, byte_t stride, DS::Vector<BufferStrideTypeInfo> stride_type_info, byte_t buffer_size, void* buffer_data) {
+    GPUBuffer GPUBuffer::VBO(BufferType type, BufferUsage usage, size_t stride, DS::Vector<BufferStrideTypeInfo> stride_type_info, size_t buffer_size, void* buffer_data) {
         GPUBuffer ret;
         ret.type = type;
         ret.usage = usage;
@@ -24,7 +24,7 @@ namespace Renderer {
         return ret;
     }
 
-    GPUBuffer GPUBuffer::EBO(byte_t indices_count, unsigned int* indices_data) {
+    GPUBuffer GPUBuffer::EBO(size_t indices_count, unsigned int* indices_data) {
         GPUBuffer ret;
         ret.type = BufferType::INDEX;
         ret.usage = BufferUsage::STATIC;
@@ -42,7 +42,7 @@ namespace Renderer {
         glCheckError(glBindBuffer(this->gl_type, this->id));
     }
 
-    void GPUBuffer::updateEntireBuffer(byte_t buffer_size, const void* buffer_data) {
+    void GPUBuffer::updateEntireBuffer(size_t buffer_size, const void* buffer_data) {
         RUNTIME_ASSERT(this->buffer_size == buffer_size);
 
         this->bind();

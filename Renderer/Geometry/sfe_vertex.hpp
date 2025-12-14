@@ -60,7 +60,7 @@ namespace Renderer {
         GLenum gl_type; // float, int
         bool normalized;
         bool is_integer;     
-        byte_t data_size;
+        size_t data_size;
         int is_instanced;
     };
 

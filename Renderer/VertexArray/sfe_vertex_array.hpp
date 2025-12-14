@@ -20,6 +20,6 @@ namespace Renderer {
         DS::Hashmap<int, bool> vertex_attribute_locations;
 
         // track used locations
-        void bindVertexAttribute(int &location, bool instanced, byte_t stride, byte_t offset, BufferStrideTypeInfo type_info);
+        void bindVertexAttribute(int &location, bool instanced, GLsizei stride, GLsizei offset, BufferStrideTypeInfo type_info);
     };
 }
