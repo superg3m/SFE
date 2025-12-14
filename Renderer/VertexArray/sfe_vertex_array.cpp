@@ -22,15 +22,15 @@ namespace Renderer {
         } 
         
         if (buffer.type == BufferType::VERTEX) {
+            glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
 
-        }
+            for (VertexAttributeDescriptor desc : buffer.descriptors) {
+                this->bindVertexAttribute(desc.location, desc.instanced, buffer.stride, desc);
+            }
 
-        for (VertexAttributeDescriptor desc : buffer.descriptors) {
-            this->bindVertexAttribute(desc.location, desc.instanced, buffer.stride, desc);
-        }
-
-        if (this->vertex_attribute_locations.count() == 0) {
-            this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
+            if (this->vertex_attribute_locations.count() == 0) {
+                this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
+            }
         }
     }
 

@@ -44,6 +44,8 @@ namespace Renderer {
         int stride;
         BufferType type = type;
         BufferUsage usage = usage;
+        GLenum gl_type; // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_UNIFORM_BUFFER
+        GLenum gl_usage; // GL_STATIC_DRAW, GL_DYNAMIC_DRAW
         
         GPUBuffer() = default;
         static GPUBuffer VBO(BufferType type, BufferUsage usage, int stride, DS::Vector<VertexAttributeDescriptor> descriptors, size_t buffer_size, void* buffer_data);
@@ -52,9 +54,6 @@ namespace Renderer {
         void updateEntireBuffer(size_t buffer_size, void* buffer_data);
 
     private:
-        GLenum gl_type; // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_UNIFORM_BUFFER
-        GLenum gl_usage; // GL_STATIC_DRAW, GL_DYNAMIC_DRAW
-
         void allocate(size_t buffer_size, void* buffer_data);
     };
 }

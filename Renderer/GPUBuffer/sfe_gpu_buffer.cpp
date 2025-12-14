@@ -36,23 +36,15 @@ namespace Renderer {
         return ret;
     }
 
-    // TODO(Jovanni): make this cached
-    void GPUBuffer::bind() const {
-        glCheckError(glBindBuffer(this->gl_type, this->id));
-    }
-
     void GPUBuffer::updateEntireBuffer(size_t buffer_size, void* buffer_data) {
-        this->bind();
+        glCheckError(glBindBuffer(this->gl_type, this->id));
         glCheckError(glBufferSubData(this->id, 0, buffer_size, buffer_data));
     }
 
     void GPUBuffer::allocate(size_t buffer_size, void* buffer_data) {
         glCheckError(glGenBuffers(1, &this->id));
-        this->bind();
+        glCheckError(glBindBuffer(this->gl_type, this->id));
 
-        if (buffer_data) {
-            LOG_DEBUG("id: %d, gl_usage: %d\n", this->id, this->gl_usage);
-            glCheckError(glBufferData(this->gl_type, buffer_size, buffer_data, this->gl_usage));
-        }
+        glCheckError(glBufferData(this->gl_type, buffer_size, buffer_data, this->gl_usage));
     }
 }
