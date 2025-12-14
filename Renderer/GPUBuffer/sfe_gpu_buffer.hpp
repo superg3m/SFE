@@ -14,7 +14,7 @@ namespace Renderer {
     enum class BufferUsage {
         STATIC,
         DYNAMIC,
-        STEAM
+        STREAM
     };
 
     // NOTE(Jovanni): The values are the component_count
