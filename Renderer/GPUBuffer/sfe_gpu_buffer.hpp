@@ -30,8 +30,10 @@ namespace Renderer {
     };
 
     struct VertexAttributeDescriptor {
-        BufferStrideTypeInfo type;
+        int location;
+        bool instanced;
         s64 offset;
+        BufferStrideTypeInfo type;
     };
 
     // TODO(Jovanni): Delete these buffers prob put them in a vao or something

@@ -14,24 +14,27 @@ namespace Renderer {
         glCheckError(glBindVertexArray(this->id));
     }
 
-    // TODO(Jovanni): this is scuffeds
-    void VertexArray::bindBuffer(int location, bool instanced, const GPUBuffer& buffer) {
-        int start_location = location; 
+    void VertexArray::bindBuffer(const GPUBuffer& buffer) {
+        if (buffer.type == BufferType::INDEX) {
+            buffer.bind();
+
+            return;
+        } 
+        
+        if (buffer.type == BufferType::VERTEX) {
+
+        }
 
         for (VertexAttributeDescriptor desc : buffer.descriptors) {
-            this->bindVertexAttribute(location, instanced, buffer.stride, desc);
+            this->bindVertexAttribute(desc.location, desc.instanced, buffer.stride, desc);
         }
 
         if (this->vertex_attribute_locations.count() == 0) {
             this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
         }
-
-        for (int i = start_location; i < location; i++) {
-            this->vertex_attribute_locations.put(i, true);
-        }
     }
 
-    void VertexArray::bindVertexAttribute(int &location, bool instanced, s64 stride, VertexAttributeDescriptor desc) {
+    void VertexArray::bindVertexAttribute(int location, bool instanced, s64 stride, VertexAttributeDescriptor desc) {
         RUNTIME_ASSERT_MSG(
             !this->vertex_attribute_locations.has(location),
             "Location already assigned"
@@ -54,11 +57,9 @@ namespace Renderer {
 
                 glEnableVertexAttribArray(location + i);
                 glVertexAttribPointer(location + i, 4, gl_type, false, stride, (void*)(desc.offset + (sizeof(Math::Vec4) * i)));
-                
                 glVertexAttribDivisor(location + i, instanced);
+                this->vertex_attribute_locations.put(location + i, true);
             }
-
-            location += 4;
         } else {
             glEnableVertexAttribArray(location);
             if (is_integer) {
@@ -68,7 +69,7 @@ namespace Renderer {
             }
 
             glVertexAttribDivisor(location, instanced);
-            location += 1;
+            this->vertex_attribute_locations.put(location, true);
         }
     }
 }

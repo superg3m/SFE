@@ -434,6 +434,7 @@ namespace Renderer {
         flags = (vertices[0].aPosition != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aPosition : flags;
         flags = (vertices[0].aNormal != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aNormal : flags;
         flags = (vertices[0].aTexCoord != Math::Vec2(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aTexCoord : flags;
+        flags = (vertices[0].aTangent != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBitangent : flags;
         flags = (vertices[0].aBitangent != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBitangent : flags;
         flags = (vertices[0].aColor != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aColor : flags;
         flags = (vertices[0].aBoneIDs != Math::IVec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
@@ -441,13 +442,14 @@ namespace Renderer {
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
         DS::Vector<Renderer::VertexAttributeDescriptor> stride_type_info = {
-            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aPosition)},
-            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aNormal)},
-            {BufferStrideTypeInfo::VEC2, OFFSET_OF(Vertex, aTexCoord)},
-            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aBitangent)},
-            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aColor)},
-            {BufferStrideTypeInfo::IVEC4, OFFSET_OF(Vertex, aBoneIDs)},
-            {BufferStrideTypeInfo::VEC3, OFFSET_OF(Vertex, aBoneWeights)},
+            {0, false, OFFSET_OF(Vertex, aPosition), BufferStrideTypeInfo::VEC3},
+            {1, false, OFFSET_OF(Vertex, aNormal), BufferStrideTypeInfo::VEC3},
+            {2, false, OFFSET_OF(Vertex, aTexCoord), BufferStrideTypeInfo::VEC2},
+            {3, false, OFFSET_OF(Vertex, aTangent), BufferStrideTypeInfo::VEC3},
+            {4, false, OFFSET_OF(Vertex, aBitangent), BufferStrideTypeInfo::VEC3},
+            {5, false, OFFSET_OF(Vertex, aColor), BufferStrideTypeInfo::VEC3},
+            {6, false, OFFSET_OF(Vertex, aBoneIDs), BufferStrideTypeInfo::IVEC4},
+            {7, false, OFFSET_OF(Vertex, aBoneWeights), BufferStrideTypeInfo::VEC3},
         };
 
         //int stride = sizeof(Vertex);
@@ -457,13 +459,9 @@ namespace Renderer {
         this->VAO.bind();
 
         this->VBO = GPUBuffer::VBO(BufferType::VERTEX, BufferUsage::STATIC, sizeof(Vertex), stride_type_info, this->vertices.count() * sizeof(Vertex), this->vertices.data());
-        this->VBO.bind();
-
         this->EBO = GPUBuffer::EBO(this->indices.count(), this->indices.data());
-        this->EBO.bind();
-
-        // TODO(Jovanni): This is odd tbh, seems like VAO, VBO, UBO are enough differnt to warrent their own thing
-        this->VAO.bindBuffer(0, false, this->VBO);
+        this->VAO.bindBuffer(this->VBO);
+        this->VAO.bindBuffer(this->EBO);
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {
