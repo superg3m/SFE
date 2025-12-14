@@ -36,7 +36,12 @@ namespace GFX {
         BufferStrideTypeInfo type;
 
         AttributeDesc() = delete;
-        AttributeDesc(int location, bool instanced, s64 offset, BufferStrideTypeInfo type);
+        AttributeDesc(int location, bool instanced, s64 offset, BufferStrideTypeInfo type) {
+            this->location = location;
+            this->instanced = instanced;
+            this->offset = offset;
+            this->type = type;
+        }
     };
 
     // TODO(Jovanni): Delete these buffers prob put them in a vao or something
