@@ -2,25 +2,6 @@
 #include "../sfe_gl_check.hpp"
 
 namespace GFX {
-    template <typename T>
-    GPUBuffer GPUBuffer::VBO(BufferUsage usage, DS::Vector<AttributeDesc> descriptors, DS::Vector<T> buffer) {
-        GPUBuffer ret;
-        ret.type = type;
-        ret.usage = usage;
-        ret.stride = stride;
-        ret.descriptors = descriptors;
-        ret.gl_type = GL_ARRAY_BUFFER;
-        ret.gl_usage = (
-            (usage == BufferUsage::STATIC) ? GL_STATIC_DRAW : 
-            (usage == BufferUsage::DYNAMIC) ? GL_DYNAMIC_DRAW :
-            (usage == BufferUsage::STREAM) ? GL_STREAM_DRAW : -1
-        );
-
-        ret.allocate(sizeof(T) * buffer.count(), buffer.data());
-
-        return ret;
-    }
-
     GPUBuffer GPUBuffer::EBO(DS::Vector<unsigned int> buffer) {
         GPUBuffer ret;
         ret.type = BufferType::INDEX;

@@ -34,6 +34,9 @@ namespace GFX {
         bool instanced;
         s64 offset;
         BufferStrideTypeInfo type;
+
+        AttributeDesc() = delete;
+        AttributeDesc(int location, bool instanced, s64 offset, BufferStrideTypeInfo type);
     };
 
     // TODO(Jovanni): Delete these buffers prob put them in a vao or something
@@ -50,7 +53,24 @@ namespace GFX {
         GPUBuffer() = default;
 
         template <typename T>
-        static GPUBuffer VBO(BufferUsage usage, DS::Vector<AttributeDesc> descriptors, DS::Vector<T> data);
+        static GPUBuffer VBO(BufferUsage usage, DS::Vector<AttributeDesc> descriptors, DS::Vector<T> buffer) {
+            GPUBuffer ret;
+            ret.type = BufferType::VERTEX;
+            ret.usage = usage;
+            ret.stride = sizeof(T);
+            ret.descriptors = descriptors;
+            ret.gl_type = GL_ARRAY_BUFFER;
+            ret.gl_usage = (
+                (usage == BufferUsage::STATIC) ? GL_STATIC_DRAW : 
+                (usage == BufferUsage::DYNAMIC) ? GL_DYNAMIC_DRAW :
+                (usage == BufferUsage::STREAM) ? GL_STREAM_DRAW : -1
+            );
+
+            ret.allocate(sizeof(T) * buffer.count(), buffer.data());
+
+            return ret;
+        }
+
         static GPUBuffer EBO(DS::Vector<unsigned int> data);
         void updateEntireBuffer(size_t buffer_size, void* buffer_data);
 
