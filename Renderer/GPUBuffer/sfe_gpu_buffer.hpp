@@ -50,7 +50,6 @@ namespace Renderer {
         GPUBuffer() = default;
         static GPUBuffer VBO(BufferType type, BufferUsage usage, int stride, DS::Vector<VertexAttributeDescriptor> descriptors, size_t buffer_size, void* buffer_data);
         static GPUBuffer EBO(int index_count, void* indices);
-        void bind() const;
         void updateEntireBuffer(size_t buffer_size, void* buffer_data);
 
     private:
