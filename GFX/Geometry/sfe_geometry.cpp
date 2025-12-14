@@ -442,14 +442,14 @@ namespace GFX {
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
         DS::Vector<GFX::AttributeDesc> stride_type_info = {
-            {0, false, OFFSET_OF(Vertex, aPosition), BufferStrideTypeInfo::VEC3},
-            {1, false, OFFSET_OF(Vertex, aNormal), BufferStrideTypeInfo::VEC3},
-            {2, false, OFFSET_OF(Vertex, aTexCoord), BufferStrideTypeInfo::VEC2},
-            {3, false, OFFSET_OF(Vertex, aTangent), BufferStrideTypeInfo::VEC3},
-            {4, false, OFFSET_OF(Vertex, aBitangent), BufferStrideTypeInfo::VEC3},
-            {5, false, OFFSET_OF(Vertex, aColor), BufferStrideTypeInfo::VEC3},
-            {6, false, OFFSET_OF(Vertex, aBoneIDs), BufferStrideTypeInfo::IVEC4},
-            {7, false, OFFSET_OF(Vertex, aBoneWeights), BufferStrideTypeInfo::VEC3},
+            AttributeDesc(0, false, OFFSET_OF(Vertex, aPosition), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(1, false, OFFSET_OF(Vertex, aNormal), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(2, false, OFFSET_OF(Vertex, aTexCoord), BufferStrideTypeInfo::VEC2),
+            AttributeDesc(3, false, OFFSET_OF(Vertex, aTangent), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(4, false, OFFSET_OF(Vertex, aBitangent), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(5, false, OFFSET_OF(Vertex, aColor), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(6, false, OFFSET_OF(Vertex, aBoneIDs), BufferStrideTypeInfo::IVEC4),
+            AttributeDesc(7, false, OFFSET_OF(Vertex, aBoneWeights), BufferStrideTypeInfo::VEC3),
         };
 
         //int stride = sizeof(Vertex);
