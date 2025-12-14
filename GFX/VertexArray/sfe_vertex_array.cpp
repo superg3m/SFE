@@ -15,6 +15,8 @@ namespace GFX {
     }
 
     void VertexArray::bindBuffer(const GPUBuffer& buffer) {
+        this->bind();
+
         if (buffer.type == BufferType::INDEX) {
             glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
             
