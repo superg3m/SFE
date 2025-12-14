@@ -9,8 +9,8 @@
 #define HASHMAP_DEFAULT_getLoadFactor 0.7f
 
 namespace DS {
-    typedef u64(HashFunction)(const void*, size_t);
-    typedef bool(EqualFunction)(const void*, size_t, const void*, size_t);
+    typedef u64(HashFunction)(const void*, byte_t);
+    typedef bool(EqualFunction)(const void*, byte_t, const void*, byte_t);
 
     template <typename K, typename V>
     struct Hashmap {
@@ -100,8 +100,6 @@ namespace DS {
 
         Hashmap& operator=(const Hashmap& other) {
             if (this != &other) {
-                if (other.m_entries == nullptr) return *this;
-
                 if (this->m_entries) {
                     Memory::Free(m_entries);
                 }
@@ -215,7 +213,7 @@ namespace DS {
             HashmapEntry* old_entries = this->m_entries;
 
             this->m_capacity *= 2;
-            size_t new_allocation_size = (this->m_capacity * sizeof(HashmapEntry));
+            byte_t new_allocation_size = (this->m_capacity * sizeof(HashmapEntry));
             this->m_entries = (HashmapEntry*)Memory::Malloc(new_allocation_size);
             Memory::Zero(this->m_entries, new_allocation_size);
 

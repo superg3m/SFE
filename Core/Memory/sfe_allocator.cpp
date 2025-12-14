@@ -15,7 +15,7 @@ namespace Memory {
         g_allocator = allocator;
     }
 
-    void* Malloc(size_t allocation_size) {
+    void* Malloc(byte_t allocation_size) {
         return g_allocator->malloc(allocation_size);
     }
 
@@ -23,7 +23,7 @@ namespace Memory {
         g_allocator->free(data);
     }
 
-    void* Realloc(void* data, size_t old_allocation_size, size_t new_allocation_size) {
+    void* Realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size) {
         return g_allocator->realloc(data, old_allocation_size, new_allocation_size);
     }
 
@@ -35,7 +35,7 @@ namespace Memory {
         this->valid = false;
     }
 
-    void* GeneralAllocator::malloc(size_t allocation_size) {
+    void* GeneralAllocator::malloc(byte_t allocation_size) {
         void* ret = std::malloc(allocation_size);
         Memory::Zero(ret, allocation_size);
 
@@ -46,7 +46,7 @@ namespace Memory {
         std::free(data);
     }
 
-    void* GeneralAllocator::realloc(void* data, size_t old_allocation_size, size_t new_allocation_size) {
+    void* GeneralAllocator::realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size) {
         RUNTIME_ASSERT_MSG(this->valid, "Allocator is invalid!\n");
         RUNTIME_ASSERT(data);
         RUNTIME_ASSERT(old_allocation_size != 0);
@@ -72,7 +72,7 @@ namespace Memory {
         this->valid = false;
     }
 
-    ArenaAllocator::ArenaAllocator(void* memory, size_t allocation_size, int flags, u8 alignment) {
+    ArenaAllocator::ArenaAllocator(void* memory, byte_t allocation_size, int flags, u8 alignment) {
         RUNTIME_ASSERT_MSG(memory, "Memory can't be a null pointer!\n");
         RUNTIME_ASSERT_MSG(allocation_size != 0, "Can't have a zero allocation size!\n");
         int mask = ARENA_FLAG_FIXED | ARENA_FLAG_CIRCULAR;
@@ -85,21 +85,21 @@ namespace Memory {
         this->capacity = allocation_size;
         this->alignment = alignment;
         this->base_address = (u8*)memory;
-        DS::Stack<size_t>* address = (DS::Stack<size_t>*)this->malloc(sizeof(DS::Stack<size_t>));
-        this->size_stack = new (address) DS::Stack<size_t>();
+        DS::Stack<byte_t>* address = (DS::Stack<byte_t>*)this->malloc(sizeof(DS::Stack<byte_t>));
+        this->size_stack = new (address) DS::Stack<byte_t>();
     }
 
-    ArenaAllocator ArenaAllocator::Fixed(void* memory, size_t capacity, bool is_stack_memory) {
+    ArenaAllocator ArenaAllocator::Fixed(void* memory, byte_t capacity, bool is_stack_memory) {
         int flags = ARENA_FLAG_FIXED | (is_stack_memory ? ARENA_FLAG_STACK_MEMORY : 0);
         return ArenaAllocator(memory, capacity, flags, 8);
     }
 
-    ArenaAllocator ArenaAllocator::Circular(void* memory, size_t capacity, bool is_stack_memory) {
+    ArenaAllocator ArenaAllocator::Circular(void* memory, byte_t capacity, bool is_stack_memory) {
         int flags = ARENA_FLAG_CIRCULAR | (is_stack_memory ? ARENA_FLAG_STACK_MEMORY : 0);
         return ArenaAllocator(memory, capacity, flags, 8);
     }
 
-    void* ArenaAllocator::malloc(size_t allocation_size) {
+    void* ArenaAllocator::malloc(byte_t allocation_size) {
         RUNTIME_ASSERT_MSG(this->valid, "Allocator is invalid!\n");
         RUNTIME_ASSERT_MSG(allocation_size != 0, "Element size can't be zero!\n");
 
@@ -113,7 +113,7 @@ namespace Memory {
         }
 
         u8* ret = this->base_address + this->used;
-        size_t previous_used = this->used;
+        byte_t previous_used = this->used;
         this->used += allocation_size;
         if ((this->used & (this->alignment - 1)) != 0) {
             this->used += (this->alignment - (this->used & (this->alignment - 1)));
@@ -135,12 +135,12 @@ namespace Memory {
         }
     }
 
-    void ArenaAllocator::free(size_t size_to_free) {
+    void ArenaAllocator::free(byte_t byte_to_free) {
         RUNTIME_ASSERT_MSG(this->valid, "Allocator is invalid!\n");
-        this->used -= size_to_free;
+        this->used -= byte_to_free;
     }
 
-    void* ArenaAllocator::realloc(void* data, size_t old_allocation_size, size_t new_allocation_size) {
+    void* ArenaAllocator::realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size) {
         RUNTIME_ASSERT_MSG(this->valid, "Allocator is invalid!\n");
         RUNTIME_ASSERT(old_allocation_size != 0);
         RUNTIME_ASSERT(new_allocation_size != 0);
@@ -158,7 +158,7 @@ namespace Memory {
     }
 
     bool ArenaAllocator::isDataPoppable(void* data) {
-        size_t bytes_to_pop = this->size_stack->peek();
+        byte_t bytes_to_pop = this->size_stack->peek();
         return this->base_address + (this->used - bytes_to_pop) == data;
     }
 }

@@ -8,16 +8,16 @@ namespace DS {
 }
 
 namespace Memory {
-    void* Malloc(size_t allocation_size);
+    void* Malloc(byte_t allocation_size);
     void Free(void* data);
-    void* Realloc(void* data, size_t old_allocation_size, size_t new_allocation_size);
+    void* Realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size);
 
     struct BaseAllocator {
         virtual ~BaseAllocator() = default;
 
-        virtual void* malloc(size_t allocation_size) = 0;
+        virtual void* malloc(byte_t allocation_size) = 0;
         virtual void free(void* data) = 0;
-        virtual void* realloc(void* data, size_t old_allocation_size, size_t new_allocation_size) = 0;
+        virtual void* realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size) = 0;
 
         bool is_valid() const {
             return this->valid;
@@ -32,9 +32,9 @@ namespace Memory {
         GeneralAllocator();
         ~GeneralAllocator();
 
-        void* malloc(size_t allocation_size) override;
+        void* malloc(byte_t allocation_size) override;
         void free(void* data) override;
-        void* realloc(void* data, size_t old_allocation_size, size_t new_allocation_size) override;
+        void* realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size) override;
     };
 
     // add linked list memory pages
@@ -49,24 +49,24 @@ namespace Memory {
         ArenaAllocator();
         ~ArenaAllocator();
 
-        ArenaAllocator(void* memory, size_t allocation_size, int flags, u8 alignment);
+        ArenaAllocator(void* memory, byte_t allocation_size, int flags, u8 alignment);
 
-        static ArenaAllocator Fixed(void* memory, size_t capacity, bool is_stack_memory);
-        static ArenaAllocator Circular(void* memory, size_t memory_capacity, bool is_stack_memory);
+        static ArenaAllocator Fixed(void* memory, byte_t capacity, bool is_stack_memory);
+        static ArenaAllocator Circular(void* memory, byte_t memory_capacity, bool is_stack_memory);
 
-        void* malloc(size_t allocation_size) override;
+        void* malloc(byte_t allocation_size) override;
         void free(void* data) override;
-        void free(size_t size_to_free);
-        void* realloc(void* data, size_t old_allocation_size, size_t new_allocation_size) override;
+        void free(byte_t byte_to_free);
+        void* realloc(void* data, byte_t old_allocation_size, byte_t new_allocation_size) override;
 
     private:
         int flags = 0;
-        size_t used = 0;
-        size_t used_save_point = 0;
-        size_t capacity = 0;
+        byte_t used = 0;
+        byte_t used_save_point = 0;
+        byte_t capacity = 0;
         u8 alignment = 0;
         u8* base_address = nullptr;
-        DS::Stack<size_t>* size_stack = nullptr;
+        DS::Stack<byte_t>* size_stack = nullptr;
 
         bool isDataPoppable(void* data);
     };

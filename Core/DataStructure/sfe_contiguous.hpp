@@ -81,10 +81,10 @@ namespace DS {
         }
 
         void reserve(u64 count) {
-            const size_t total_allocation_size = sizeof(T) * this->m_capacity;
+            const byte_t total_allocation_size = sizeof(T) * this->m_capacity;
 
-            const size_t old_allocation_size = sizeof(T) * this->m_count;
-            const size_t new_allocation_size = sizeof(T) * count;
+            const byte_t old_allocation_size = sizeof(T) * this->m_count;
+            const byte_t new_allocation_size = sizeof(T) * count;
 
             if (new_allocation_size > total_allocation_size) {
                 this->m_data = (T*)Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
@@ -93,10 +93,10 @@ namespace DS {
         }
 
         void resize(u64 count) {
-            const size_t total_allocation_size = sizeof(T) * this->m_capacity;
+            const byte_t total_allocation_size = sizeof(T) * this->m_capacity;
 
-            const size_t old_allocation_size = sizeof(T) * this->m_count;
-            const size_t new_allocation_size = sizeof(T) * count;
+            const byte_t old_allocation_size = sizeof(T) * this->m_count;
+            const byte_t new_allocation_size = sizeof(T) * count;
             if (new_allocation_size > total_allocation_size) {
                 this->m_data = (T*)Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
             }
@@ -173,9 +173,9 @@ namespace DS {
         }
         
         void grow() {
-            size_t old_allocation_size = (this->m_capacity * sizeof(T));
+            byte_t old_allocation_size = (this->m_capacity * sizeof(T));
             this->m_capacity *= 2;
-            size_t new_allocation_size = (this->m_capacity * sizeof(T));
+            byte_t new_allocation_size = (this->m_capacity * sizeof(T));
             this->m_data = (T*)Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
         }
 
@@ -185,7 +185,7 @@ namespace DS {
 
         void shrink_to_fit() {
             this->m_capacity = this->m_count;
-            size_t shrunken_allocation_size = (this->m_capacity * sizeof(T));
+            byte_t shrunken_allocation_size = (this->m_capacity * sizeof(T));
 
             this->m_data = (T*)Memory::Realloc(this->m_data, shrunken_allocation_size, shrunken_allocation_size);
         }
@@ -220,7 +220,7 @@ namespace DS {
 
         void free() {
             if (this->m_data) {
-                for (size_t i = 0; i < m_count; ++i) {
+                for (byte_t i = 0; i < m_count; ++i) {
                     this->m_data[i].~T();
                 }
             }
@@ -275,9 +275,9 @@ namespace DS {
                 // return;
             }
 
-            size_t old_allocation_size = (this->m_capacity * sizeof(T));
+            byte_t old_allocation_size = (this->m_capacity * sizeof(T));
             this->m_capacity *= 2;
-            size_t new_allocation_size = (this->m_capacity * sizeof(T));
+            byte_t new_allocation_size = (this->m_capacity * sizeof(T));
             this->m_data = (T*)Memory::Realloc(this->m_data, old_allocation_size, new_allocation_size);
         }
     private:
@@ -288,7 +288,7 @@ namespace DS {
     
     template <typename T>
     struct RingQueue {
-        RingQueue(size_t capacity = 1) {
+        RingQueue(byte_t capacity = 1) {
             RUNTIME_ASSERT(capacity > 0);
             
             this->m_count = 0;
@@ -344,7 +344,7 @@ namespace DS {
         u64 m_count = 0;
         u64 m_capacity = 0;
 
-        size_t m_read = 0;
-        size_t m_write = 0;
+        byte_t m_read = 0;
+        byte_t m_write = 0;
     };
 }
