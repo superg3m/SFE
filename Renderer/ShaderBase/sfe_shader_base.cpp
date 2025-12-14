@@ -51,7 +51,7 @@ void ShaderBase::checkCompileError(unsigned int source_id, const char* path) {
 }
 
 unsigned int ShaderBase::shaderSourceCompile(const char* path) {
-    byte_t file_size = 0;
+    size_t file_size = 0;
     Error error = Error::SUCCESS;
     GLchar* shader_source = (GLchar*)Platform::ReadEntireFile(path, file_size, error);
     RUNTIME_ASSERT_MSG(error == Error::SUCCESS, "Shader Error: %s\n", path, getErrorString(error));
