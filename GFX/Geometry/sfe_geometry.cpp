@@ -5,12 +5,12 @@
 #include "../../Core/DataStructure/sfe_contiguous.hpp"
 #include "../../Core/Random/sfe_random.hpp"
 #include "../ShaderBase/sfe_shader_base.hpp"
-#include "../sfe_renderer_state.hpp"
+#include "../sfe_renderer.hpp"
 #include "../sfe_gl_check.hpp"
 #include "sfe_geometry.hpp"
 #include "sfe_vertex.hpp"
 
-namespace Renderer {
+namespace GFX {
     static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
         Math::Mat4 ret;
 
@@ -379,14 +379,14 @@ namespace Renderer {
             shader->setMaterial(geo->material);
 
             if (geo->index_count > 0) {
-                Renderer::IncrementDrawCallCount();
+                GFX::IncrementDrawCallCount();
                 glCheckError(glDrawElementsBaseVertex(
                     this->draw_type, geo->index_count, GL_UNSIGNED_INT, 
                     (void*)(sizeof(unsigned int) * geo->base_index), 
                     geo->base_vertex
                 ));
             } else {
-                Renderer::IncrementDrawCallCount();
+                GFX::IncrementDrawCallCount();
                 glCheckError(glDrawArrays(
                     this->draw_type,
                     geo->base_vertex,
@@ -408,14 +408,14 @@ namespace Renderer {
             shader->setMaterial(geo->material);
 
             if (geo->index_count > 0) {
-                Renderer::IncrementDrawCallCount();
+                GFX::IncrementDrawCallCount();
                 glCheckError(glDrawElementsInstancedBaseVertex(
                     this->draw_type, geo->index_count,
                     GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * geo->base_index),
                     instance_count, geo->base_vertex
                 ));
             } else {
-                Renderer::IncrementDrawCallCount();
+                GFX::IncrementDrawCallCount();
                 glCheckError(glDrawArraysInstanced(
                     this->draw_type,
                     geo->base_vertex,
@@ -441,7 +441,7 @@ namespace Renderer {
         flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
-        DS::Vector<Renderer::VertexAttributeDescriptor> stride_type_info = {
+        DS::Vector<GFX::AttributeDesc> stride_type_info = {
             {0, false, OFFSET_OF(Vertex, aPosition), BufferStrideTypeInfo::VEC3},
             {1, false, OFFSET_OF(Vertex, aNormal), BufferStrideTypeInfo::VEC3},
             {2, false, OFFSET_OF(Vertex, aTexCoord), BufferStrideTypeInfo::VEC2},
@@ -458,8 +458,8 @@ namespace Renderer {
         this->VAO = VertexArray::Create();
         this->VAO.bind();
 
-        this->VBO = GPUBuffer::VBO(BufferType::VERTEX, BufferUsage::STATIC, sizeof(Vertex), stride_type_info, this->vertices.count() * sizeof(Vertex), this->vertices.data());
-        this->EBO = GPUBuffer::EBO(this->indices.count(), this->indices.data());
+        this->VBO = GPUBuffer::VBO(BufferUsage::STATIC, stride_type_info, this->vertices);
+        this->EBO = GPUBuffer::EBO(this->indices);
         this->VAO.bindBuffer(this->VBO);
         this->VAO.bindBuffer(this->EBO);
 

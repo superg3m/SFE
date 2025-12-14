@@ -1,7 +1,7 @@
 #include "sfe_vertex_array.hpp"
 #include "../sfe_gl_check.hpp"
 
-namespace Renderer {
+namespace GFX {
     VertexArray VertexArray::Create() { 
         VertexArray ret;
         ret.vertex_attribute_locations = DS::Hashmap<int, bool>(1);
@@ -24,7 +24,7 @@ namespace Renderer {
         if (buffer.type == BufferType::VERTEX) {
             glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
 
-            for (VertexAttributeDescriptor desc : buffer.descriptors) {
+            for (AttributeDesc desc : buffer.descriptors) {
                 this->bindVertexAttribute(desc.location, desc.instanced, buffer.stride, desc);
             }
 
@@ -34,7 +34,7 @@ namespace Renderer {
         }
     }
 
-    void VertexArray::bindVertexAttribute(int location, bool instanced, s64 stride, VertexAttributeDescriptor desc) {
+    void VertexArray::bindVertexAttribute(int location, bool instanced, s64 stride, AttributeDesc desc) {
         RUNTIME_ASSERT_MSG(
             !this->vertex_attribute_locations.has(location),
             "Location already assigned"

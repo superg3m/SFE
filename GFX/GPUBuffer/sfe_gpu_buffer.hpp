@@ -4,7 +4,7 @@
 #include "../../Core/Common/sfe_common.hpp"
 #include "../../Core/DataStructure/sfe_ds.hpp"
 
-namespace Renderer {
+namespace GFX {
     enum class BufferType {
         VERTEX,
         INDEX,
@@ -29,7 +29,7 @@ namespace Renderer {
         MAT4 = 16
     };
 
-    struct VertexAttributeDescriptor {
+    struct AttributeDesc {
         int location;
         bool instanced;
         s64 offset;
@@ -40,7 +40,7 @@ namespace Renderer {
     struct GPUBuffer {
         GLuint id = 0;
         
-        DS::Vector<VertexAttributeDescriptor> descriptors;
+        DS::Vector<AttributeDesc> descriptors;
         int stride;
         BufferType type = type;
         BufferUsage usage = usage;
@@ -48,8 +48,10 @@ namespace Renderer {
         GLenum gl_usage; // GL_STATIC_DRAW, GL_DYNAMIC_DRAW
         
         GPUBuffer() = default;
-        static GPUBuffer VBO(BufferType type, BufferUsage usage, int stride, DS::Vector<VertexAttributeDescriptor> descriptors, size_t buffer_size, void* buffer_data);
-        static GPUBuffer EBO(int index_count, void* indices);
+
+        template <typename T>
+        static GPUBuffer VBO(BufferUsage usage, DS::Vector<AttributeDesc> descriptors, DS::Vector<T> data);
+        static GPUBuffer EBO(DS::Vector<unsigned int> data);
         void updateEntireBuffer(size_t buffer_size, void* buffer_data);
 
     private:

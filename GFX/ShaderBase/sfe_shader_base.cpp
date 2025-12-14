@@ -2,7 +2,7 @@
 #include "../../Core/DataStructure/sfe_ds.hpp"
 #include "../../Core/String/sfe_string.hpp"
 #include "../../Platform/sfe_platform.hpp"
-#include "../sfe_renderer_state.hpp"
+#include "../sfe_renderer.hpp"
 #include "sfe_shader_base.hpp"
 
 static const char* glEnumToString(GLenum type) {
@@ -134,7 +134,7 @@ unsigned int ShaderBase::createShaderProgram(DS::Vector<const char*> shader_path
 }
 
 void ShaderBase::use() const {
-    Renderer::BindProgram(this->program_id);
+    GFX::BindProgram(this->program_id);
 }
 
 // TODO(Jovanni): Make this use the locations instead of string lookups

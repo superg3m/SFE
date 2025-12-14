@@ -5,7 +5,7 @@
 #include "../../Core/Math/sfe_math.hpp"
 #include "../../Core/Common/sfe_common.hpp"
 
-namespace Renderer {
+namespace GFX {
     const float MAGIC_NUMBER = -123450510.0f;
     const int RESERVED_VERTEX_ATTRIBUTE_LOCATIONS = 8;
 

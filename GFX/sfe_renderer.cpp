@@ -1,9 +1,9 @@
 #include <glad/glad.h>
 
-#include "sfe_renderer_state.hpp"
+#include "sfe_renderer.hpp"
 #include "sfe_gl_check.hpp"
 
-namespace Renderer {
+namespace GFX {
     static unsigned int VAO = (unsigned int)-1;
     static unsigned int PROGRAM = (unsigned int)-1;
     static bool DEPTH = false;

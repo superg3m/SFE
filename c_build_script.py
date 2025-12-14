@@ -55,7 +55,7 @@ procedures_config = {
         source_files = [
             "../../Core/**/*.cpp",
             "../../Platform/**/*.cpp",
-            "../../Renderer/**/*.cpp",
+            "../../GFX/**/*.cpp",
             "../../Input/**/*.cpp",
             "../../Vendor/glad/src/glad.c",
             "../../Vendor/stb/stb_image.c"

@@ -10,14 +10,14 @@
 #include "../GPUBuffer/sfe_gpu_buffer.hpp"
 #include "../VertexArray/sfe_vertex_array.hpp"
 #include "../Core/Common/sfe_common.hpp"
-#include "../sfe_renderer_state.hpp"
+#include "../sfe_renderer.hpp"
 #include "sfe_material.hpp"
 #include "sfe_vertex.hpp"
 
 #define MAX_BONES 128
 
 typedef struct ShaderBase ShaderBase;
-namespace Renderer  {
+namespace GFX  {
     template<typename T>
     concept SupportedVertexAttributeType = (
         std::is_same_v<T, bool> ||

@@ -1,6 +1,6 @@
 #include "sfe_vertex.hpp"
 
-namespace Renderer {
+namespace GFX {
     Vertex::Vertex(Math::Vec3 pos) { 
         this->aPosition = pos;
     }

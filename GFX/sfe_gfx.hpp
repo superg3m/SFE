@@ -5,5 +5,5 @@
 #include "Geometry/sfe_geometry.hpp"
 #include "Geometry/sfe_material.hpp"
 #include "ShaderBase/sfe_shader_base.hpp"
-#include "sfe_renderer_state.hpp"
+#include "sfe_renderer.hpp"
 #include "sfe_gl_check.hpp"

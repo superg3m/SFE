@@ -4,7 +4,7 @@ because using globals is such a footgun...
 // Modules:
 - Core
 - Platform
-- Renderer
+- GFX
 - Input
 
 // Core
