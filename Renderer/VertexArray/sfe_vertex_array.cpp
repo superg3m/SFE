@@ -16,8 +16,8 @@ namespace Renderer {
 
     void VertexArray::bindBuffer(const GPUBuffer& buffer) {
         if (buffer.type == BufferType::INDEX) {
-            buffer.bind();
-
+            glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
+            
             return;
         } 
         
