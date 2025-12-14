@@ -21,7 +21,7 @@ namespace Renderer {
         int offset = 0;
         for (const auto& type_info : buffer.stride_type_info) {
             this->bindVertexAttribute(location, instanced, buffer.stride, offset, type_info);
-            offset += (int)type_info;
+            offset += sizeof(float) * (int)type_info; // TODO(Jovanni): not robust at all its wrong fix it later, I need to actually have the type info and offsets somehow
         }
 
         if (this->vertex_attribute_locations.count() == 0) {

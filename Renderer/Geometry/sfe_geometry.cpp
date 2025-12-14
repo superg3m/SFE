@@ -430,9 +430,6 @@ namespace Renderer {
         this->aabb = CalculateAABB(vertices);
         this->total_vertex_count = this->vertices.count();
 
-        int stride = sizeof(Vertex);
-        int vertex_data_size = this->vertices.count() * sizeof(Vertex);
-
         VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
         flags = (vertices[0].aPosition != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aPosition : flags;
         flags = (vertices[0].aNormal != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aNormal : flags;
@@ -453,6 +450,9 @@ namespace Renderer {
             BufferStrideTypeInfo::VEC3,
         };
 
+        //int stride = sizeof(Vertex);
+        //int vertex_data_size = this->vertices.count() * sizeof(Vertex);
+
         this->VAO = VertexArray::Create();
         this->VAO.bind();
 
@@ -467,22 +467,6 @@ namespace Renderer {
         // glCheckError(glGenBuffers(1, &this->EBO.id));
         // glCheckError(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO.id));
         // glCheckError(glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.count() * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW));
-
-        s64 offset = 0;
-        for (const auto& desc : ALL_ATTRIBUTE_DESCRIPTORS) {
-            if (flags & desc.flag) {
-                glEnableVertexAttribArray(desc.location);
-                if (desc.is_integer) {
-                    glVertexAttribIPointer(desc.location, desc.component_count, desc.gl_type, sizeof(Vertex), (void*)offset);
-                } else {
-                    glVertexAttribPointer(desc.location, desc.component_count, desc.gl_type, desc.normalized, sizeof(Vertex), (void*)offset);
-                }
-
-                offset += desc.data_size;
-            } else {
-                glDisableVertexAttribArray(desc.location);
-            }
-        }
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {

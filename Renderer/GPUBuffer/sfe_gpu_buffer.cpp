@@ -6,6 +6,7 @@ namespace Renderer {
         GPUBuffer ret;
         ret.type = type;
         ret.usage = usage;
+        ret.stride = stride;
         ret.stride_type_info = stride_type_info;
         ret.gl_type = (
             (type == BufferType::VERTEX) ? GL_ARRAY_BUFFER : 
