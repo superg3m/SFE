@@ -1,16 +1,17 @@
 #include "sfe_vertex_array.hpp"
+#include "../sfe_gl_check.hpp"
 
 namespace Renderer {
     VertexArray VertexArray::Create() { 
         VertexArray ret;
         ret.vertex_attribute_locations = DS::Hashmap<int, bool>(1);
 
-        glGenVertexArrays(1, &ret.id);
+        glCheckError(glGenVertexArrays(1, &ret.id));
         return ret;
     }
 
     void VertexArray::bind() const { 
-        glBindVertexArray(this->id); 
+        glCheckError(glBindVertexArray(this->id));
     }
 
     // TODO(Jovanni): this is scuffeds
