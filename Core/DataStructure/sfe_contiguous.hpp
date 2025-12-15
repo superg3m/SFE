@@ -23,8 +23,8 @@ namespace DS {
             Memory::Copy(this->m_data, this->m_capacity * sizeof(T), list.begin(), list.size() * sizeof(T));
         }
 
-        Vector(u64 capacity) {
-            this->m_count = 0;
+        Vector(u64 capacity, u64 count = 0) {
+            this->m_count = count;
             this->m_capacity = capacity;
 
             this->m_data = (T*)Memory::Malloc(this->m_capacity * sizeof(T));
