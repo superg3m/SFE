@@ -10,10 +10,10 @@ struct ShaderMaterial : public ShaderBase {
     void compile() override;
 
     // Fragment Uniforms
-    void setLightPosition(Math::Vec3 &light_position) const;
-    void setCameraPosition(Math::Vec3 &camera_position) const;
-    void setMaterial(const Material &material) const override;
-    void setEmissiveMaterial(bool should_emit) const;
+    void setLightPosition(Math::Vec3 &light_position);
+    void setCameraPosition(Math::Vec3 &camera_position);
+    void setMaterial(const Material &material) override;
+    void setEmissiveMaterial(bool should_emit);
 private:
     // Fragment Uniforms
     unsigned int uCameraPosition_Location;

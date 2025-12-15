@@ -59,8 +59,8 @@ namespace GFX  {
 		static Geometry Sphere(int segments);
 		static Geometry Model(const char* path);
 
-		void draw(const ShaderBase* shader);
-		void drawInstanced(const ShaderBase* shader, int instance_count);
+		void draw(ShaderBase* shader);
+		void drawInstanced(ShaderBase* shader, int instance_count);
 
 		private:
 			DS::Vector<Vertex> vertices; // only the root will have vertices

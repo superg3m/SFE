@@ -32,7 +32,7 @@ void ShaderMaterial::compile() {
     this->uMaterial_Location.has_texcoord = this->getUniformLocation("uMaterial.has_texcoord", GL_BOOL);
 }
 
-void ShaderMaterial::setMaterial(const Material &material) const {
+void ShaderMaterial::setMaterial(const Material &material) {
     this->use();
 
     for (int i = 0; i < TEXTURE_COUNT - 1; i++) {
@@ -62,12 +62,12 @@ void ShaderMaterial::setMaterial(const Material &material) const {
     this->setBool(this->uMaterial_Location.has_texcoord, material.has_texcoord);
 }
 
-void ShaderMaterial::setEmissiveMaterial(bool should_emit) const {
+void ShaderMaterial::setEmissiveMaterial(bool should_emit) {
     this->use();
     this->setBool(this->uApplyEmissiveMaterial_Location, should_emit);
 }
 
-void ShaderMaterial::setCameraPosition(Math::Vec3 &camera_position) const {
+void ShaderMaterial::setCameraPosition(Math::Vec3 &camera_position) {
     this->use();
     this->setVec3(this->uCameraPosition_Location, camera_position);
 }

@@ -349,7 +349,7 @@ namespace GFX {
         return ret;
     }
 
-    void Geometry::draw(const ShaderBase* shader) {
+    void Geometry::draw(ShaderBase* shader) {
         shader->use();
         this->VAO.bind();
 
@@ -396,7 +396,7 @@ namespace GFX {
         }
     }
 
-    void Geometry::drawInstanced(const ShaderBase* shader, int instance_count) {
+    void Geometry::drawInstanced(ShaderBase* shader, int instance_count) {
         shader->use();
         this->VAO.bind();
 
