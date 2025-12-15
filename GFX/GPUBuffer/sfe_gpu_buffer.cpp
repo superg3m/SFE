@@ -1,5 +1,4 @@
 #include "sfe_gpu_buffer.hpp"
-#include "../sfe_gl_check.hpp"
 
 namespace GFX {
     GPUBuffer GPUBuffer::EBO(DS::Vector<unsigned int> buffer) {
