@@ -34,6 +34,7 @@ namespace Math {
         static Mat4 Translate(Mat4 mat, Vec3 t);
         static Mat4 Translate(Mat4 mat, float x, float y, float z);
         static Mat4 Transform(Vec3 s, float theta, Vec3 axis, Vec3 t);
+        static Mat4 Transform(Vec3 s, Math::Quat r, Vec3 t);
         static Mat4 InverseTransform(Vec3 s, float theta, Vec3 axis, Vec3 t);
         static void Decompose(Mat4 mat, Vec3* out_position, Quat* out_orientation, Vec3* out_scale);
         
