@@ -4,7 +4,7 @@
 
 #include "../../Core/DataStructure/sfe_contiguous.hpp"
 #include "../../Core/Random/sfe_random.hpp"
-#include "../ShaderBase/sfe_shader_base.hpp"
+#include "../Shader/Base/sfe_shader_base.hpp"
 #include "../sfe_renderer.hpp"
 #include "../sfe_gl_check.hpp"
 #include "sfe_geometry.hpp"

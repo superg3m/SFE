@@ -40,7 +40,7 @@ because using globals is such a footgun...
 // Add Hot Reloading
 
 // Standardize Shaders
-- ShaderModel (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
+- ShaderMaterial (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
 - ShaderAnimation (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
 - ShaderUI (for ui and screen space stuff, text)
 - ShaderParticle (pos, texture, instancing and stuff)

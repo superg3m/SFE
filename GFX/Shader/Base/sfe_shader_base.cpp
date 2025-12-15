@@ -1,8 +1,8 @@
 
-#include "../../Core/DataStructure/sfe_ds.hpp"
-#include "../../Core/String/sfe_string.hpp"
-#include "../../Platform/sfe_platform.hpp"
-#include "../sfe_renderer.hpp"
+#include "../../../Core/DataStructure/sfe_ds.hpp"
+#include "../../../Core/String/sfe_string.hpp"
+#include "../../../Platform/sfe_platform.hpp"
+#include "../../sfe_renderer.hpp"
 #include "sfe_shader_base.hpp"
 
 static const char* glEnumToString(GLenum type) {
