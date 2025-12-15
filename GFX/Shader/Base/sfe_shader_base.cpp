@@ -71,8 +71,7 @@ unsigned int ShaderBase::getUniformLocation(const char* name, GLenum type) {
     if (this->uniforms.has(name)) {
         UniformDesc expected = this->uniforms.get(name);
         if (expected.type != type) {
-            LOG_ERROR("Shader {%s} Uniform: '%s' type missmatch\n", this->shader_paths[0], name);
-            LOG_ERROR("Expected: %s | Got: %s\n", glEnumToString(expected.type), glEnumToString(type));
+            LOG_ERROR("Shader {%s} Uniform: '%s' type missmatch | Expected: %s | Got: %s\n", this->shader_paths[0], name, glEnumToString(expected.type), glEnumToString(type));
             return (unsigned int)-1;
         }
 
