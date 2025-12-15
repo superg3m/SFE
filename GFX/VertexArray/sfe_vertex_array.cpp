@@ -57,7 +57,7 @@ namespace GFX {
                 );
 
                 glEnableVertexAttribArray(location + i);
-                glVertexAttribPointer(location + i, 4, GL_FLOAT, false, stride, (void*)(desc.offset + (sizeof(Math::Vec4) * i)));
+                glVertexAttribPointer(location + i, (int)BufferStrideTypeInfo::VEC4, GL_FLOAT, false, stride, (void*)(desc.offset + (sizeof(Math::Vec4) * i)));
                 glVertexAttribDivisor(location + i, instanced);
                 this->vertex_attribute_locations.put(location + i, true);
             }

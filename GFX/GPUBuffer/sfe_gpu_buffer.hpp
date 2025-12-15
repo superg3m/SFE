@@ -78,7 +78,7 @@ namespace GFX {
         template <typename T>
         void updateEntireBuffer(DS::Vector<T> buffer) {
             glCheckError(glBindBuffer(this->gl_type, this->id));
-            glCheckError(glBufferSubData(this->id, 0, sizeof(T) * buffer.count(), buffer.data()));
+            glCheckError(glBufferSubData(this->gl_type, 0, sizeof(T) * buffer.count(), buffer.data()));
         }
     private:
         void allocate(size_t buffer_size, void* buffer_data);
