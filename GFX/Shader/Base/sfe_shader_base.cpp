@@ -166,6 +166,13 @@ void ShaderBase::setInt(const char* name, int value) {
     this->use();
     glCheckError(glUniform1i(this->getUniformLocation(name, GL_INT), value));
 }
+void ShaderBase::setTexture2D(const char* name, int texture_unit, Texture &texture) {
+    this->use();
+
+    glCheckError(glActiveTexture(GL_TEXTURE0 + texture_unit));
+    glCheckError(glBindTexture(GL_TEXTURE_2D, texture.id));
+    this->setInt(this->getUniformLocation(name, GL_SAMPLER_2D), texture_unit);
+}
 void ShaderBase::setFloat(const char* name, float value) {
     this->use();
     glCheckError(glUniform1f(this->getUniformLocation(name, GL_FLOAT), value));
