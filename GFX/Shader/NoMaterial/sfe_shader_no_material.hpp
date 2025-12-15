@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../Base/sfe_shader_base.hpp"
 #include "../../Lighting/sfe_lighting.hpp"
 
