@@ -429,4 +429,15 @@ namespace Math {
             this->v[3].x, this->v[3].y, this->v[3].z, this->v[3].w
         );
     }
+
+    Mat4 Mat4::toColumnMajor() const {
+        Mat4 ret = {
+            this->v[0].x, this->v[1].x, this->v[2].x, this->v[3].x,
+            this->v[0].y, this->v[1].y, this->v[2].y, this->v[3].y,  
+            this->v[0].z, this->v[1].z, this->v[2].z, this->v[3].z,  
+            this->v[0].w, this->v[1].w, this->v[2].w, this->v[3].w
+        };
+        
+        return ret;
+    }
 } 
