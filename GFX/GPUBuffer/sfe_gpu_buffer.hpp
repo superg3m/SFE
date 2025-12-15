@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include "../../Core/Common/sfe_common.hpp"
 #include "../../Core/DataStructure/sfe_ds.hpp"
+#include "../sfe_gl_check.hpp"
 
 namespace GFX {
     enum class BufferType {
@@ -73,8 +74,12 @@ namespace GFX {
         }
 
         static GPUBuffer EBO(DS::Vector<unsigned int> data);
-        void updateEntireBuffer(size_t buffer_size, void* buffer_data);
 
+        template <typename T>
+        void updateEntireBuffer(DS::Vector<T> buffer) {
+            glCheckError(glBindBuffer(this->gl_type, this->id));
+            glCheckError(glBufferSubData(this->id, 0, sizeof(T) * buffer.count(), buffer.data()));
+        }
     private:
         void allocate(size_t buffer_size, void* buffer_data);
     };

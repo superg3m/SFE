@@ -14,11 +14,6 @@ namespace GFX {
         return ret;
     }
 
-    void GPUBuffer::updateEntireBuffer(size_t buffer_size, void* buffer_data) {
-        glCheckError(glBindBuffer(this->gl_type, this->id));
-        glCheckError(glBufferSubData(this->id, 0, buffer_size, buffer_data));
-    }
-
     void GPUBuffer::allocate(size_t buffer_size, void* buffer_data) {
         glCheckError(glGenBuffers(1, &this->id));
         glCheckError(glBindBuffer(this->gl_type, this->id));
