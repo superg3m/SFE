@@ -6,7 +6,6 @@
 #include "Geometry/sfe_material.hpp"
 #include "Shader/Base/sfe_shader_base.hpp"
 #include "Shader/Material/sfe_shader_material.hpp"
-#include "Shader/OneTexture/sfe_shader_one_texture.hpp"
-#include "Shader/Simple/sfe_shader_simple.hpp"
+#include "Shader/NoMaterial/sfe_shader_no_material.hpp"
 #include "sfe_renderer.hpp"
 #include "sfe_gl_check.hpp"

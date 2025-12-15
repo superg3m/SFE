@@ -25,6 +25,7 @@ struct ShaderBase {
 
     void setBool(const char* name, bool value);
     void setInt(const char* name, int value);
+    void setTexture(const char* name, int texture_unit, Texture &texture);
     void setFloat(const char* name, float value);
     void setVec2(const char* name, const Math::Vec2& value);
     void setVec2(const char* name, float x, float y);
