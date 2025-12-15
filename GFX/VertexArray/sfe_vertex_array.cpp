@@ -14,29 +14,28 @@ namespace GFX {
         glCheckError(glBindVertexArray(this->id));
     }
 
-    void VertexArray::bindBuffer(const GPUBuffer& buffer) {
+    void VertexArray::bindVBO(int location, bool instanced, const GPUBuffer& buffer) {
+        RUNTIME_ASSERT(buffer.type == BufferType::VERTEX);
+    
         this->bind();
+        glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
+        for (AttributeDesc desc : buffer.descriptors) {
+            this->bindVertexAttribute(location, instanced, buffer.stride, desc);
+        }
 
-        if (buffer.type == BufferType::INDEX) {
-            glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
-            
-            return;
-        } 
-        
-        if (buffer.type == BufferType::VERTEX) {
-            glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
-
-            for (AttributeDesc desc : buffer.descriptors) {
-                this->bindVertexAttribute(desc.location, desc.instanced, buffer.stride, desc);
-            }
-
-            if (this->vertex_attribute_locations.count() == 0) {
-                this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
-            }
+        if (this->vertex_attribute_locations.count() == 0) {
+            this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
         }
     }
 
-    void VertexArray::bindVertexAttribute(int location, bool instanced, s64 stride, AttributeDesc desc) {
+    void VertexArray::bindEBO(const GPUBuffer& buffer) {
+        RUNTIME_ASSERT(buffer.type == BufferType::INDEX);
+
+        this->bind();
+        glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
+    }
+
+    void VertexArray::bindVertexAttribute(int &location, bool instanced, s64 stride, AttributeDesc desc) {
         RUNTIME_ASSERT_MSG(
             !this->vertex_attribute_locations.has(location),
             "Location already assigned"
@@ -62,6 +61,8 @@ namespace GFX {
                 glVertexAttribDivisor(location + i, instanced);
                 this->vertex_attribute_locations.put(location + i, true);
             }
+
+            location += 4;
         } else {
             glEnableVertexAttribArray(location);
             if (is_integer) {
@@ -72,6 +73,7 @@ namespace GFX {
 
             glVertexAttribDivisor(location, instanced);
             this->vertex_attribute_locations.put(location, true);
+            location += 1;
         }
     }
 }

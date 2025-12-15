@@ -30,15 +30,11 @@ namespace GFX {
     };
 
     struct AttributeDesc {
-        int location;
-        bool instanced;
         s64 offset;
         BufferStrideTypeInfo type;
 
         AttributeDesc() = delete;
-        AttributeDesc(int location, bool instanced, s64 offset, BufferStrideTypeInfo type) {
-            this->location = location;
-            this->instanced = instanced;
+        AttributeDesc(s64 offset, BufferStrideTypeInfo type) {
             this->offset = offset;
             this->type = type;
         }

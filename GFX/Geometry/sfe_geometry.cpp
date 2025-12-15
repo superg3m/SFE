@@ -442,14 +442,14 @@ namespace GFX {
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
 
         DS::Vector<GFX::AttributeDesc> stride_type_info = {
-            AttributeDesc(0, false, OFFSET_OF(Vertex, aPosition), BufferStrideTypeInfo::VEC3),
-            AttributeDesc(1, false, OFFSET_OF(Vertex, aNormal), BufferStrideTypeInfo::VEC3),
-            AttributeDesc(2, false, OFFSET_OF(Vertex, aTexCoord), BufferStrideTypeInfo::VEC2),
-            AttributeDesc(3, false, OFFSET_OF(Vertex, aTangent), BufferStrideTypeInfo::VEC3),
-            AttributeDesc(4, false, OFFSET_OF(Vertex, aBitangent), BufferStrideTypeInfo::VEC3),
-            AttributeDesc(5, false, OFFSET_OF(Vertex, aColor), BufferStrideTypeInfo::VEC3),
-            AttributeDesc(6, false, OFFSET_OF(Vertex, aBoneIDs), BufferStrideTypeInfo::IVEC4),
-            AttributeDesc(7, false, OFFSET_OF(Vertex, aBoneWeights), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aPosition), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aNormal), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aTexCoord), BufferStrideTypeInfo::VEC2),
+            AttributeDesc(OFFSET_OF(Vertex, aTangent), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aBitangent), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aColor), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aBoneIDs), BufferStrideTypeInfo::IVEC4),
+            AttributeDesc(OFFSET_OF(Vertex, aBoneWeights), BufferStrideTypeInfo::VEC3),
         };
 
         //int stride = sizeof(Vertex);
@@ -460,8 +460,8 @@ namespace GFX {
 
         this->VBO = GPUBuffer::VBO(BufferUsage::STATIC, stride_type_info, this->vertices);
         this->EBO = GPUBuffer::EBO(this->indices);
-        this->VAO.bindBuffer(this->VBO);
-        this->VAO.bindBuffer(this->EBO);
+        this->VAO.bindVBO(8, false, this->VBO);
+        this->VAO.bindEBO(this->EBO);
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {

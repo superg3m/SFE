@@ -14,9 +14,10 @@ namespace GFX {
         static VertexArray Create();
 
         void bind() const;
-        void bindBuffer(const GPUBuffer& buffer);
+        void bindVBO(int location, bool instanced, const GPUBuffer& buffer);
+        void bindEBO(const GPUBuffer& buffer);
     private:
         DS::Hashmap<int, bool> vertex_attribute_locations;
-        void bindVertexAttribute(int location, bool instanced, s64 stride, AttributeDesc desc);
+        void bindVertexAttribute(int &location, bool instanced, s64 stride, AttributeDesc desc);
     };
 }
