@@ -38,13 +38,13 @@ namespace Hashing {
         HALF_ROUND(v0,v1,v2,v3,13,16); \
         HALF_ROUND(v2,v1,v0,v3,17,21)
 
-    u64 zeroHash(const void* source, u64 source_size) {
+    u64 zeroHash(const void* source, size_t source_size) {
         (void)source;
         (void)source_size;
         return 0;
     }
 
-    u64 siphash24(const void* source, u64 source_size) {
+    u64 siphash24(const void* source, size_t source_size) {
         const char key[16] = {
             0x00, 0x01, 0x02, 0x03,
             0x04, 0x05, 0x06, 0x07,
@@ -95,7 +95,7 @@ namespace Hashing {
         return ret;
     }
 
-    u64 cstringHash(const void* str, u64 str_length) {
+    u64 cstringHash(const void* str, size_t str_length) {
         (void)str_length;
 
         u64 hash = 5381;
