@@ -46,8 +46,8 @@ namespace GFX {
         
         DS::Vector<AttributeDesc> descriptors;
         int stride;
-        BufferType type = type;
-        BufferUsage usage = usage;
+        BufferType type;
+        BufferUsage usage;
         GLenum gl_type; // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_UNIFORM_BUFFER
         GLenum gl_usage; // GL_STATIC_DRAW, GL_DYNAMIC_DRAW
         

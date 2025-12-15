@@ -5,10 +5,10 @@
     #include <dlfcn.h>
     #include <stdio.h>
 
-    #include "../Common/sfe_logger.hpp"
-    #include "../Common/sfe_assert.hpp"
-    #include "../Error/sfe_error.hpp"
-    #include "../Memory/sfe_memory.hpp"
+    #include "../Core/Common/sfe_logger.hpp"
+    #include "../Core/Common/sfe_assert.hpp"
+    #include "../Core/Error/sfe_error.hpp"
+    #include "../Core/Memory/sfe_memory.hpp"
     
     namespace Platform {
         bool Init() { return true; }
@@ -74,14 +74,14 @@
             FILE* file_handle = fopen(file_name, "r");
             if (file_handle == nullptr) {
                 LOG_ERROR("Invalid file_handle, the file_name/path is likely wrong: ReadEntireFile(%s)\n", file_name);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error =Error::RESOURCE_NOT_FOUND;
 
                 return nullptr;
             }
 
             if (fseek(file_handle, 0L, SEEK_END) != 0) {
                 LOG_ERROR("fseek failed: ReadEntireFile(%s)\n", file_name);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
                 fclose(file_handle);
                 return nullptr;
             }
@@ -89,7 +89,7 @@
             out_file_size = ftell(file_handle);
             if (out_file_size == -1L) {
                 LOG_ERROR("ftell failed: ReadEntireFile(%s)\n", file_name);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
                 fclose(file_handle);
                 return nullptr;
             }
@@ -97,7 +97,7 @@
             rewind(file_handle);
             if (ferror(file_handle)) {
                 LOG_ERROR("rewind() failed: ReadEntireFile(%s)\n", file_name);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
                 fclose(file_handle);
                 
                 return nullptr;
@@ -106,7 +106,7 @@
             u8* file_data = (u8*)Memory::Malloc((size_t)out_file_size + 1); // +1 for null terminator
             if (fread(file_data, out_file_size, 1, file_handle) != 1) {
                 LOG_ERROR("fread() failed: ReadEntireFile(%s)\n", file_name);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
                 Memory::Free(file_data);
                 fclose(file_handle);
 
@@ -124,7 +124,7 @@
             DLL library = dlopen(dll_path, RTLD_LAZY);
             if (!library) {
                 LOG_ERROR("dlopen() failed: LoadDLL(%s)\n", dll_path);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
 
                 return nullptr;
             }
@@ -145,7 +145,7 @@
             void* proc = dlsym(dll, proc_name);
             if (!proc) {
                 LOG_ERROR("dlsym() failed: ckg_os_GetProcAddress(%s)\n", proc_name);
-                error = ERROR_RESOURCE_NOT_FOUND;
+                error = Error::RESOURCE_NOT_FOUND;
 
                 return nullptr;
             }
