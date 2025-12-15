@@ -460,7 +460,7 @@ namespace GFX {
 
         this->VBO = GPUBuffer::VBO(BufferUsage::STATIC, stride_type_info, this->vertices);
         this->EBO = GPUBuffer::EBO(this->indices);
-        this->VAO.bindVBO(8, false, this->VBO);
+        this->VAO.bindVBO(0, false, this->VBO);
         this->VAO.bindEBO(this->EBO);
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
