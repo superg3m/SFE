@@ -42,9 +42,9 @@ GLenum ShaderBase::typeFromPath(const char* shader_source_path) {
 void ShaderBase::checkCompileError(unsigned int source_id, const char* path) {
     int success;
     char info_log[1024];
-    glGetShaderiv(source_id, GL_COMPILE_STATUS, &success);
+    glCheckError(glGetShaderiv(source_id, GL_COMPILE_STATUS, &success));
     if (!success) {
-        glGetShaderInfoLog(source_id, 1024, NULL, info_log);
+        glCheckError(glGetShaderInfoLog(source_id, 1024, NULL, info_log));
         LOG_ERROR("ERROR::SHADER_COMPILATION_ERROR {%s}\n", path);
         LOG_ERROR("%s -- --------------------------------------------------- --\n", info_log);
     }
@@ -58,8 +58,8 @@ unsigned int ShaderBase::shaderSourceCompile(const char* path) {
 
     GLenum type = this->typeFromPath(path);
     unsigned int source_id = glCreateShader(type);
-    glShaderSource(source_id, 1, &shader_source, NULL);
-    glCompileShader(source_id);
+    glCheckError(glShaderSource(source_id, 1, &shader_source, NULL));
+    glCheckError(glCompileShader(source_id));
 
     this->checkCompileError(source_id, path);
 

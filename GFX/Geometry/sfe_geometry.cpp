@@ -471,9 +471,6 @@ namespace GFX {
             geo->material.has_texcoord = flags & VertexAttributeFlag::aTexCoord;
         }
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-
         if (should_destory_data) {
             this->vertices.~Vector();
             this->indices.~Vector();
