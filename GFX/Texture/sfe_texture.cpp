@@ -3,6 +3,7 @@
 
 #include "../../Core/Common/sfe_common.hpp"
 #include "../../Platform/sfe_platform.hpp"
+#include "../sfe_gl_check.hpp"
 #include "sfe_texture.hpp"
 
 Texture::Texture() {}
@@ -13,12 +14,12 @@ Texture Texture::LoadFromFile(const char* path, bool should_free) {
     GLenum TEXTURE_VERTICAL_FLIP = true; // GET_BIT(texture_flags, 1);
 
     unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture); 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MIPMAP_TYPE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MIPMAP_TYPE);
+    glCheckError(glGenTextures(1, &texture));
+    glCheckError(glBindTexture(GL_TEXTURE_2D, texture)); 
+    glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+    glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+    glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MIPMAP_TYPE));
+    glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MIPMAP_TYPE));
 
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(TEXTURE_VERTICAL_FLIP);
@@ -40,8 +41,8 @@ Texture Texture::LoadFromFile(const char* path, bool should_free) {
     }
 
     if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, pixel_format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        glCheckError(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, pixel_format, GL_UNSIGNED_BYTE, data));
+        glCheckError(glGenerateMipmap(GL_TEXTURE_2D));
     } else {
         LOG_ERROR("TextureLoader | Failed to load texture\n");
     }
@@ -76,12 +77,12 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
     GLenum MIPMAP_TYPE = GL_LINEAR; // GET_BIT(texture_flags, 0) ? GL_NEAREST : GL_LINEAR;
 
     unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MIPMAP_TYPE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MIPMAP_TYPE);
+    glCheckError(glGenTextures(1, &texture));
+    glCheckError(glBindTexture(GL_TEXTURE_2D, texture));
+    glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+    glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+    glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MIPMAP_TYPE));
+    glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MIPMAP_TYPE));
 
     GLenum format = 0;
     if (nrChannels == 1) {
@@ -94,8 +95,8 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
         RUNTIME_ASSERT_MSG(false, "TextureLoader | Failed to pick a format for memory texture (channels: %d)\n", nrChannels);
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glCheckError(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
+    glCheckError(glGenerateMipmap(GL_TEXTURE_2D));
 
     if (texture == 0) {
         RUNTIME_ASSERT_MSG(false, "TextureLoader | id is invalid for memory texture!\n");

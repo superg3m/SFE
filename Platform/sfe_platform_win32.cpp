@@ -77,7 +77,7 @@
         }
 
         /*
-        void* win32_malloc(const Memory::BaseAllocator** allocator, byte_t allocation_size) {
+        void* win32_malloc(const Memory::BaseAllocator** allocator, size_t allocation_size) {
             (void)allocator;
             return VirtualAlloc(nullptr, allocation_size, MEM_COMMIT, PAGE_READWRITE);
         }
@@ -88,7 +88,7 @@
         }
         */
 
-        u8* ReadEntireFile( const char* file_path, byte_t& out_file_size, Error& error) {
+        u8* ReadEntireFile( const char* file_path, size_t& out_file_size, Error& error) {
             HANDLE file_handle = CreateFileA(file_path, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
             if (file_handle == INVALID_HANDLE_VALUE) {
                 LOG_ERROR("CreateFileA() returned an INVALID_HANDLE_VALUE, the file_path/path is likely wrong: ReadEntireFile(%s)\n", file_path);
@@ -107,7 +107,7 @@
                 return nullptr;
             }
 
-            byte_t file_size = (byte_t)large_int.QuadPart;
+            size_t file_size = (size_t)large_int.QuadPart;
             if (file_size > SIZE_MAX) {
                 LOG_ERROR("File size is bigger than max size: ReadEntireFile(%s)\n", file_path);
                 error = Error::RESOURCE_TOO_BIG;
@@ -128,7 +128,7 @@
                 return nullptr;
             }
 
-            out_file_size = (byte_t)file_size;
+            out_file_size = (size_t)file_size;
 
             return file_data;
         }

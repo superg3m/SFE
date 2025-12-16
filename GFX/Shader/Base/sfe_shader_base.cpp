@@ -1,8 +1,8 @@
 
-#include "../../Core/DataStructure/sfe_ds.hpp"
-#include "../../Core/String/sfe_string.hpp"
-#include "../../Platform/sfe_platform.hpp"
-#include "../sfe_renderer_state.hpp"
+#include "../../../Core/DataStructure/sfe_ds.hpp"
+#include "../../../Core/String/sfe_string.hpp"
+#include "../../../Platform/sfe_platform.hpp"
+#include "../../sfe_renderer.hpp"
 #include "sfe_shader_base.hpp"
 
 static const char* glEnumToString(GLenum type) {
@@ -42,24 +42,24 @@ GLenum ShaderBase::typeFromPath(const char* shader_source_path) {
 void ShaderBase::checkCompileError(unsigned int source_id, const char* path) {
     int success;
     char info_log[1024];
-    glGetShaderiv(source_id, GL_COMPILE_STATUS, &success);
+    glCheckError(glGetShaderiv(source_id, GL_COMPILE_STATUS, &success));
     if (!success) {
-        glGetShaderInfoLog(source_id, 1024, NULL, info_log);
+        glCheckError(glGetShaderInfoLog(source_id, 1024, NULL, info_log));
         LOG_ERROR("ERROR::SHADER_COMPILATION_ERROR {%s}\n", path);
         LOG_ERROR("%s -- --------------------------------------------------- --\n", info_log);
     }
 }
 
 unsigned int ShaderBase::shaderSourceCompile(const char* path) {
-    byte_t file_size = 0;
+    size_t file_size = 0;
     Error error = Error::SUCCESS;
     GLchar* shader_source = (GLchar*)Platform::ReadEntireFile(path, file_size, error);
     RUNTIME_ASSERT_MSG(error == Error::SUCCESS, "Shader Error: %s\n", path, getErrorString(error));
 
     GLenum type = this->typeFromPath(path);
     unsigned int source_id = glCreateShader(type);
-    glShaderSource(source_id, 1, &shader_source, NULL);
-    glCompileShader(source_id);
+    glCheckError(glShaderSource(source_id, 1, &shader_source, NULL));
+    glCheckError(glCompileShader(source_id));
 
     this->checkCompileError(source_id, path);
 
@@ -67,18 +67,21 @@ unsigned int ShaderBase::shaderSourceCompile(const char* path) {
     return source_id;
 }
 
-unsigned int ShaderBase::getUniformLocation(const char* name, GLenum type) const {
+unsigned int ShaderBase::getUniformLocation(const char* name, GLenum type) {
     if (this->uniforms.has(name)) {
-        GLenum expected = this->uniforms.get(name);
-        if (expected != type) {
-            LOG_ERROR("Shader {%s} Uniform: '%s' type missmatch\n", this->shader_paths[0], name);
-            LOG_ERROR("Expected: %s | Got: %s\n", glEnumToString(expected), glEnumToString(type));
+        UniformDesc expected = this->uniforms.get(name);
+        if (expected.type != type) {
+            LOG_ERROR("Shader {%s} Uniform: '%s' type missmatch | Expected: %s | Got: %s\n", this->shader_paths[0], name, glEnumToString(expected.type), glEnumToString(type));
             return (unsigned int)-1;
         }
+
+        return expected.location;
     }
-    
+
     GLint location = glGetUniformLocation(this->program_id, name);
-    if (location == -1) {
+    if (location >= 0) {
+        this->uniforms.put(name, UniformDesc{type, location}); // this type might be wrong, but theres no great robust way to do arrays that I know of...
+    } else if (location == -1) {
         LOG_ERROR("Shader {%s} Uniform: '%s' does not exists\n", this->shader_paths[0], name);
     }
 
@@ -118,7 +121,7 @@ unsigned int ShaderBase::createShaderProgram(DS::Vector<const char*> shader_path
 
     GLint uniform_count = 0;
     glGetProgramiv(program_id, GL_ACTIVE_UNIFORMS, &uniform_count);
-    this->uniforms = DS::Hashmap<const char*, GLenum>(MAX(1, uniform_count));
+    this->uniforms = DS::Hashmap<const char*, UniformDesc>(MAX(1, uniform_count));
     for (int i = 0; i < uniform_count; i++) {
         GLint size;
         GLenum type;
@@ -127,111 +130,119 @@ unsigned int ShaderBase::createShaderProgram(DS::Vector<const char*> shader_path
         GLsizei name_length;
         glGetActiveUniform(program_id, (GLuint)i, name_max_size, &name_length, &size, &type, name);
 
-        this->uniforms.put(String::Allocate(name, name_length), type);
+        GLint location = glGetUniformLocation(program_id, name);
+        this->uniforms.put(String::Allocate(name, name_length), UniformDesc{type, location});
     }
 
     return program_id;
 }
 
 void ShaderBase::use() const {
-    Renderer::BindProgram(this->program_id);
+    GFX::BindProgram(this->program_id);
 }
 
 // TODO(Jovanni): Make this use the locations instead of string lookups
-void ShaderBase::setModel(Math::Mat4 &model) const {
+void ShaderBase::setModel(Math::Mat4 &model) {
     this->use();
     this->setMat4("uModel", model);
 }
 
-void ShaderBase::setView(Math::Mat4 &view) const {
+void ShaderBase::setView(Math::Mat4 &view) {
     this->use();
     this->setMat4("uView", view);
 }
 
-void ShaderBase::setProjection(Math::Mat4 &projection) const {
+void ShaderBase::setProjection(Math::Mat4 &projection) {
     this->use();
     this->setMat4("uProjection", projection);
 }
 
-void ShaderBase::setBool(const char* name, bool value) const {
+void ShaderBase::setBool(const char* name, bool value) {
     this->use();
     glCheckError(glUniform1i(this->getUniformLocation(name, GL_BOOL), (int)value));
 }
-void ShaderBase::setInt(const char* name, int value) const {
+void ShaderBase::setInt(const char* name, int value) {
     this->use();
     glCheckError(glUniform1i(this->getUniformLocation(name, GL_INT), value));
 }
-void ShaderBase::setFloat(const char* name, float value) const {
+void ShaderBase::setTexture2D(const char* name, int texture_unit, Texture &texture) {
+    this->use();
+
+    glCheckError(glActiveTexture(GL_TEXTURE0 + texture_unit));
+    glCheckError(glBindTexture(GL_TEXTURE_2D, texture.id));
+    this->setInt(this->getUniformLocation(name, GL_SAMPLER_2D), texture_unit);
+}
+void ShaderBase::setFloat(const char* name, float value) {
     this->use();
     glCheckError(glUniform1f(this->getUniformLocation(name, GL_FLOAT), value));
 }
-void ShaderBase::setVec2(const char* name, const Math::Vec2& value) const {
+void ShaderBase::setVec2(const char* name, const Math::Vec2& value) {
     this->use();
     glCheckError(glUniform2fv(this->getUniformLocation(name, GL_FLOAT_VEC2), 1, &value.x));
 }
-void ShaderBase::setVec2(const char* name, float x, float y) const {
+void ShaderBase::setVec2(const char* name, float x, float y) {
     this->use();
     glCheckError(glUniform2f(this->getUniformLocation(name, GL_FLOAT_VEC2), x, y));
 }
-void ShaderBase::setVec3(const char* name, const Math::Vec3& value) const {
+void ShaderBase::setVec3(const char* name, const Math::Vec3& value) {
     this->use();
     glCheckError(glUniform3fv(this->getUniformLocation(name, GL_FLOAT_VEC3), 1, &value.x));
 }
-void ShaderBase::setVec3(const char* name, float x, float y, float z) const {
+void ShaderBase::setVec3(const char* name, float x, float y, float z) {
     this->use();
     glCheckError(glUniform3f(this->getUniformLocation(name, GL_FLOAT_VEC3), x, y, z));
 }
-void ShaderBase::setVec4(const char* name, const Math::Vec4& value) const {
+void ShaderBase::setVec4(const char* name, const Math::Vec4& value) {
     this->use();
     glCheckError(glUniform4fv(this->getUniformLocation(name, GL_FLOAT_VEC4), 1, &value.x));
 }
-void ShaderBase::setVec4(const char* name, float x, float y, float z, float w) const {
+void ShaderBase::setVec4(const char* name, float x, float y, float z, float w) {
     this->use();
     glCheckError(glUniform4f(this->getUniformLocation(name, GL_FLOAT_VEC4), x, y, z, w));
 }
-void ShaderBase::setMat4(const char* name, const Math::Mat4& mat) const {
+void ShaderBase::setMat4(const char* name, const Math::Mat4& mat) {
     this->use();
     glCheckError(glUniformMatrix4fv(this->getUniformLocation(name, GL_FLOAT_MAT4), 1, GL_TRUE, &mat.v[0].x));
 }
 
 // protected
-void ShaderBase::setBool(unsigned int location, bool value) const {
+void ShaderBase::setBool(unsigned int location, bool value) {
     this->use();
     glCheckError(glUniform1i(location, (int)value));
 }
-void ShaderBase::setInt(unsigned int location, int value) const {
+void ShaderBase::setInt(unsigned int location, int value) {
     this->use();
     glCheckError(glUniform1i(location, value));
 }
-void ShaderBase::setFloat(unsigned int location, float value) const {
+void ShaderBase::setFloat(unsigned int location, float value) {
     this->use();
     glCheckError(glUniform1f(location, value));
 }
-void ShaderBase::setVec2(unsigned int location, const Math::Vec2& value) const {
+void ShaderBase::setVec2(unsigned int location, const Math::Vec2& value) {
     this->use();
     glCheckError(glUniform2fv(location, 1, &value.x));
 }
-void ShaderBase::setVec2(unsigned int location, float x, float y) const {
+void ShaderBase::setVec2(unsigned int location, float x, float y) {
     this->use();
     glCheckError(glUniform2f(location, x, y));
 }
-void ShaderBase::setVec3(unsigned int location, const Math::Vec3& value) const {
+void ShaderBase::setVec3(unsigned int location, const Math::Vec3& value) {
     this->use();
     glCheckError(glUniform3fv(location, 1, &value.x));
 }
-void ShaderBase::setVec3(unsigned int location, float x, float y, float z) const {
+void ShaderBase::setVec3(unsigned int location, float x, float y, float z) {
     this->use();
     glCheckError(glUniform3f(location, x, y, z));
 }
-void ShaderBase::setVec4(unsigned int location, const Math::Vec4& value) const {
+void ShaderBase::setVec4(unsigned int location, const Math::Vec4& value) {
     this->use();
     glCheckError(glUniform4fv(location, 1, &value.x));
 }
-void ShaderBase::setVec4(unsigned int location, float x, float y, float z, float w) const {
+void ShaderBase::setVec4(unsigned int location, float x, float y, float z, float w) {
     this->use();
     glCheckError(glUniform4f(location, x, y, z, w));
 }
-void ShaderBase::setMat4(unsigned int location, const Math::Mat4& mat) const {
+void ShaderBase::setMat4(unsigned int location, const Math::Mat4& mat) {
     this->use();
     glCheckError(glUniformMatrix4fv(location, 1, GL_TRUE, &mat.v[0].x));
 }

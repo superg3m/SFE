@@ -1,10 +1,12 @@
+# On going development
+
 There has to be a very well defined init and deinit
 because using globals is such a footgun...
 
 // Modules:
 - Core
 - Platform
-- Renderer
+- GFX
 - Input
 
 // Core
@@ -38,8 +40,11 @@ because using globals is such a footgun...
 // Add Hot Reloading
 
 // Standardize Shaders
-- ShaderModel (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
+- ShaderMaterial (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
 - ShaderAnimation (pos, normal, texture) (lambertian diffuse shading, specular, emissive)
 - ShaderUI (for ui and screen space stuff, text)
 - ShaderParticle (pos, texture, instancing and stuff)
 - ShaderSkyBox (pos, texture, instancing and stuff)
+
+// CPU Profiler Module! Right now i'm hard cpu bound I wonder why?
+// start optimizing the math library

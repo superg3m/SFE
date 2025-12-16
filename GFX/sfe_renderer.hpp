@@ -2,7 +2,7 @@
 
 #include "../../Core/Math/sfe_math.hpp"
 
-namespace Renderer {
+namespace GFX {
     enum ProjectionMode {
         PROJECTION_2D,
         PROJECTION_3D

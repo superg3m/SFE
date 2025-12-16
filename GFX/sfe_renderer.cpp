@@ -1,9 +1,9 @@
 #include <glad/glad.h>
 
-#include "sfe_renderer_state.hpp"
+#include "sfe_renderer.hpp"
 #include "sfe_gl_check.hpp"
 
-namespace Renderer {
+namespace GFX {
     static unsigned int VAO = (unsigned int)-1;
     static unsigned int PROGRAM = (unsigned int)-1;
     static bool DEPTH = false;
@@ -37,9 +37,9 @@ namespace Renderer {
 
         DEPTH = depth;
         if (DEPTH) {
-            glEnable(GL_DEPTH_TEST);
+            glCheckError(glEnable(GL_DEPTH_TEST));
         } else {
-            glDisable(GL_DEPTH_TEST);
+            glCheckError(glDisable(GL_DEPTH_TEST));
         }
     }
 
@@ -50,9 +50,9 @@ namespace Renderer {
 
         STENCIL = stencil;
         if (STENCIL) {
-            glEnable(GL_STENCIL_TEST);
+            glCheckError(glEnable(GL_STENCIL_TEST));
         } else {
-            glDisable(GL_STENCIL_TEST);
+            glCheckError(glDisable(GL_STENCIL_TEST));
         }
     }
 
@@ -63,9 +63,9 @@ namespace Renderer {
 
         BLENDING = blending;
         if (BLENDING) {
-            glEnable(GL_BLEND);
+            glCheckError(glEnable(GL_BLEND));
         } else {
-            glDisable(GL_BLEND);
+            glCheckError(glDisable(GL_BLEND));
         }
     }
 
@@ -76,7 +76,7 @@ namespace Renderer {
 
         WIREFRAME = wireframe;
         GLenum mode = WIREFRAME ? GL_LINE : GL_FILL;
-        glPolygonMode(GL_FRONT_AND_BACK, mode);
+        glCheckError(glPolygonMode(GL_FRONT_AND_BACK, mode));
     }
 
     Math::Mat4 GetProjectionMatrix2D(unsigned int width, unsigned int height) {

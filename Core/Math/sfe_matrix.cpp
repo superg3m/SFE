@@ -154,6 +154,14 @@ namespace Math {
         return translation_matrix * rotation_matrix * scale_matrix;
     }
 
+    Mat4 Mat4::Transform(Vec3 s, Math::Quat r, Vec3 t) {
+        Mat4 scale_matrix = Mat4::Scale(Mat4::Identity(), s);
+        Mat4 rotation_matrix = Mat4::Rotate(Mat4::Identity(), r);
+        Mat4 translation_matrix = Mat4::Translate(Mat4::Identity(), t);
+
+        return translation_matrix * rotation_matrix * scale_matrix;
+    }
+
     Mat4 Mat4::InverseTransform(Vec3 s, float theta, Vec3 axis, Vec3 t) {
         Mat4 inverse_scale_matrix = Mat4::Scale(Mat4::Identity(), s.scale(1 / s.x, 1 / s.y, 1 / s.z));
         Mat4 inverse_rotation_matrix = Mat4::Rotate(Mat4::Identity(), theta, axis).transpose();

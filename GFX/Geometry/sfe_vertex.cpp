@@ -1,17 +1,6 @@
 #include "sfe_vertex.hpp"
 
-namespace Renderer {
-    const AttributeDescriptor ALL_ATTRIBUTE_DESCRIPTORS[8] = {
-        AttributeDescriptor{VertexAttributeFlag::aPosition,    0, 3, GL_FLOAT, GL_FALSE, false, sizeof(float) * 3},
-        AttributeDescriptor{VertexAttributeFlag::aNormal,      1, 3, GL_FLOAT, GL_FALSE, false, sizeof(float) * 3},
-        AttributeDescriptor{VertexAttributeFlag::aTexCoord,    2, 2, GL_FLOAT, GL_FALSE, false, sizeof(float) * 2},
-        AttributeDescriptor{VertexAttributeFlag::aTangent,     3, 3, GL_FLOAT, GL_FALSE, false, sizeof(float) * 3},
-        AttributeDescriptor{VertexAttributeFlag::aBitangent,   4, 3, GL_FLOAT, GL_FALSE, false, sizeof(float) * 3},
-        AttributeDescriptor{VertexAttributeFlag::aColor,       5, 3, GL_FLOAT, GL_FALSE, false, sizeof(float) * 3}, // Or GL_UNSIGNED_BYTE, true, true
-        AttributeDescriptor{VertexAttributeFlag::aBoneIDs,     6, 4, GL_INT,   GL_FALSE, true,  sizeof(int)   * 4}, // Use GL_INT and isInteger=true
-        AttributeDescriptor{VertexAttributeFlag::aBoneWeights, 7, 4, GL_FLOAT, GL_FALSE, false, sizeof(float) * 4}
-    };
-
+namespace GFX {
     Vertex::Vertex(Math::Vec3 pos) { 
         this->aPosition = pos;
     }

@@ -4,13 +4,13 @@
 
 #include "../../Core/DataStructure/sfe_contiguous.hpp"
 #include "../../Core/Random/sfe_random.hpp"
-#include "../ShaderBase/sfe_shader_base.hpp"
-#include "../sfe_renderer_state.hpp"
+#include "../Shader/Base/sfe_shader_base.hpp"
+#include "../sfe_renderer.hpp"
 #include "../sfe_gl_check.hpp"
 #include "sfe_geometry.hpp"
 #include "sfe_vertex.hpp"
 
-namespace Renderer {
+namespace GFX {
     static Math::Mat4 convertAssimpMatrixToGM(aiMatrix4x4 ai_matrix) {
         Math::Mat4 ret;
 
@@ -70,10 +70,6 @@ namespace Renderer {
     }
 
     Geometry::Geometry() {
-        this->VAO = 0;
-        this->VBO = 0;
-        this->EBO = 0;
-
         this->draw_type = GL_TRIANGLES;
         this->vertex_count = 0;
         this->index_count = 0;
@@ -138,8 +134,7 @@ namespace Renderer {
         RUNTIME_ASSERT_MSG((height & 1) == 0, "height must be even\n");
 
         const int TOTAL_VERTEX_COUNT = width * height;
-        DS::Vector<Vertex> vertices = DS::Vector<Vertex>(TOTAL_VERTEX_COUNT);
-        vertices.resize(TOTAL_VERTEX_COUNT);
+        DS::Vector<Vertex> vertices = DS::Vector<Vertex>(TOTAL_VERTEX_COUNT, TOTAL_VERTEX_COUNT);
 
         int idx = 0;
         const int HALF_WIDTH = width / 2;
@@ -353,9 +348,9 @@ namespace Renderer {
         return ret;
     }
 
-    void Geometry::draw(const ShaderBase* shader) {
+    void Geometry::draw(ShaderBase* shader) {
         shader->use();
-        Renderer::BindVAO(this->VAO);
+        this->VAO.bind();
 
         /*
         struct Batch {
@@ -383,15 +378,14 @@ namespace Renderer {
             shader->setMaterial(geo->material);
 
             if (geo->index_count > 0) {
-                Renderer::IncrementDrawCallCount();
+                GFX::IncrementDrawCallCount();
                 glCheckError(glDrawElementsBaseVertex(
-                    this->draw_type, geo->index_count, 
-                    GL_UNSIGNED_INT, 
+                    this->draw_type, geo->index_count, GL_UNSIGNED_INT, 
                     (void*)(sizeof(unsigned int) * geo->base_index), 
                     geo->base_vertex
                 ));
             } else {
-                Renderer::IncrementDrawCallCount();
+                GFX::IncrementDrawCallCount();
                 glCheckError(glDrawArrays(
                     this->draw_type,
                     geo->base_vertex,
@@ -401,9 +395,9 @@ namespace Renderer {
         }
     }
 
-    void Geometry::drawInstanced(const ShaderBase* shader, int instance_count) {
+    void Geometry::drawInstanced(ShaderBase* shader, int instance_count) {
         shader->use();
-        Renderer::BindVAO(this->VAO);
+        this->VAO.bind();
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {
@@ -413,14 +407,14 @@ namespace Renderer {
             shader->setMaterial(geo->material);
 
             if (geo->index_count > 0) {
-                Renderer::IncrementDrawCallCount();
+                GFX::IncrementDrawCallCount();
                 glCheckError(glDrawElementsInstancedBaseVertex(
                     this->draw_type, geo->index_count,
                     GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * geo->base_index),
                     instance_count, geo->base_vertex
                 ));
             } else {
-                Renderer::IncrementDrawCallCount();
+                GFX::IncrementDrawCallCount();
                 glCheckError(glDrawArraysInstanced(
                     this->draw_type,
                     geo->base_vertex,
@@ -435,28 +429,38 @@ namespace Renderer {
         this->aabb = CalculateAABB(vertices);
         this->total_vertex_count = this->vertices.count();
 
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, this->vertices.count() * sizeof(Vertex), this->vertices.data(), GL_STATIC_DRAW);
-
-        glGenBuffers(1, &EBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.count() * sizeof(unsigned int), this->indices.data(), GL_STATIC_DRAW);
-        
-        size_t offset = 0;
-
         VertexAttributeFlag flags = VertexAttributeFlag::INVALID;
         flags = (vertices[0].aPosition != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aPosition : flags;
         flags = (vertices[0].aNormal != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aNormal : flags;
         flags = (vertices[0].aTexCoord != Math::Vec2(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aTexCoord : flags;
+        flags = (vertices[0].aTangent != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBitangent : flags;
         flags = (vertices[0].aBitangent != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBitangent : flags;
         flags = (vertices[0].aColor != Math::Vec3(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aColor : flags;
         flags = (vertices[0].aBoneIDs != Math::IVec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneIDs : flags;
         flags = (vertices[0].aBoneWeights != Math::Vec4(MAGIC_NUMBER)) ? flags | VertexAttributeFlag::aBoneWeights : flags;
         RUNTIME_ASSERT(flags != VertexAttributeFlag::INVALID);
+
+        DS::Vector<GFX::AttributeDesc> stride_type_info = {
+            AttributeDesc(OFFSET_OF(Vertex, aPosition), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aNormal), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aTexCoord), BufferStrideTypeInfo::VEC2),
+            AttributeDesc(OFFSET_OF(Vertex, aTangent), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aBitangent), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aColor), BufferStrideTypeInfo::VEC3),
+            AttributeDesc(OFFSET_OF(Vertex, aBoneIDs), BufferStrideTypeInfo::IVEC4),
+            AttributeDesc(OFFSET_OF(Vertex, aBoneWeights), BufferStrideTypeInfo::VEC3),
+        };
+
+        //int stride = sizeof(Vertex);
+        //int vertex_data_size = this->vertices.count() * sizeof(Vertex);
+
+        this->VAO = VertexArray::Create();
+        this->VAO.bind();
+
+        this->VBO = GPUBuffer::VBO(BufferUsage::STATIC, stride_type_info, this->vertices);
+        this->EBO = GPUBuffer::EBO(this->indices);
+        this->VAO.bindVBO(0, false, this->VBO);
+        this->VAO.bindEBO(this->EBO);
 
         for (Geometry* geo = this; geo != nullptr; geo = geo->next) {
             if (geo->vertex_count == 0) {
@@ -467,33 +471,10 @@ namespace Renderer {
             geo->material.has_texcoord = flags & VertexAttributeFlag::aTexCoord;
         }
 
-        for (const auto& desc : ALL_ATTRIBUTE_DESCRIPTORS) {
-            if (flags & desc.flag) {
-                glEnableVertexAttribArray(desc.location);
-                if (desc.isInteger) {
-                    glVertexAttribIPointer(desc.location, desc.componentCount, desc.glType, sizeof(Vertex), (void*)offset);
-                } else {
-                    glVertexAttribPointer(desc.location, desc.componentCount, desc.glType, desc.normalized, sizeof(Vertex), (void*)offset);
-                }
-
-                offset += desc.byteSize;
-            } else {
-                glDisableVertexAttribArray(desc.location);
-            }
-        }
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-
         if (should_destory_data) {
             this->vertices.~Vector();
             this->indices.~Vector();
             this->materials.~Vector();
-        }
-
-        this->vertex_attribute_locations = DS::Hashmap<int, bool>(1);
-        for (int i = 0; i < RESERVED_VERTEX_ATTRIBUTE_LOCATIONS; i++) {
-            this->vertex_attribute_locations.put(i, true);
         }
     }
 
@@ -513,8 +494,7 @@ namespace Renderer {
 
         this->vertices = DS::Vector<Vertex>(total_vertex_count);
         this->indices = DS::Vector<GLuint>(total_index_count);
-        this->materials = DS::Vector<Material>(scene->mNumMaterials);
-        this->materials.resize(scene->mNumMaterials);
+        this->materials = DS::Vector<Material>(scene->mNumMaterials, scene->mNumMaterials);
 
         s64 index = String::LastIndexOf(path, path_length, STRING_LIT_ARG("/"));
         RUNTIME_ASSERT(index > -1);
