@@ -77,7 +77,7 @@ namespace GFX {
 
         template <typename T>
         void updateEntireBuffer(DS::Vector<T> buffer) {
-            #if 1
+            #if 0
                 this->bind();
                 void *ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
                 size_t buffer_size = sizeof(T) * buffer.count();
