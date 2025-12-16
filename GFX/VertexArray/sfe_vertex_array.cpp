@@ -12,7 +12,7 @@ namespace GFX {
     }
 
     inline void VertexArray::bind() const { 
-        GFX::BindVAO((this->id));
+        GFX::BindVAO(this->id);
     }
 
     void VertexArray::bindVBO(int location, bool instanced, const GPUBuffer& buffer) {
