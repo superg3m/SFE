@@ -13,10 +13,15 @@ namespace GFX {
         return ret;
     }
 
+
+    void GPUBuffer::bind() const {
+        glCheckError(glBindBuffer(this->gl_type, this->id));
+    }
+
     void GPUBuffer::allocate(size_t buffer_size, void* buffer_data) {
         glCheckError(glGenBuffers(1, &this->id));
-        glCheckError(glBindBuffer(this->gl_type, this->id));
-
+        
+        this->bind();
         glCheckError(glBufferData(this->gl_type, buffer_size, buffer_data, this->gl_usage));
     }
 }

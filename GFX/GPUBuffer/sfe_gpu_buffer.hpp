@@ -77,9 +77,19 @@ namespace GFX {
 
         template <typename T>
         void updateEntireBuffer(DS::Vector<T> buffer) {
-            glCheckError(glBindBuffer(this->gl_type, this->id));
-            glCheckError(glBufferSubData(this->gl_type, 0, sizeof(T) * buffer.count(), buffer.data()));
+            #if 1
+                this->bind();
+                void *ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+                size_t buffer_size = sizeof(T) * buffer.count();
+                Memory::Copy(ptr, buffer_size, buffer.data(), buffer_size);
+                glUnmapBuffer(GL_ARRAY_BUFFER);
+            #else
+                glCheckError(glBindBuffer(this->gl_type, this->id));
+                glCheckError(glBufferSubData(this->gl_type, 0, sizeof(T) * buffer.count(), buffer.data()));
+            #endif
         }
+
+        void bind() const;
     private:
         void allocate(size_t buffer_size, void* buffer_data);
     };

@@ -21,6 +21,15 @@ namespace GFX {
         glCheckError(glBindVertexArray(VAO));
     }
 
+    void BindVBO(unsigned int vao) {
+        if (VAO == vao) {
+            return;
+        }
+
+        VAO = vao;
+        glCheckError(glBindVertexArray(VAO));
+    }
+
     void BindProgram(unsigned int program) {
         if (PROGRAM == program) {
             return;

@@ -1,5 +1,6 @@
 #include "sfe_vertex_array.hpp"
 #include "../sfe_gl_check.hpp"
+#include "../sfe_renderer.hpp" 
 
 namespace GFX {
     VertexArray VertexArray::Create() { 
@@ -10,15 +11,15 @@ namespace GFX {
         return ret;
     }
 
-    void VertexArray::bind() const { 
-        glCheckError(glBindVertexArray(this->id));
+    inline void VertexArray::bind() const { 
+        GFX::BindVAO((this->id));
     }
 
     void VertexArray::bindVBO(int location, bool instanced, const GPUBuffer& buffer) {
         RUNTIME_ASSERT(buffer.type == BufferType::VERTEX);
     
         this->bind();
-        glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
+        buffer.bind();
         for (AttributeDesc desc : buffer.descriptors) {
             this->bindVertexAttribute(location, instanced, buffer.stride, desc);
         }
@@ -32,7 +33,7 @@ namespace GFX {
         RUNTIME_ASSERT(buffer.type == BufferType::INDEX);
 
         this->bind();
-        glCheckError(glBindBuffer(buffer.gl_type, buffer.id));
+        buffer.bind();
     }
 
     void VertexArray::bindVertexAttribute(int &location, bool instanced, s64 stride, AttributeDesc desc) {
