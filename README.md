@@ -47,3 +47,4 @@ because using globals is such a footgun...
 - ShaderSkyBox (pos, texture, instancing and stuff)
 
 // CPU Profiler Module! Right now i'm hard cpu bound I wonder why?
+// start optimizing the math library

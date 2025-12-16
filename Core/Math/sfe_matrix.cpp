@@ -76,11 +76,11 @@ namespace Math {
         return ret;
     }
 
-    Mat4 Mat4::Scale(Mat4 mat, float scale) {
+    inline Mat4 Mat4::Scale(Mat4 mat, float scale) {
         return Mat4::Scale(mat, Vec3(scale, scale, scale));
     }
 
-    Mat4 Mat4::Scale(Mat4 mat, Vec3 s) {
+    inline Mat4 Mat4::Scale(Mat4 mat, Vec3 s) {
         Mat4 scale_matrix;
         scale_matrix.v = {
             Vec4(s.x,  0.0f, 0.0f, 0.0f),
@@ -92,12 +92,12 @@ namespace Math {
         return scale_matrix * mat;
     }
 
-    Mat4 Mat4::Scale(Mat4 mat, float scale_x, float scale_y, float scale_z) {
+    inline Mat4 Mat4::Scale(Mat4 mat, float scale_x, float scale_y, float scale_z) {
         return Mat4::Scale(mat, Vec3(scale_x, scale_y, scale_z));
     }
 
 
-    Mat4 Mat4::Rotate(Mat4 mat, float theta, Vec3 axis) {
+    inline Mat4 Mat4::Rotate(Mat4 mat, float theta, Vec3 axis) {
         float rad = DEGREES_TO_RAD(theta);
         float c = cosf(rad);
         float s = sinf(rad);
@@ -119,18 +119,18 @@ namespace Math {
         return rot * mat;
     }
 
-    Mat4 Mat4::Rotate(Mat4 mat, float theta, float rot_x, float rot_y, float rot_z) {
+    inline Mat4 Mat4::Rotate(Mat4 mat, float theta, float rot_x, float rot_y, float rot_z) {
         return Mat4::Rotate(mat, theta, Vec3(rot_x, rot_y, rot_z));
     }
 
-    Mat4 Mat4::Rotate(Mat4 mat, Quat quat) {
+    inline Mat4 Mat4::Rotate(Mat4 mat, Quat quat) {
         float theta;
         Vec3 axis;
         quat.getAngleAxis(theta, axis);
         return Mat4::Rotate(mat, theta, axis);
     }
 
-    Mat4 Mat4::Translate(Mat4 mat, Vec3 t) {
+    inline Mat4 Mat4::Translate(Mat4 mat, Vec3 t) {
         Mat4 translate_matrix;
         translate_matrix.v = {
             Vec4(1.0f, 0.0f, 0.0f, t.x),
@@ -142,11 +142,11 @@ namespace Math {
         return translate_matrix * mat;
     }
 
-    Mat4 Mat4::Translate(Mat4 mat, float x, float y, float z) {
+    inline Mat4 Mat4::Translate(Mat4 mat, float x, float y, float z) {
         return Mat4::Translate(mat, Vec3(x, y, z));
     }
 
-    Mat4 Mat4::Transform(Vec3 s, float theta, Vec3 axis, Vec3 t) {
+    inline Mat4 Mat4::Transform(Vec3 s, float theta, Vec3 axis, Vec3 t) {
         Mat4 scale_matrix = Mat4::Scale(Mat4::Identity(), s);
         Mat4 rotation_matrix = Mat4::Rotate(Mat4::Identity(), theta, axis);
         Mat4 translation_matrix = Mat4::Translate(Mat4::Identity(), t);
@@ -154,7 +154,7 @@ namespace Math {
         return translation_matrix * rotation_matrix * scale_matrix;
     }
 
-    Mat4 Mat4::Transform(Vec3 s, Math::Quat r, Vec3 t) {
+    inline Mat4 Mat4::Transform(Vec3 s, Math::Quat r, Vec3 t) {
         Mat4 scale_matrix = Mat4::Scale(Mat4::Identity(), s);
         Mat4 rotation_matrix = Mat4::Rotate(Mat4::Identity(), r);
         Mat4 translation_matrix = Mat4::Translate(Mat4::Identity(), t);
