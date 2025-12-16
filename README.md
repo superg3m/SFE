@@ -45,3 +45,5 @@ because using globals is such a footgun...
 - ShaderUI (for ui and screen space stuff, text)
 - ShaderParticle (pos, texture, instancing and stuff)
 - ShaderSkyBox (pos, texture, instancing and stuff)
+
+// CPU Profiler Module! Right now i'm hard cpu bound I wonder why?
