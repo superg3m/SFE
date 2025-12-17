@@ -76,7 +76,7 @@ namespace GFX {
         static GPUBuffer EBO(DS::Vector<unsigned int> data);
 
         template <typename T>
-        void updateEntireBuffer(DS::Vector<T> buffer) {
+        void updateEntireBuffer(const DS::Vector<T> &buffer) {
             #if 0
                 this->bind();
                 void *ptr = glCheckError(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
