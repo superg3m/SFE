@@ -2,6 +2,7 @@
 
 constexpr float PI = 3.14159265359f;
 constexpr float TAU = PI * 2;
+constexpr float G = 0.0000000000667430f;
 constexpr float EPSILON = 0.0001f;
 
 #define stringify(entry) #entry
