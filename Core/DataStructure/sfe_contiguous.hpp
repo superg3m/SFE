@@ -147,13 +147,13 @@ namespace DS {
         }
         
         T operator[](int i) const {
-            RUNTIME_ASSERT_MSG((i >= 0) && (this->m_count > i), "index is outside of bounds!\n");
+            RUNTIME_ASSERT_MSG((i >= 0) && (this->m_count > i), "index: %d is outside of bounds! [0, %lld]\n", i, this->m_count);
 
             return this->m_data[i];
         }
 
         T& operator[](int i) {
-            RUNTIME_ASSERT_MSG((i >= 0) && (this->m_count > i), "index is outside of bounds!\n");
+            RUNTIME_ASSERT_MSG((i >= 0) && (this->m_count > i), "index: %d is outside of bounds! [0, %lld]\n", i, this->m_count);
 
             return this->m_data[i];
         }
