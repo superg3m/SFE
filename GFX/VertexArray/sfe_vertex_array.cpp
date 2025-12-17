@@ -11,7 +11,7 @@ namespace GFX {
         return ret;
     }
 
-    inline void VertexArray::bind() const { 
+    void VertexArray::bind() const { 
         GFX::BindVAO(this->id);
     }
 
