@@ -53,6 +53,7 @@ namespace GFX  {
 		Geometry(const DS::Vector<Vertex>& vertices, const DS::Vector<unsigned int>& indices, GLenum draw_type = GL_TRIANGLES);
 
 		static Geometry Quad();
+		static Geometry Quad(Math::Vec3 tr, Math::Vec3 br, Math::Vec3 bl, Math::Vec3 tl);
 		static Geometry Quad(int width, int height); // tessellated quad
 		static Geometry AABB();
 		static Geometry Cube();

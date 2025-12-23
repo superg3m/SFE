@@ -129,6 +129,32 @@ namespace GFX {
         return ret;
     }
 
+    Geometry Geometry::Quad(Math::Vec3 tr, Math::Vec3 br, Math::Vec3 bl, Math::Vec3 tl) {
+        DS::Vector<Vertex> quad_vertices = {
+            //  Position               Normal                      UV
+            Vertex{tr,  Math::Vec3(1.0f, 0.0f, 0.0f),  Math::Vec2(1, 1)}, // top right
+            Vertex{br,  Math::Vec3(0.0f, 1.0f, 0.0f),  Math::Vec2(1, 0)}, // bottom right
+            Vertex{bl,  Math::Vec3(0.0f, 0.0f, 1.0f),  Math::Vec2(0, 0)}, // bottom left
+            Vertex{tl,  Math::Vec3(1.0f, 1.0f, 0.0f),  Math::Vec2(0, 1)}  // top left 
+        }; 
+
+        DS::Vector<unsigned int> quad_indices = {
+            0, 1, 3,
+            1, 2, 3
+        };
+
+        Geometry ret;
+        ret.draw_type = GL_TRIANGLES;
+        ret.vertices = quad_vertices;
+        ret.indices = quad_indices;
+        ret.vertex_count = ret.vertices.count();
+        ret.index_count = ret.indices.count();
+
+        ret.setup();
+
+        return ret;
+    }
+
     Geometry Geometry::Quad(int width, int height) {
         RUNTIME_ASSERT_MSG((width & 1) == 0, "width must be even\n");
         RUNTIME_ASSERT_MSG((height & 1) == 0, "height must be even\n");
