@@ -89,7 +89,15 @@
         */
 
         u8* ReadEntireFile( const char* file_path, size_t& out_file_size, Error& error) {
-            HANDLE file_handle = CreateFileA(file_path, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+            HANDLE file_handle = CreateFileA(
+                file_path, 
+                GENERIC_READ, 
+                FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE, 
+                nullptr, 
+                OPEN_EXISTING, 
+                FILE_ATTRIBUTE_NORMAL, 
+                nullptr
+            );
             if (file_handle == INVALID_HANDLE_VALUE) {
                 LOG_ERROR("CreateFileA() returned an INVALID_HANDLE_VALUE, the file_path/path is likely wrong: ReadEntireFile(%s)\n", file_path);
                 error = Error::RESOURCE_NOT_FOUND;
