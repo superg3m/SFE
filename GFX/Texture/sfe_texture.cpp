@@ -13,7 +13,7 @@ Texture Texture::LoadFromFile(const char* path, bool should_free) {
     GLenum MIPMAP_TYPE = GL_LINEAR; // GET_BIT(texture_flags, 0) ? GL_NEAREST : GL_LINEAR;
     GLenum TEXTURE_VERTICAL_FLIP = true; // GET_BIT(texture_flags, 1);
 
-    unsigned int texture;
+    unsigned int texture = 0;
     glCheckError(glGenTextures(1, &texture));
     glCheckError(glBindTexture(GL_TEXTURE_2D, texture)); 
     glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
@@ -76,7 +76,7 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
 
     GLenum MIPMAP_TYPE = pixel_perfect ? GL_NEAREST : GL_LINEAR;
 
-    unsigned int texture;
+    unsigned int texture = 0;
     glCheckError(glGenTextures(1, &texture));
     glCheckError(glBindTexture(GL_TEXTURE_2D, texture));
     glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
