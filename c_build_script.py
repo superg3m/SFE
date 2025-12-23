@@ -58,7 +58,7 @@ procedures_config = {
             "../../GFX/**/*.cpp",
             "../../Input/**/*.cpp",
             "../../Vendor/glad/src/glad.c",
-            "../../Vendor/stb/stb_image.c"
+            "../../Vendor/stb/*.c"
         ],
         additional_libs = [],
         include_paths = [
