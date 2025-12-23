@@ -120,6 +120,8 @@ namespace DS {
         }
 
         void put(K key, V value) {
+            RUNTIME_ASSERT(this->m_entries); 
+
             if (this->getLoadFactor() >= HASHMAP_DEFAULT_getLoadFactor) {
                 this->growRehash();
             }
@@ -139,6 +141,8 @@ namespace DS {
         }
 
         bool has(K key) const {
+            RUNTIME_ASSERT(this->m_entries); 
+
             u64 hash = this->safeHash(key);
             s64 index = this->resolveCollision(key, hash % this->m_capacity);
             if (index == -1) {
