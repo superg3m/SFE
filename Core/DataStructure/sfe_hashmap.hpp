@@ -141,7 +141,7 @@ namespace DS {
         }
 
         bool has(K key) const {
-            RUNTIME_ASSERT(this->m_entries); 
+            RUNTIME_ASSERT(this->m_entries && this->m_hash_func && this->m_equal_func); 
 
             u64 hash = this->safeHash(key);
             s64 index = this->resolveCollision(key, hash % this->m_capacity);
