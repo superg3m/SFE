@@ -69,12 +69,12 @@ Texture Texture::LoadFromFile(const char* path, bool should_free) {
     return ret;
 }
 
-Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrChannels) {
+Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrChannels, bool pixel_perfect) {
     if (!data || width <= 0 || height <= 0 || nrChannels == 0) {
         RUNTIME_ASSERT_MSG(false, "TextureLoader | Invalid input data for loadTextureFromMemory!\n");
     }
 
-    GLenum MIPMAP_TYPE = GL_LINEAR; // GET_BIT(texture_flags, 0) ? GL_NEAREST : GL_LINEAR;
+    GLenum MIPMAP_TYPE = pixel_perfect ? GL_NEAREST : GL_LINEAR;
 
     unsigned int texture;
     glCheckError(glGenTextures(1, &texture));
