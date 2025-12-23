@@ -2,10 +2,10 @@
 #include "sfe_input_glfw.hpp"
 
 namespace Input {
-    GLFWkeyfun cb_keyboard = nullptr;
-    GLFWmousebuttonfun cb_mouse_button = nullptr;
-    GLFWcursorposfun cb_mouse_move = nullptr;
-    DS::Hashmap<int, KeyCode> glfw_to_key_code;
+    static GLFWkeyfun cb_keyboard = nullptr;
+    static GLFWmousebuttonfun cb_mouse_button = nullptr;
+    static GLFWcursorposfun cb_mouse_move = nullptr;
+    static DS::Hashmap<int, KeyCode> glfw_to_key_code;
 
     void GLFW_BIND_KEY_CALLBACK(GLFWkeyfun cb) {
         cb_keyboard = cb;
