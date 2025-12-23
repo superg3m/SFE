@@ -29,6 +29,12 @@ constexpr float EPSILON = 0.0001f;
 #define ArrayCount(array) (sizeof(array) / sizeof(array[0]))
 #define STRING_LIT_ARG(literal) literal, sizeof(literal) - 1
 
+#define CHAR_IS_DIGIT(c) (((c) >= '0') && ((c) <= '9'))
+#define CHAR_IS_UPPER(c) (((c) >= 'A') && ((c) <= 'Z'))
+#define CHAR_IS_LOWER(c) (((c) >= 'a') && ((c) <= 'z'))
+#define CHAR_IS_ALPHA(c) (CHAR_IS_UPPER(c & 0b11011111))
+#define CHAR_IS_ALPHA_NUMERIC(c) (CHAR_IS_ALPHA(c) || CHAR_IS_DIGIT(c))
+
 #if defined(_WIN32)
     #define PLATFORM_WINDOWS
     #define CRASH() __debugbreak()
