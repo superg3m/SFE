@@ -10,6 +10,7 @@ struct Texture {
     // sampler2d or cubemap
 
     Texture();
+    static void FlipVerticallyInPlace(u8* data, int width, int height);
     static Texture LoadFromFile(const char* path, bool should_free = true);
     static Texture LoadFromMemory(const u8* data, int width, int height, int nrChannels, bool pixel_perfect = false);
 

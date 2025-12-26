@@ -5,8 +5,17 @@
 #include "../../Platform/sfe_platform.hpp"
 #include "../sfe_gl_check.hpp"
 #include "sfe_texture.hpp"
+#include "../../Core/Memory/sfe_memory.hpp"
 
 Texture::Texture() {}
+void Texture::FlipVerticallyInPlace(u8* data, int width, int height) {
+    for (int y = 0; y < height / 2; y++) {
+        for (int x = 0; x < width; x++) {
+            Memory::Swap(data[y * width + x], data[(height - 1 - y) * width + x]);
+        }
+    }
+}
+
 Texture Texture::LoadFromFile(const char* path, bool should_free) {
     RUNTIME_ASSERT_MSG(Platform::FilePathExists(path), "Texture path: '%s' doesn't exist!\n", path);
     
