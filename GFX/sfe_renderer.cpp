@@ -109,6 +109,118 @@ namespace GFX {
     void ClearTelemetry() {
         DRAW_CALL_COUNT = 0;
     }
+
+
+    /*
+    struct Batch {
+        DS::Vector<GLsizei> firsts;
+        DS::Vector<GLsizei> counts;
+        Material material; // If it has the same material index then you can multi-draw
+    }
+    */
+
+    // Vector<Batch> batches // Calculate the number of batches
+
+    /*
+    // Define the draw calls
+    GLsizei firsts[] = { 0, 36 }; // Start of Cube 1 (0), Start of Cube 2 (36 vertices)
+    GLsizei counts[] = { 36, 36 }; // 36 vertices per cube
+    GLsizei numDraws = 2;
+    // glMultiDrawArrays(mode, firsts, counts, numDraws);
+    */
+    void DrawGeometry(Geometry &geometry, ShaderBase* shader) {
+        shader->use();
+        geometry.VAO.bind();
+
+        for (Geometry* geo = &geometry; geo != nullptr; geo = geo->next) {
+            if (geo->vertex_count == 0) {
+                continue;
+            }
+
+            shader->setMaterial(geo->material);
+
+            if (geo->index_count > 0) {
+                GFX::IncrementDrawCallCount();
+                glCheckError(glDrawElementsBaseVertex(
+                    geometry.draw_type, geo->index_count, GL_UNSIGNED_INT, 
+                    (void*)(sizeof(unsigned int) * geo->base_index), 
+                    geo->base_vertex
+                ));
+            } else {
+                GFX::IncrementDrawCallCount();
+                glCheckError(glDrawArrays(
+                    geometry.draw_type,
+                    geo->base_vertex,
+                    geo->vertex_count
+                ));
+            }
+        }
+    }
+
+    void DrawGeometryInstanced(Geometry &geometry, ShaderBase* shader, int instance_count) {
+        shader->use();
+        geometry.VAO.bind();
+
+        for (Geometry* geo = &geometry; geo != nullptr; geo = geo->next) {
+            if (geo->vertex_count == 0) {
+                continue;
+            }
+
+            shader->setMaterial(geo->material);
+
+            if (geo->index_count > 0) {
+                GFX::IncrementDrawCallCount();
+                glCheckError(glDrawElementsInstancedBaseVertex(
+                    geometry.draw_type, geo->index_count,
+                    GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * geo->base_index),
+                    instance_count, geo->base_vertex
+                ));
+            } else {
+                GFX::IncrementDrawCallCount();
+                glCheckError(glDrawArraysInstanced(
+                    geometry.draw_type,
+                    geo->base_vertex,
+                    geo->vertex_count,
+                    instance_count
+                ));
+            }
+        }
+    }
+
+    void DrawText(Font font, const char* text, int x, int y, ShaderBase* shader) {
+        int x_position = x;
+        int y_position = y;
+        for (int i = 0; i < String::Length(text); i++) {
+            char codepoint = text[i];
+            if (codepoint == '\n') {
+                y_position += font.line_height;
+                x_position = x;
+                continue;
+            }
+
+            Glyph g = font.glyphs.get(codepoint);
+            if (codepoint == ' ') {
+                x_position += g.x_advance;
+                continue;
+            }
+
+            Math::Mat4 model = Math::Mat4::Identity();
+            model = Math::Mat4::Scale(model, 1);
+            model = Math::Mat4::Translate(model, x_position, y_position, 0.0f);
+
+            shader->setModel(model);
+            shader->setTexture2D("uTexture", 0, g.texture);
+            
+
+            // Date: December 26, 2025
+            // TODO(Jovanni): Obviously this is bad its a different VAO for each draw call at least fix that please...
+            // But also maybe find a way to do instancing here?
+            // What you could do is have a single quad and just scale it and translate it depending on the codepoint (yes this is smart and will work with instancing)
+            GFX::SetBlending(true);
+            GFX::DrawGeometry(g.quad, shader);
+            GFX::SetBlending(false);
+
+            x_position += g.x_advance;
+        }
+    }
 }
-
-

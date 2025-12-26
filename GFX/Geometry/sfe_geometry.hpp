@@ -10,7 +10,6 @@
 #include "../GPUBuffer/sfe_gpu_buffer.hpp"
 #include "../VertexArray/sfe_vertex_array.hpp"
 #include "../Core/Common/sfe_common.hpp"
-#include "../sfe_renderer.hpp"
 #include "sfe_material.hpp"
 #include "sfe_vertex.hpp"
 
@@ -59,9 +58,6 @@ namespace GFX  {
 		static Geometry Cube();
 		static Geometry Sphere(int segments);
 		static Geometry Model(const char* path);
-
-		void draw(ShaderBase* shader);
-		void drawInstanced(ShaderBase* shader, int instance_count);
 
 		private:
 			DS::Vector<Vertex> vertices; // only the root will have vertices
