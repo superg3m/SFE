@@ -25,23 +25,19 @@ Texture Texture::LoadFromFile(const char* path, bool should_free) {
     stbi_set_flip_vertically_on_load(TEXTURE_VERTICAL_FLIP);
     u8 *data = stbi_load(path, &width, &height, &nrChannels, 0);
 
-    GLenum internal_format = 0;
-    GLenum pixel_format = 0;
+    GLenum format = 0;
     if (nrChannels == 1) {
-        internal_format = GL_RED;
-        pixel_format = GL_RED;
+        format = GL_ALPHA;
     } else if (nrChannels == 3) {
-        internal_format = GL_RGB; // gammaCorrected ? GL_SRGB : GL_RGB;
-        pixel_format = GL_RGB;
+        format = GL_RGB;  // gammaCorrected ? GL_SRGB : GL_RGB;
     } else if (nrChannels == 4) {
-        internal_format = GL_RGBA; // gammaCorrected ? GL_SRGB_ALPHA : GL_RGBA;
-        pixel_format = GL_RGBA;
+        format = GL_RGBA; // gammaCorrected ? GL_SRGB_ALPHA : GL_RGBA;
     } else {
         RUNTIME_ASSERT_MSG(false, "TextureLoader | Failed to pick a stb format, most likely related to assimp, try to link your libraries in a different order\n");
     }
 
     if (data) {
-        glCheckError(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, pixel_format, GL_UNSIGNED_BYTE, data));
+        glCheckError(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
         glCheckError(glGenerateMipmap(GL_TEXTURE_2D));
     } else {
         LOG_ERROR("TextureLoader | Failed to load texture\n");
@@ -86,7 +82,7 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
 
     GLenum format = 0;
     if (nrChannels == 1) {
-        format = GL_RED;
+        format = GL_ALPHA;
     } else if (nrChannels == 3) {
         format = GL_RGB;
     } else if (nrChannels == 4) {
