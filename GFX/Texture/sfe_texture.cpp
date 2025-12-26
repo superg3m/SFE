@@ -25,19 +25,23 @@ Texture Texture::LoadFromFile(const char* path, bool should_free) {
     stbi_set_flip_vertically_on_load(TEXTURE_VERTICAL_FLIP);
     u8 *data = stbi_load(path, &width, &height, &nrChannels, 0);
 
-    GLenum format = 0;
+    GLenum internal_format = 0;
+    GLenum pixel_format = 0;
     if (nrChannels == 1) {
-        format = GL_ALPHA;
+        internal_format = GL_R8;
+        pixel_format = GL_RED;
     } else if (nrChannels == 3) {
-        format = GL_RGB;  // gammaCorrected ? GL_SRGB : GL_RGB;
+        internal_format = GL_RGB8;
+        pixel_format = GL_RGB;
     } else if (nrChannels == 4) {
-        format = GL_RGBA; // gammaCorrected ? GL_SRGB_ALPHA : GL_RGBA;
+        internal_format = GL_RGBA8;
+        pixel_format = GL_RGBA;
     } else {
-        RUNTIME_ASSERT_MSG(false, "TextureLoader | Failed to pick a stb format, most likely related to assimp, try to link your libraries in a different order\n");
+        RUNTIME_ASSERT_MSG(false, "Unsupported channel count");
     }
 
     if (data) {
-        glCheckError(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
+        glCheckError(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, pixel_format, GL_UNSIGNED_BYTE, data));
         glCheckError(glGenerateMipmap(GL_TEXTURE_2D));
     } else {
         LOG_ERROR("TextureLoader | Failed to load texture\n");
@@ -80,18 +84,22 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
     glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MIPMAP_TYPE));
     glCheckError(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MIPMAP_TYPE));
 
-    GLenum format = 0;
+    GLenum internal_format = 0;
+    GLenum pixel_format = 0;
     if (nrChannels == 1) {
-        format = GL_ALPHA;
+        internal_format = GL_R8;
+        pixel_format = GL_RED;
     } else if (nrChannels == 3) {
-        format = GL_RGB;
+        internal_format = GL_RGB8;
+        pixel_format = GL_RGB;
     } else if (nrChannels == 4) {
-        format = GL_RGBA;
+        internal_format = GL_RGBA8;
+        pixel_format = GL_RGBA;
     } else {
-        RUNTIME_ASSERT_MSG(false, "TextureLoader | Failed to pick a format for memory texture (channels: %d)\n", nrChannels);
+        RUNTIME_ASSERT_MSG(false, "Unsupported channel count");
     }
 
-    glCheckError(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
+    glCheckError(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, pixel_format, GL_UNSIGNED_BYTE, data));
     glCheckError(glGenerateMipmap(GL_TEXTURE_2D));
 
     if (texture == 0) {
