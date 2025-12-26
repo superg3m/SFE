@@ -93,7 +93,7 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
     GLenum pixel_format = 0;
     if (nrChannels == 1) {
         internal_format = GL_R8;
-        pixel_format   = GL_RED;
+        pixel_format = GL_RED;
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_RED);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_RED);
@@ -101,10 +101,10 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_RED);
     } else if (nrChannels == 3) {
         internal_format = GL_RGB8;
-        pixel_format   = GL_RGB;
+        pixel_format = GL_RGB;
     } else if (nrChannels == 4) {
         internal_format = GL_RGBA8;
-        pixel_format   = GL_RGBA;
+        pixel_format = GL_RGBA;
     } else {
         RUNTIME_ASSERT_MSG(false, "Unsupported channel count");
     }
