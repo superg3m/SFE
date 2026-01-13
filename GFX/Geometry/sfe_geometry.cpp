@@ -406,8 +406,8 @@ namespace GFX {
         this->VAO = VertexArray::Create();
         this->VAO.bind();
 
-        this->VBO = GPUBuffer::VBO(BufferUsage::STATIC, stride_type_info, this->vertices);
-        this->EBO = GPUBuffer::EBO(this->indices);
+        this->VBO = VertexBuffer::Create(BufferUsage::STATIC, stride_type_info, this->vertices);
+        this->EBO = IndexBuffer::Create(this->indices);
         this->VAO.bindVBO(0, false, this->VBO);
         this->VAO.bindEBO(this->EBO);
 

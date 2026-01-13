@@ -7,7 +7,7 @@
 
 #include "../../Core/DataStructure/sfe_ds.hpp"
 #include "../../Core/Math/sfe_math.hpp"
-#include "../GPUBuffer/sfe_gpu_buffer.hpp"
+#include "../GPUBuffer/sfe_vertex_buffer.hpp"
 #include "../VertexArray/sfe_vertex_array.hpp"
 #include "../Core/Common/sfe_common.hpp"
 #include "sfe_material.hpp"
@@ -31,8 +31,8 @@ namespace GFX  {
 
 	struct Geometry {
 		VertexArray VAO; 
-		GPUBuffer VBO; 
-		GPUBuffer EBO;
+		VertexBuffer VBO; 
+		IndexBuffer EBO;
 		GLuint vertex_count = 0;
 		GLuint index_count = 0;
 		GLenum draw_type = GL_TRIANGLES; // GL_TRIANGLES, GL_LINES, ...

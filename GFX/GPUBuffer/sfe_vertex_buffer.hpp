@@ -6,12 +6,6 @@
 #include "../sfe_gl_check.hpp"
 
 namespace GFX {
-    enum class BufferType {
-        VERTEX,
-        INDEX,
-        UNIFORM,
-    };
-
     enum class BufferUsage {
         STATIC,
         DYNAMIC,
@@ -41,27 +35,22 @@ namespace GFX {
         }
     };
 
-    // TODO(Jovanni): Delete these buffers prob put them in a vao or something
-    struct GPUBuffer {
+    struct VertexBuffer {
         GLuint id = 0;
         
         DS::Vector<AttributeDesc> descriptors;
         int stride;
-        BufferType type;
         BufferUsage usage;
-        GLenum gl_type; // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_UNIFORM_BUFFER
-        GLenum gl_usage; // GL_STATIC_DRAW, GL_DYNAMIC_DRAW
+        GLenum gl_usage; // GL_STATIC_DRAW, GL_DYNAMIC_DRAW, ect...
         
-        GPUBuffer() = default;
+        VertexBuffer() = default;
 
         template <typename T>
-        static GPUBuffer VBO(BufferUsage usage, DS::Vector<AttributeDesc> descriptors, DS::Vector<T> buffer) {
-            GPUBuffer ret;
-            ret.type = BufferType::VERTEX;
+        static VertexBuffer Create(BufferUsage usage, DS::Vector<AttributeDesc> descriptors, DS::Vector<T> buffer) {
+            VertexBuffer ret;
             ret.usage = usage;
             ret.stride = sizeof(T);
             ret.descriptors = descriptors;
-            ret.gl_type = GL_ARRAY_BUFFER;
             ret.gl_usage = (
                 (usage == BufferUsage::STATIC) ? GL_STATIC_DRAW : 
                 (usage == BufferUsage::DYNAMIC) ? GL_DYNAMIC_DRAW :
@@ -73,8 +62,6 @@ namespace GFX {
             return ret;
         }
 
-        static GPUBuffer EBO(DS::Vector<unsigned int> data);
-
         template <typename T>
         void updateEntireBuffer(const DS::Vector<T> &buffer) {
             #if 0
@@ -84,8 +71,8 @@ namespace GFX {
                 Memory::Copy(ptr, buffer_size, buffer.data(), buffer_size);
                 glCheckError(glUnmapBuffer(GL_ARRAY_BUFFER));
             #else
-                glCheckError(glBindBuffer(this->gl_type, this->id));
-                glCheckError(glBufferSubData(this->gl_type, 0, sizeof(T) * buffer.count(), buffer.data()));
+                glCheckError(glBindBuffer(GL_ARRAY_BUFFER, this->id));
+                glCheckError(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(T) * buffer.count(), buffer.data()));
             #endif
         }
 

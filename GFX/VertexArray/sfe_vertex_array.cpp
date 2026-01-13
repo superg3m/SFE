@@ -15,9 +15,7 @@ namespace GFX {
         GFX::BindVAO(this->id);
     }
 
-    void VertexArray::bindVBO(int location, bool instanced, const GPUBuffer& buffer) {
-        RUNTIME_ASSERT(buffer.type == BufferType::VERTEX);
-    
+    void VertexArray::bindVBO(int location, bool instanced, const VertexBuffer& buffer) {    
         this->bind();
         buffer.bind();
         for (AttributeDesc desc : buffer.descriptors) {
@@ -29,9 +27,7 @@ namespace GFX {
         }
     }
 
-    void VertexArray::bindEBO(const GPUBuffer& buffer) {
-        RUNTIME_ASSERT(buffer.type == BufferType::INDEX);
-
+    void VertexArray::bindEBO(const IndexBuffer& buffer) {
         this->bind();
         buffer.bind();
     }
