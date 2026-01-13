@@ -4,17 +4,18 @@
 namespace GFX {
     Font Font::Create(const char* font_path, float font_point_scale, int first_codepoint, int last_codepoint) {
         Font font;
+        stbtt_fontinfo info;
 
         size_t file_size = 0;
         Error error = Error::SUCCESS;
         u8* ttf_data = Platform::ReadEntireFile(font_path, file_size, error);
         RUNTIME_ASSERT_MSG(error == Error::SUCCESS, "%s\n", getErrorString(error));   
-        RUNTIME_ASSERT(stbtt_InitFont(&font.info, ttf_data, stbtt_GetFontOffsetForIndex(ttf_data, 0)));
+        RUNTIME_ASSERT(stbtt_InitFont(&info, ttf_data, stbtt_GetFontOffsetForIndex(ttf_data, 0)));
 
-        font.scale = stbtt_ScaleForPixelHeight(&font.info, font_point_scale);
+        font.scale = stbtt_ScaleForPixelHeight(&info, font_point_scale);
 
         int ascent, descent, lineGap;
-        stbtt_GetFontVMetrics(&font.info, &ascent, &descent, &lineGap);
+        stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
         font.ascent  = ascent  * font.scale;
         font.descent = descent * font.scale;
         font.line_gap = lineGap * font.scale;
@@ -25,7 +26,7 @@ namespace GFX {
             Glyph glyph;
 
             int advance, lsb;
-            stbtt_GetCodepointHMetrics(&font.info, codepoint, &advance, &lsb);
+            stbtt_GetCodepointHMetrics(&info, codepoint, &advance, &lsb);
             glyph.x_advance = advance * font.scale;
 
             if (codepoint == ' ') {
@@ -34,7 +35,7 @@ namespace GFX {
             }
 
             u8* bmp = stbtt_GetCodepointBitmap(
-                &font.info,
+                &info,
                 0, font.scale,
                 codepoint,
                 &glyph.width,

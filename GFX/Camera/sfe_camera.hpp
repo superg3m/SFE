@@ -38,9 +38,9 @@ struct Camera {
     void processMouseMovement(float xoffset, float yoffset, bool contrain_pitch = true);
     void processMouseScroll(float yoffset);
 
-    private:
-        float yaw = DEFAULTED_YAW;
-        float pitch = DEFAULTED_PITCH;
+private:
+    float yaw = DEFAULTED_YAW;
+    float pitch = DEFAULTED_PITCH;
 
-        void update();
+    void update();
 };

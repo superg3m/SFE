@@ -15,9 +15,7 @@ namespace GFX {
     };
 
     struct Font {
-        stbtt_fontinfo info;
         float scale;
-
         float ascent;
         float descent;
         float line_gap;
