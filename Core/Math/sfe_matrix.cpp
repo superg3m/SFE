@@ -284,7 +284,7 @@ namespace Math {
         rotation.v = {
             Vec4(right,   0),
             Vec4(up,      0),
-            Vec4(forward.scale(-1), 0),
+            Vec4(forward, 0),
             Vec4(0, 0, 0, 1)
         };
         
