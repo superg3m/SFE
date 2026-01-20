@@ -282,10 +282,10 @@ namespace Math {
 
         Mat4 rotation;
         rotation.v = {
-            Vec4(right.x,   right.y,   right.z,   0),
-            Vec4(up.x,      up.y,      up.z,      0),
-            Vec4(forward.x, forward.y, forward.z, 0),
-            Vec4(0,         0,         0,         1)
+            Vec4(right,   0),
+            Vec4(up,      0),
+            Vec4(forward, 0),
+            Vec4(0, 0, 0, 1)
         };
         
         Mat4 translation = Mat4::Translate(Mat4::Identity(), position.scale(-1));
