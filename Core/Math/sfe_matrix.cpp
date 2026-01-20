@@ -288,7 +288,7 @@ namespace Math {
             Vec4(0,         0,         0,         1)
         };
         
-        Mat4 translation = Mat4::Translate(Mat4::Identity(), -position.x, -position.y, -position.z);
+        Mat4 translation = Mat4::Translate(Mat4::Identity(), position.scale(-1));
 
         return rotation * translation;
     }
