@@ -78,7 +78,7 @@ Texture Texture::LoadFromFile(const char* path, bool should_free) {
     ret.height = height;
     ret.data = data;
 
-    LOG_WARN("Texture: %s\n", path);
+    glCheckError(glBindTexture(GL_TEXTURE_2D, 0));
     
     return ret;
 }
@@ -130,6 +130,8 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
     ret.width = width;
     ret.height = height;
 
+    glCheckError(glBindTexture(GL_TEXTURE_2D, 0));
+
     return ret;
 }
 
@@ -176,6 +178,8 @@ Texture Texture::LoadCubeMap(DS::Vector<const char*> texture_paths) {
     Texture ret;
     ret.id = texture;
     ret.type = TextureSamplerType::CUBEMAP3D;
+
+    glCheckError(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 
     return ret;
 }
