@@ -1,10 +1,10 @@
 #include <glad/glad.h>
 #include <stb_image.h>
 
+#include "./sfe_texture.hpp"
+#include "../sfe_gl_check.hpp"
 #include "../../Core/Common/sfe_common.hpp"
 #include "../../Platform/sfe_platform.hpp"
-#include "../sfe_gl_check.hpp"
-#include "sfe_texture.hpp"
 #include "../../Core/Memory/sfe_memory.hpp"
 
 Texture::Texture() {}
@@ -129,6 +129,53 @@ Texture Texture::LoadFromMemory(const u8* data, int width, int height, int nrCha
     ret.id = texture;
     ret.width = width;
     ret.height = height;
+
+    return ret;
+}
+
+// {right, left,  top, bottom, front, back}
+Texture Texture::LoadCubeMap(DS::Vector<const char*> texture_paths) {
+    unsigned int texture;
+    glCheckError(glGenTextures(1, &texture));
+    glCheckError(glBindTexture(GL_TEXTURE_CUBE_MAP, texture));
+    glCheckError(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    glCheckError(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    glCheckError(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    glCheckError(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    glCheckError(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+
+    unsigned char *data;  
+    for(unsigned int i = 0; i < texture_paths.count(); i++) {
+        RUNTIME_ASSERT_MSG(Platform::FilePathExists(texture_paths[i]), "Texture path: '%s' doesn't exist!\n", texture_paths[i]);
+        int width, height, nrChannels;
+        data = stbi_load(texture_paths[i], &width, &height, &nrChannels, 0);
+        
+        GLenum format = 0;
+        if (nrChannels == 1) {
+            format = GL_RED;
+        } else if (nrChannels == 3) {
+            format = GL_RGB;
+        } else if (nrChannels == 4) {
+            format = GL_RGBA;
+        } else {
+            LOG_ERROR("TextureLoader | Failed to pick a stb format, most likely related to assimp, try to link your libraries in a different order\n");
+        }
+
+        if (data) {
+            glCheckError(glTexImage2D(
+                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
+                0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data
+            ));
+        } else {
+            LOG_ERROR("TextureLoader | Failed to load texture\n");
+        }
+
+        stbi_image_free(data);
+    }
+
+    Texture ret;
+    ret.id = texture;
+    ret.type = TextureSamplerType::CUBEMAP3D;
 
     return ret;
 }
