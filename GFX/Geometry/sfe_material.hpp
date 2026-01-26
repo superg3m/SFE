@@ -54,9 +54,6 @@ struct Material {
 
     float shininess = 32.0f;
     float opacity = 1.0f;
-
-    bool has_normals = false;
-    bool has_texcoord = false;
 };
 
 struct MaterialLocation {
@@ -69,7 +66,4 @@ struct MaterialLocation {
 
     unsigned int shininess;
     unsigned int opacity;
-
-    unsigned int has_normals;
-    unsigned int has_texcoord;
 };

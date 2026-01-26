@@ -18,6 +18,9 @@ void ShaderMaterial::compile() {
     this->uMaterial_Location.textures[TEXTURE_TYPE_SPECULAR] = this->getUniformLocation("uMaterial.specular_map", GL_SAMPLER_2D);
     this->uMaterial_Location.has_textures[TEXTURE_TYPE_SPECULAR] = this->getUniformLocation("uMaterial.has_specular_map", GL_BOOL);
 
+    this->uMaterial_Location.textures[TEXTURE_TYPE_NORMALS] = this->getUniformLocation("uMaterial.normal_map", GL_SAMPLER_2D);
+    this->uMaterial_Location.has_textures[TEXTURE_TYPE_NORMALS] = this->getUniformLocation("uMaterial.has_normal_map", GL_BOOL);
+
     this->uMaterial_Location.textures[TEXTURE_TYPE_EMISSIVE] = this->getUniformLocation("uMaterial.emissive_map", GL_SAMPLER_2D);
     this->uMaterial_Location.has_textures[TEXTURE_TYPE_EMISSIVE] = this->getUniformLocation("uMaterial.has_emissive_map", GL_BOOL);
 
@@ -27,9 +30,6 @@ void ShaderMaterial::compile() {
 
     this->uMaterial_Location.shininess = this->getUniformLocation("uMaterial.shininess", GL_FLOAT);
     this->uMaterial_Location.opacity = this->getUniformLocation("uMaterial.opacity", GL_FLOAT);
-
-    this->uMaterial_Location.has_normals = this->getUniformLocation("uMaterial.has_normals", GL_BOOL);
-    this->uMaterial_Location.has_texcoord = this->getUniformLocation("uMaterial.has_texcoord", GL_BOOL);
 }
 
 void ShaderMaterial::setMaterial(const Material &material) {
@@ -57,9 +57,6 @@ void ShaderMaterial::setMaterial(const Material &material) {
 
     this->setFloat(uMaterial_Location.shininess, material.shininess);
     this->setFloat(uMaterial_Location.opacity, material.opacity);
-
-    this->setBool(this->uMaterial_Location.has_normals, material.has_normals);
-    this->setBool(this->uMaterial_Location.has_texcoord, material.has_texcoord);
 }
 
 void ShaderMaterial::setEmissiveMaterial(bool should_emit) {
