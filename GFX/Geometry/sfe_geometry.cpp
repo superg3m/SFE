@@ -400,9 +400,6 @@ namespace GFX {
             AttributeDesc(OFFSET_OF(Vertex, aBoneWeights), BufferStrideTypeInfo::VEC3),
         };
 
-        //int stride = sizeof(Vertex);
-        //int vertex_data_size = this->vertices.count() * sizeof(Vertex);
-
         this->VAO = VertexArray::Create();
         this->VAO.bind();
 
@@ -416,8 +413,8 @@ namespace GFX {
                 continue;
             }
 
-            geo->material.has_normals = flags & VertexAttributeFlag::aNormal;
-            geo->material.has_texcoord = flags & VertexAttributeFlag::aTexCoord;
+            // geo->material.has_normals = flags & VertexAttributeFlag::aNormal;
+            // geo->material.has_texcoord = flags & VertexAttributeFlag::aTexCoord;
         }
 
         if (should_destory_data) {
