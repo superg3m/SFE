@@ -35,7 +35,7 @@ void main() {
     vec3 final_rgb = vec3(0.0);
 
     vec3 base_color;
-    if (uMaterial.has_diffuse_map && uMaterial.has_texcoord) {
+    if (uMaterial.has_diffuse_map) {
         base_color = texture(uMaterial.diffuse_map, v_TexCoord).rgb;
     } else {
         base_color = uMaterial.diffuse_color;
@@ -63,7 +63,7 @@ void main() {
     }
     */
 
-    if (uApplyEmissiveMaterial && uMaterial.has_emissive_map && uMaterial.has_texcoord) {
+    if (uApplyEmissiveMaterial && uMaterial.has_emissive_map) {
         vec3 emissive = texture(uMaterial.emissive_map, v_TexCoord).rgb;
         final_rgb += emissive;
     }
