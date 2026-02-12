@@ -1496,14 +1496,14 @@ namespace Math {
         }
     };
 
-    Mat4 Mat4::Rotate(Mat4 mat, Quat quat) {
+    inline Mat4 Mat4::Rotate(Mat4 mat, Quat quat) {
         float theta;
         Vec3 axis;
         quat.getAngleAxis(theta, axis);
         return Mat4::Rotate(mat, theta, axis);
     }
 
-    Mat4 Mat4::Transform(Vec3 s, Math::Quat r, Vec3 t) {
+    inline Mat4 Mat4::Transform(Vec3 s, Math::Quat r, Vec3 t) {
         Mat4 scale_matrix = Mat4::Scale(Mat4::Identity(), s);
         Mat4 rotation_matrix = Mat4::Rotate(Mat4::Identity(), r);
         Mat4 translation_matrix = Mat4::Translate(Mat4::Identity(), t);
@@ -1511,7 +1511,7 @@ namespace Math {
         return translation_matrix * rotation_matrix * scale_matrix;
     }
 
-    static void Decompose(Mat4 mat, Vec3* out_position, Quat* out_orientation, Vec3* out_scale) {
+    inline void Mat4::Decompose(Mat4 mat, Vec3* out_position, Quat* out_orientation, Vec3* out_scale) {
         Vec3 translation = Vec3(mat.v[0].w, mat.v[1].w, mat.v[2].w);
         Vec3 scale = Vec3(0);
         {
