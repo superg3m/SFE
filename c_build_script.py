@@ -57,16 +57,19 @@ procedures_config = {
             "../../Platform/**/*.cpp",
             "../../GFX/**/*.cpp",
             "../../Input/**/*.cpp",
+
             "../../Vendor/glad/src/glad.c",
+            "../../Vendor/imgui/*.cpp",
             "../../Vendor/stb/*.c"
         ],
         additional_libs = [],
         include_paths = [
             "../../Vendor",
-            "../../Vendor/stb",
+            "../../Vendor/assimp/include",
             "../../Vendor/glad/include", 
             "../../Vendor/glfw",
-            "../../Vendor/assimp/include",
+            "../../Vendor/imgui",
+            "../../Vendor/stb"
         ],
         compiler_inject_into_args=[]
     ),
