@@ -47,7 +47,7 @@ namespace Math {
 
         T average = (T)accumlator / (T)count;
 
-        return average
+        return average;
     }
 
     inline float Lerp(float a, float b, float t) {
