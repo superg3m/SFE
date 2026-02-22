@@ -115,7 +115,7 @@ namespace Input {
             #undef X
         };
 
-        RUNTIME_ASSERT_MSG(glfw_to_key_code.count() == ArrayCount(keys), "Update your mappings to reflect the new keys");
+        RUNTIME_ASSERT_MSG(glfw_to_key_code.count() == ArrayCount(keys), "Update your mappings to reflect the new keys | Expected: %d | Got: %d\n", ArrayCount(keys), glfw_to_key_code.count());
 
         glfw_window_instance = (void*)window;
         if (!glfw_window_instance) {
