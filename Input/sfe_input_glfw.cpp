@@ -120,7 +120,7 @@ namespace Input {
             }
 
             if (!glfw_to_key_code.has(key)) {
-                LOG_WARN("Pressed a glfw key and it is not mapped yet: %c\n", key);
+                LOG_WARN("Pressed a glfw key and it is not mapped yet: %s\n", glfwGetKeyName(key, scancode));
                 return;
             }
 
