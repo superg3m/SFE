@@ -38,6 +38,18 @@ namespace Math {
     float ease_in_out_bounce(float t);
     */
 
+    template <typename T>
+    inline T Average(T* array, int count) {
+        T accumlator = 0;
+        for (int i = 0; i < count; i++) {
+            accumlator += array[i];
+        }
+
+        T average = (T)accumlator / (T)count;
+
+        return average
+    }
+
     inline float Lerp(float a, float b, float t) {
         return a + ((b - a) * t);
     }
