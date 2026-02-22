@@ -48,6 +48,9 @@ namespace Input {
             {GLFW_KEY_X, KEY_X},
             {GLFW_KEY_Y, KEY_Y},
             {GLFW_KEY_Z, KEY_Z},
+            {GLFW_KEY_EQUAL, KEY_EQUAL},
+            {GLFW_KEY_MINUS, KEY_MINUS},
+            {GLFW_KEY_PERIOD, KEY_PERIOD},
 
             // Numbers
             {GLFW_KEY_0, KEY_0},
@@ -101,6 +104,18 @@ namespace Input {
             {GLFW_MOUSE_BUTTON_RIGHT,  MOUSE_BUTTON_RIGHT},
             {GLFW_MOUSE_BUTTON_MIDDLE, MOUSE_BUTTON_MIDDLE}
         };
+
+        KeyCode keys [] {
+            #define X(name, value) name,
+                X_ASCII_KEYCODE
+            #undef X
+
+            #define X(name) name,
+                X_COMPLEX_KEYCODE
+            #undef X
+        };
+
+        RUNTIME_ASSERT_MSG(glfw_to_key_code.count() == ArrayCount(keys), "Update your mappings to reflect the new keys");
 
         glfw_window_instance = (void*)window;
         if (!glfw_window_instance) {

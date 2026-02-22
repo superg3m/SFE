@@ -36,40 +36,13 @@ namespace Input {
     void Init() {
         profiles = DS::Vector<Profile>(1);
         input_state = {
-            {KEY_A, KeyState::UP}, {KEY_B, KeyState::UP}, {KEY_C, KeyState::UP},
-            {KEY_D, KeyState::UP}, {KEY_E, KeyState::UP}, {KEY_F, KeyState::UP},
-            {KEY_G, KeyState::UP}, {KEY_H, KeyState::UP}, {KEY_I, KeyState::UP},
-            {KEY_J, KeyState::UP}, {KEY_K, KeyState::UP}, {KEY_L, KeyState::UP},
-            {KEY_M, KeyState::UP}, {KEY_N, KeyState::UP}, {KEY_O, KeyState::UP},
-            {KEY_P, KeyState::UP}, {KEY_Q, KeyState::UP}, {KEY_R, KeyState::UP},
-            {KEY_S, KeyState::UP}, {KEY_T, KeyState::UP}, {KEY_U, KeyState::UP},
-            {KEY_V, KeyState::UP}, {KEY_W, KeyState::UP}, {KEY_X, KeyState::UP},
-            {KEY_Y, KeyState::UP}, {KEY_Z, KeyState::UP},
+            #define X(name, value) {name, KeyState::UP},
+                X_ASCII_KEYCODE
+            #undef X
 
-            {KEY_0, KeyState::UP}, {KEY_1, KeyState::UP}, {KEY_2, KeyState::UP},
-            {KEY_3, KeyState::UP}, {KEY_4, KeyState::UP}, {KEY_5, KeyState::UP},
-            {KEY_6, KeyState::UP}, {KEY_7, KeyState::UP}, {KEY_8, KeyState::UP},
-            {KEY_9, KeyState::UP},
-
-            {KEY_SPACE, KeyState::UP}, {KEY_ENTER, KeyState::UP},
-            {KEY_ESCAPE, KeyState::UP}, {KEY_TAB, KeyState::UP},
-            {KEY_BACKSPACE, KeyState::UP},
-
-            {KEY_LEFT, KeyState::UP}, {KEY_RIGHT, KeyState::UP},
-            {KEY_UP, KeyState::UP}, {KEY_DOWN, KeyState::UP},
-            {KEY_CTRL, KeyState::UP}, {KEY_SHIFT, KeyState::UP},
-            {KEY_ALT, KeyState::UP},
-
-            {KEY_F1, KeyState::UP}, {KEY_F2, KeyState::UP},
-            {KEY_F3, KeyState::UP}, {KEY_F4, KeyState::UP},
-            {KEY_F5, KeyState::UP}, {KEY_F6, KeyState::UP},
-            {KEY_F7, KeyState::UP}, {KEY_F8, KeyState::UP},
-            {KEY_F9, KeyState::UP}, {KEY_F10, KeyState::UP},
-            {KEY_F11, KeyState::UP}, {KEY_F12, KeyState::UP},
-
-            {MOUSE_BUTTON_LEFT, KeyState::UP},
-            {MOUSE_BUTTON_RIGHT, KeyState::UP},
-            {MOUSE_BUTTON_MIDDLE, KeyState::UP}
+            #define X(name) {name, KeyState::UP},
+                X_COMPLEX_KEYCODE
+            #undef X
         };
     }
 
