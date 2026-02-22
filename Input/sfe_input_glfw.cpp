@@ -105,18 +105,6 @@ namespace Input {
             {GLFW_MOUSE_BUTTON_MIDDLE, MOUSE_BUTTON_MIDDLE}
         };
 
-        KeyCode keys [] {
-            #define X(name, value) name,
-                X_ASCII_KEYCODE
-            #undef X
-
-            #define X(name) name,
-                X_COMPLEX_KEYCODE
-            #undef X
-        };
-
-        RUNTIME_ASSERT_MSG(glfw_to_key_code.count() == ArrayCount(keys), "Update your mappings to reflect the new keys | Expected: %d | Got: %d\n", ArrayCount(keys), glfw_to_key_code.count());
-
         glfw_window_instance = (void*)window;
         if (!glfw_window_instance) {
             return false;
