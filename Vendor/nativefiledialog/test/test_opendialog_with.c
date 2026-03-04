@@ -13,8 +13,14 @@ int main(void) {
 
     nfdchar_t* outPath;
 
+    // prepare filters for the dialog
+    nfdfilteritem_t filterItem[2] = {{"Source code", "c,cpp,cc"}, {"Headers", "h,hpp"}};
+
     // show the dialog
-    nfdresult_t result = NFD_PickFolder(&outPath, NULL);
+    nfdopendialogu8args_t args = {0};
+    args.filterList = filterItem;
+    args.filterCount = 2;
+    nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
     if (result == NFD_OKAY) {
         puts("Success!");
         puts(outPath);

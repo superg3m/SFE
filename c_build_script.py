@@ -28,7 +28,7 @@ pc: ProjectConfig = ProjectConfig(
 )
 
 if IS_WINDOWS() and not C_BUILD_IS_DEPENDENCY():
-    cc.compiler_name = "gcc"
+    cc.compiler_name = "cl"
 elif IS_DARWIN() and not C_BUILD_IS_DEPENDENCY():
     cc.compiler_name = "clang"
 elif IS_LINUX() and not C_BUILD_IS_DEPENDENCY():
@@ -69,7 +69,7 @@ procedures_config = {
             "../../Vendor/glad/include", 
             "../../Vendor/glfw",
             "../../Vendor/imgui",
-            "../../Vendor/nativefiledialog/include",
+            "../../Vendor/nativefiledialog/src/include",
             "../../Vendor/stb"
         ],
         compiler_inject_into_args=[]

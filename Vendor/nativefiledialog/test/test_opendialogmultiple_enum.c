@@ -22,18 +22,21 @@ int main(void) {
     if (result == NFD_OKAY) {
         puts("Success!");
 
-        nfdpathsetsize_t numPaths;
-        NFD_PathSet_GetCount(outPaths, &numPaths);
+        // declare enumerator (not a pointer)
+        nfdpathsetenum_t enumerator;
 
-        nfdpathsetsize_t i;
-        for (i = 0; i < numPaths; ++i) {
-            nfdchar_t* path;
-            NFD_PathSet_GetPath(outPaths, i, &path);
-            printf("Path %i: %s\n", (int)i, path);
+        NFD_PathSet_GetEnum(outPaths, &enumerator);
+        nfdchar_t* path;
+        unsigned i = 0;
+        while (NFD_PathSet_EnumNext(&enumerator, &path) && path) {
+            printf("Path %u: %s\n", i++, path);
 
             // remember to free the pathset path with NFD_PathSet_FreePath (not NFD_FreePath!)
             NFD_PathSet_FreePath(path);
         }
+
+        // remember to free the pathset enumerator memory (before freeing the pathset)
+        NFD_PathSet_FreeEnum(&enumerator);
 
         // remember to free the pathset memory (since NFD_OKAY is returned)
         NFD_PathSet_Free(outPaths);

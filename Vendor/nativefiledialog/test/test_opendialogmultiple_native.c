@@ -1,3 +1,4 @@
+#define NFD_NATIVE
 #include <nfd.h>
 
 #include <stdio.h>
@@ -14,7 +15,11 @@ int main(void) {
     const nfdpathset_t* outPaths;
 
     // prepare filters for the dialog
+#ifdef _WIN32
+    nfdfilteritem_t filterItem[2] = {{L"Source code", L"c,cpp,cc"}, {L"Headers", L"h,hpp"}};
+#else
     nfdfilteritem_t filterItem[2] = {{"Source code", "c,cpp,cc"}, {"Headers", "h,hpp"}};
+#endif
 
     // show the dialog
     nfdresult_t result = NFD_OpenDialogMultiple(&outPaths, filterItem, 2, NULL);
@@ -29,7 +34,11 @@ int main(void) {
         for (i = 0; i < numPaths; ++i) {
             nfdchar_t* path;
             NFD_PathSet_GetPath(outPaths, i, &path);
+#ifdef _WIN32
+            wprintf(L"Path %i: %s\n", (int)i, path);
+#else
             printf("Path %i: %s\n", (int)i, path);
+#endif
 
             // remember to free the pathset path with NFD_PathSet_FreePath (not NFD_FreePath!)
             NFD_PathSet_FreePath(path);

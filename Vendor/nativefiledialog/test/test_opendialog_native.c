@@ -1,3 +1,4 @@
+#define NFD_NATIVE
 #include <nfd.h>
 
 #include <stdio.h>
@@ -13,11 +14,26 @@ int main(void) {
 
     nfdchar_t* outPath;
 
+    // prepare filters for the dialog
+#ifdef _WIN32
+    nfdfilteritem_t filterItem[2] = {{L"Source code", L"c,cpp,cc"}, {L"Headers", L"h,hpp"}};
+#else
+    nfdfilteritem_t filterItem[2] = {{"Source code", "c,cpp,cc"}, {"Headers", "h,hpp"}};
+#endif
+
     // show the dialog
-    nfdresult_t result = NFD_PickFolder(&outPath, NULL);
+    nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 2, NULL);
     if (result == NFD_OKAY) {
         puts("Success!");
+#ifdef _WIN32
+#ifdef _MSC_VER
+        _putws(outPath);
+#else
+        fputws(outPath, stdin);
+#endif
+#else
         puts(outPath);
+#endif
         // remember to free the memory (since NFD_OKAY is returned)
         NFD_FreePath(outPath);
     } else if (result == NFD_CANCEL) {

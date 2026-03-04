@@ -14,7 +14,8 @@ int main(void) {
     nfdchar_t* outPath;
 
     // show the dialog
-    nfdresult_t result = NFD_PickFolder(&outPath, NULL);
+    nfdpickfolderu8args_t args = {0};
+    nfdresult_t result = NFD_PickFolderU8_With(&outPath, &args);
     if (result == NFD_OKAY) {
         puts("Success!");
         puts(outPath);

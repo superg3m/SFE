@@ -1,3 +1,4 @@
+#define NFD_NATIVE
 #include <nfd.h>
 
 #include <stdio.h>
@@ -14,13 +15,35 @@ int main(void) {
     nfdchar_t* savePath;
 
     // prepare filters for the dialog
-    nfdfilteritem_t filterItem[2] = {{"Source code", "c,cpp,cc"}, {"Header", "h,hpp"}};
+#ifdef _WIN32
+    nfdfilteritem_t filterItem[2] = {{L"Source code", L"c,cpp,cc"}, {L"Headers", L"h,hpp"}};
+#else
+    nfdfilteritem_t filterItem[2] = {{"Source code", "c,cpp,cc"}, {"Headers", "h,hpp"}};
+#endif
+
+#ifdef _WIN32
+    const wchar_t* defaultPath = L"Untitled.c";
+#else
+    const char* defaultPath = "Untitled.c";
+#endif
 
     // show the dialog
-    nfdresult_t result = NFD_SaveDialog(&savePath, filterItem, 2, NULL, "Untitled.c");
+    nfdsavedialognargs_t args = {0};
+    args.filterList = filterItem;
+    args.filterCount = 2;
+    args.defaultName = defaultPath;
+    nfdresult_t result = NFD_SaveDialogN_With(&savePath, &args);
     if (result == NFD_OKAY) {
         puts("Success!");
+#ifdef _WIN32
+#ifdef _MSC_VER
+        _putws(savePath);
+#else
+        fputws(savePath, stdin);
+#endif
+#else
         puts(savePath);
+#endif
         // remember to free the memory (since NFD_OKAY is returned)
         NFD_FreePath(savePath);
     } else if (result == NFD_CANCEL) {

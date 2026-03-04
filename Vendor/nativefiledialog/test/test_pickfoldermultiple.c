@@ -13,11 +13,8 @@ int main(void) {
 
     const nfdpathset_t* outPaths;
 
-    // prepare filters for the dialog
-    nfdfilteritem_t filterItem[2] = {{"Source code", "c,cpp,cc"}, {"Headers", "h,hpp"}};
-
     // show the dialog
-    nfdresult_t result = NFD_OpenDialogMultiple(&outPaths, filterItem, 2, NULL);
+    nfdresult_t result = NFD_PickFolderMultiple(&outPaths, NULL);
 
     if (result == NFD_OKAY) {
         puts("Success!");
