@@ -28,7 +28,7 @@ pc: ProjectConfig = ProjectConfig(
 )
 
 if IS_WINDOWS() and not C_BUILD_IS_DEPENDENCY():
-    cc.compiler_name = "cl"
+    cc.compiler_name = "gcc"
 elif IS_DARWIN() and not C_BUILD_IS_DEPENDENCY():
     cc.compiler_name = "clang"
 elif IS_LINUX() and not C_BUILD_IS_DEPENDENCY():
@@ -36,7 +36,7 @@ elif IS_LINUX() and not C_BUILD_IS_DEPENDENCY():
 
 if cc.compiler_name == "cl":
     cc.compiler_warning_level = "4"
-    cc.compiler_disable_specific_warnings = ["4244", "4100", "4458", "4201", "4116", "4245"]
+    cc.compiler_disable_specific_warnings = ["4244", "4100", "4458", "4201", "4116", "4245", "4996"]
 else:
     cc.compiler_warning_level = ""
     cc.compiler_disable_specific_warnings = [
@@ -72,6 +72,18 @@ procedures_config = {
             "../../Vendor/nativefiledialog/src/include",
             "../../Vendor/stb"
         ],
+        compiler_inject_into_args=[]
+    ),
+    
+    "NFD Lib": ProcedureConfig(
+        build_directory = f"./Vendor/nativefiledialog/bin/{cc.compiler_name}/{C_BUILD_BUILD_TYPE()}",
+        output_name = f"nfd.lib",
+        source_files = [
+            "../../../src/nfd_common.c",
+            "../../../src/nfd_win.cpp",
+        ],
+        additional_libs = [],
+        include_paths = ["../../../src/include"],
         compiler_inject_into_args=[]
     ),
 }
