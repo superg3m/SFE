@@ -443,7 +443,10 @@ namespace GFX {
         this->materials = DS::Vector<Material>(scene->mNumMaterials, scene->mNumMaterials);
 
         s64 index = String::LastIndexOf(path, path_length, STRING_LIT_ARG("/"));
-        RUNTIME_ASSERT(index > -1);
+        if (index == -1) {
+            index = String::LastIndexOf(path, path_length, STRING_LIT_ARG("\\"));
+            RUNTIME_ASSERT(index > -1);
+        }
 
         const int STRING_CAPACITY = 512;
         char directory[STRING_CAPACITY] = {0};
