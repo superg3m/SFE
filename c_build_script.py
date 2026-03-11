@@ -69,7 +69,6 @@ procedures_config = {
             "../../Vendor/glad/include", 
             "../../Vendor/glfw",
             "../../Vendor/imgui",
-            "../../Vendor/nativefiledialog/include",
             "../../Vendor/stb"
         ],
         compiler_inject_into_args=[]
