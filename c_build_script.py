@@ -45,6 +45,18 @@ else:
         "implicit-fallthrough",
         "unused-variable"
     ]
+    
+nfd = []
+if IS_WINDOWS():
+    nfd = [
+        "../../Vendor/nativefiledialog/src/nfd_common.c",
+        "../../Vendor/nativefiledialog/src/nfd_win.cpp"
+    ]
+elif IS_DARWIN():
+    nfd = [
+        "../../Vendor/nativefiledialog/src/nfd_common.c",
+        "../../Vendor/nativefiledialog/src/nfd.cocoa.m"
+    ] 
 
 build_postfix = f"./build_{cc.compiler_name}/{C_BUILD_BUILD_TYPE()}"
 procedures_config = {
@@ -63,7 +75,7 @@ procedures_config = {
             
             "../../Vendor/nativefiledialog/src/nfd_common.c",
             "../../Vendor/nativefiledialog/src/nfd_win.cpp",
-        ],
+        ] + nfd,
         additional_libs = [],
         include_paths = [
             "../../Vendor",
