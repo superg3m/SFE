@@ -35,7 +35,7 @@ elif IS_LINUX() and not C_BUILD_IS_DEPENDENCY():
     cc.compiler_name = "gcc"
 
 if cc.compiler_name == "cl":
-    cc.compiler_warning_level = "4"
+    cc.compiler_warning_level = "2"
     cc.compiler_disable_specific_warnings = ["4244", "4100", "4458", "4201", "4116"]
 else:
     cc.compiler_warning_level = ""
@@ -45,7 +45,6 @@ else:
         "implicit-fallthrough",
         "unused-variable"
     ]
-
 
 build_postfix = f"./build_{cc.compiler_name}/{C_BUILD_BUILD_TYPE()}"
 procedures_config = {
@@ -60,7 +59,10 @@ procedures_config = {
 
             "../../Vendor/glad/src/glad.c",
             "../../Vendor/imgui/*.cpp",
-            "../../Vendor/stb/*.c"
+            "../../Vendor/stb/*.c",
+            
+            "../../Vendor/nativefiledialog/src/nfd_common.c",
+            "../../Vendor/nativefiledialog/src/nfd_win.cpp",
         ],
         additional_libs = [],
         include_paths = [
@@ -69,7 +71,8 @@ procedures_config = {
             "../../Vendor/glad/include", 
             "../../Vendor/glfw",
             "../../Vendor/imgui",
-            "../../Vendor/stb"
+            "../../Vendor/stb",
+            "../../Vendor/nativefiledialog",
         ],
         compiler_inject_into_args=[]
     ),
