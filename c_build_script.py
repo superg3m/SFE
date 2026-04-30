@@ -72,9 +72,6 @@ procedures_config = {
             "../../Vendor/glad/src/glad.c",
             "../../Vendor/imgui/*.cpp",
             "../../Vendor/stb/*.c",
-            
-            "../../Vendor/nativefiledialog/src/nfd_common.c",
-            "../../Vendor/nativefiledialog/src/nfd_win.cpp",
         ] + nfd,
         additional_libs = [],
         include_paths = [
