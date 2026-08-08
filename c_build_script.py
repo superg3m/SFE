@@ -18,6 +18,7 @@ from c_build.source.Manager import *
 
 cc: CompilerConfig = CompilerConfig(
     compiler_name = C_BUILD_COMPILER_NAME() if C_BUILD_IS_DEPENDENCY() else "INVALID_COMPILER",
+    compiler_std_version=""
 )
 
 pc: ProjectConfig = ProjectConfig(
@@ -55,7 +56,7 @@ if IS_WINDOWS():
 elif IS_DARWIN():
     nfd = [
         "../../Vendor/nativefiledialog/src/nfd_common.c",
-        "../../Vendor/nativefiledialog/src/nfd.cocoa.m"
+        "../../Vendor/nativefiledialog/src/nfd_cocoa.mm"
     ] 
 
 build_postfix = f"./build_{cc.compiler_name}/{C_BUILD_BUILD_TYPE()}"
