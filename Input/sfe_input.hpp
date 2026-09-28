@@ -7,6 +7,19 @@
 #include "../Core/DataStructure/sfe_ds.hpp"
 
 #define X_ASCII_KEYCODE \
+    X(KEY_MINUS,  '-')  \
+    X(KEY_PERIOD, '.')  \
+    X(KEY_0,      '0')  \
+    X(KEY_1,      '1')  \
+    X(KEY_2,      '2')  \
+    X(KEY_3,      '3')  \
+    X(KEY_4,      '4')  \
+    X(KEY_5,      '5')  \
+    X(KEY_6,      '6')  \
+    X(KEY_7,      '7')  \
+    X(KEY_8,      '8')  \
+    X(KEY_9,      '9')  \
+    X(KEY_EQUAL,  '=')  \
     X(KEY_A,      'A')  \
     X(KEY_B,      'B')  \
     X(KEY_C,      'C')  \
@@ -33,19 +46,6 @@
     X(KEY_X,      'X')  \
     X(KEY_Y,      'Y')  \
     X(KEY_Z,      'Z')  \
-    X(KEY_0,      '0')  \
-    X(KEY_1,      '1')  \
-    X(KEY_2,      '2')  \
-    X(KEY_3,      '3')  \
-    X(KEY_4,      '4')  \
-    X(KEY_5,      '5')  \
-    X(KEY_6,      '6')  \
-    X(KEY_7,      '7')  \
-    X(KEY_8,      '8')  \
-    X(KEY_9,      '9')  \
-    X(KEY_EQUAL,  '=')  \
-    X(KEY_MINUS,  '-')  \
-    X(KEY_PERIOD, '.')  \
 
 #define X_COMPLEX_KEYCODE  \
     X(KEY_SPACE)           \

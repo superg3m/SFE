@@ -5,7 +5,8 @@ param (
     [switch]$Clean,
     [switch]$Build,
     [switch]$Debugger,
-    [switch]$Run
+    [switch]$Run,
+    [switch]$Offline
 )
 
 $directoryPath = "./c_build"
@@ -13,7 +14,7 @@ $repositoryUrl = "https://github.com/superg3m/c_build.git"
 if (-not (Test-Path -Path $directoryPath)) {
     Write-Output "Directory does not exist. Cloning the repository..."
     git clone $repositoryUrl
-} else {
+} elseif (-not $Offline) {
     Push-Location $directoryPath
     git fetch origin -q
     git reset --hard origin/main -q
@@ -22,7 +23,7 @@ if (-not (Test-Path -Path $directoryPath)) {
 }
 
 . ./c_build/validate_temp_files.ps1 $MyInvocation.MyCommand.Name
-if (-not ($Clean -or $Build -or $Run -or $Debugger)) {
+if (-not ($Clean -or $Build -or ($Run -and $BuildType) -or $Debugger)) {
     Write-Error "You must specify at least one of -Clean, -Build, -Run, or -Debugger."
     exit 1
 }
